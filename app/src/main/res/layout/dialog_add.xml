@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <EditText
+        android:id="@+id/saisieNomEtudiant"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:ems="10"
+        android:hint="@string/suggestionNomEtudiant"
+        android:inputType="textPersonName"
+        android:textColor="@color/couleurTexteDefaut"
+        android:textSize="@dimen/taillePoliceTexteDefaut" />
+
+    <!--
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/boutonAjouter"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/couleurAjoutAjouter"
+            android:text="@string/etiquetteAjoutAjouter"
+            android:textColor="@color/couleurTexteContreombrage"
+            android:textSize="@dimen/taillePoliceTexteDefaut" />
+
+        <Button
+            android:id="@+id/boutonAnnuler"
+            style="@style/Widget.AppCompat.Button.Borderless"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/couleurAjoutAnnuler"
+            android:text="@string/etiquetteAjoutAnnuler"
+            android:textColor="@color/couleurTexteContreombrage"
+            android:textSize="@dimen/taillePoliceTexteDefaut" />
+    </LinearLayout>
+    -->
+</LinearLayout>

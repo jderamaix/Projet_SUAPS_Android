@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ElementHorizontal"
+            android:layout_height="70dp"
+            android:layout_weight="5"
+            android:text="@string/etiquetteCapacite"/>
+
+        <NumberPicker
+            android:id="@+id/configCapacite"
+            style="@style/ElementHorizontal"
+            android:layout_height="70dp"
+            android:layout_weight="1"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <TextView
+            style="@style/ElementHorizontal"
+            android:layout_weight="4"
+            android:text="@string/etiquetteTempsMinimum"/>
+
+        <NumberPicker
+            android:id="@+id/configDureeHeures"
+            style="@style/ElementHorizontal"
+            android:layout_weight="1"/>
+
+        <NumberPicker
+            android:id="@+id/configDureeMinutes"
+            style="@style/ElementHorizontal"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>

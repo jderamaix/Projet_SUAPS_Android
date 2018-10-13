@@ -1,3 +1,16 @@
 <resources>
     <string name="app_name">SUAPS</string>
+    <string name="etiquetteCapacite">Capacité : </string>
+    <string name="affichageCapacite">0</string>
+    <string name="etiquetteTempsMinimum">Temps Minimum : </string>
+    <string name="affichageTempsMinimum">00:00</string>
+    <string name="affichageOccupation">0/0</string>
+    <string name="etiquetteBoutonAjout">Ajouter</string>
+    <string name="etiquetteBoutonBadge">BADGE</string>
+    <string name="etiquetteAjoutAjouter">Ajouter</string>
+    <string name="etiquetteAjoutAnnuler">Annuler</string>
+    <string name="suggestionNomEtudiant">Nom de l\'étudiant(e)</string>
+    <string name="bidonTempsEcoule">00:00</string>
+    <string name="etiquetteConfigValider">Valider</string>
+    <string name="etiquetteConfigAnnuler">Annuler</string>
 </resources>
