@@ -1,5 +1,6 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -56,5 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void Badger(View view) {
         Toast.makeText(this, "Pas encore implantée", Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, BadgeActivity.class);
+        startActivity(intent);
     }
 }
