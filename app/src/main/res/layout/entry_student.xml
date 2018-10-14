@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/entreeEtudiant"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/nomEtudiant"
+        style="@style/ElementHorizontal"
+        android:layout_weight="0.8" />
+
+    <TextView
+        android:id="@+id/tempsEcoule"
+        style="@style/ElementHorizontal"
+        android:text="@string/bidonTempsEcoule"
+        android:layout_weight="0.2"
+        android:textAlignment="center" />
+
+</LinearLayout>
