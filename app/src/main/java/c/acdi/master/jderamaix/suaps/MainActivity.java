@@ -11,7 +11,6 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private RecyclerView _view;
     private Adapter _adapter;
 
     @Override
@@ -21,10 +20,10 @@ public class MainActivity extends AppCompatActivity {
 
         _adapter = new Adapter(this);
 
-        _view = (RecyclerView) findViewById(R.id.affichageEtudiants);
-        _view.setHasFixedSize(true);
-        _view.setAdapter(_adapter);
-        _view.setLayoutManager(new LinearLayoutManager(this));
+        RecyclerView view = (RecyclerView) findViewById(R.id.affichageEtudiants);
+        view.setHasFixedSize(true);
+        view.setAdapter(_adapter);
+        view.setLayoutManager(new LinearLayoutManager(this));
 
         // Implémentation de la suppression par swipe
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
@@ -37,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 _adapter.removeStudent((int) viewHolder.itemView.getTag());
             }
-        }).attachToRecyclerView(_view);
+        }).attachToRecyclerView(view);
 
         // Test
         _adapter.addStudent("Marcel");
