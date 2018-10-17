@@ -29,18 +29,14 @@
 
         <TextView
             style="@style/ElementHorizontal"
-            android:layout_weight="4"
+            android:layout_weight="3"
             android:text="@string/etiquetteTempsMinimum"/>
 
-        <NumberPicker
-            android:id="@+id/configDureeHeures"
+        <TimePicker
+            android:id="@+id/configDuree"
             style="@style/ElementHorizontal"
-            android:layout_weight="1"/>
-
-        <NumberPicker
-            android:id="@+id/configDureeMinutes"
-            style="@style/ElementHorizontal"
-            android:layout_weight="1"/>
+            android:timePickerMode="spinner"
+            android:layout_weight="3" />
 
     </LinearLayout>
 

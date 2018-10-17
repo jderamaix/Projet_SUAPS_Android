@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TextView;
+import android.widget.TimePicker;
 
 public class ConfigDialog extends DialogFragment {
 
@@ -28,11 +29,13 @@ public class ConfigDialog extends DialogFragment {
                 .setPositiveButton(R.string.etiquetteConfigValider, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
+                        // Capacité
                         ((TextView) view.findViewById(R.id.affichageCapacite)).setText(
                                 ((NumberPicker) view.findViewById(R.id.configCapacite)).getValue()
                         );
+                        // Duree
                         ((TextView) view.findViewById(R.id.affichageTempsMinimum)).setText(
-                                ((NumberPicker) view.findViewById(R.id.configDureeHeures)).getValue()
+                                ((TimePicker) view.findViewById(R.id.configDuree)).
                         );
                     }
                 })
