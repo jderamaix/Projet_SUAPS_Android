@@ -12,11 +12,21 @@ import android.widget.NumberPicker;
 import android.widget.TextView;
 import android.widget.TimePicker;
 
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
+
 public class ConfigDialog extends DialogFragment {
 
     private Context _context;
 
+    public ConfigDialog() {
+        super();
+        _context = getActivity();
+    }
+
     public ConfigDialog(Context context) {
+        super();
         _context = context;
     }
 
@@ -34,8 +44,9 @@ public class ConfigDialog extends DialogFragment {
                                 ((NumberPicker) view.findViewById(R.id.configCapacite)).getValue()
                         );
                         // Duree
+                        TimePicker picker = (TimePicker) view.findViewById(R.id.configDuree);
                         ((TextView) view.findViewById(R.id.affichageTempsMinimum)).setText(
-                                ((TimePicker) view.findViewById(R.id.configDuree)).
+                                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE).format(new Date(0))
                         );
                     }
                 })

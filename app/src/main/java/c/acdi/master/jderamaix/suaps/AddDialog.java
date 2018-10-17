@@ -17,7 +17,14 @@ public class AddDialog extends DialogFragment {
     private Context _context;
     private Adapter _adapter;
 
+    public AddDialog() {
+        super();
+        _context = getActivity();
+        _adapter = null;
+    }
+
     public AddDialog(Context context, Adapter adapter) {
+        super();
         _context = context;
         _adapter = adapter;
     }
