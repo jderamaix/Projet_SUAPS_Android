@@ -30,7 +30,8 @@
         <TextView
             style="@style/ElementHorizontal"
             android:layout_weight="3"
-            android:text="@string/etiquetteTempsMinimum"/>
+            android:gravity="center_vertical"
+            android:text="@string/etiquetteTempsMinimum" />
 
         <TimePicker
             android:id="@+id/configDuree"
