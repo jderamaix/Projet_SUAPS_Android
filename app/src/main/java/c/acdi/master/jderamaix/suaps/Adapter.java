@@ -42,6 +42,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     public void removeStudent(int i) {
         //Log.i("Adapter.removeStudent",name);  // debugging
         _dataset.remove(i);
+        // Pour des raisons encore inconnues,
+        //`notifyItemRemoved(i);`
+        // donne des problèmes considérables.
+        // C'est pour cela que
+        //`notifyDataSetChanged();`
+        // est utilisé ici.
         notifyDataSetChanged();
     }
 

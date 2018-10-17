@@ -11,6 +11,8 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Élément principal de l'interface
+    // Adaptateur de l'affichage des étudiants présents
     private Adapter _adapter;
 
     @Override
@@ -20,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
 
         _adapter = new Adapter(this);
 
+        // Initialisation du RecyclerView
         RecyclerView view = (RecyclerView) findViewById(R.id.affichageEtudiants);
         view.setHasFixedSize(true);
         view.setAdapter(_adapter);
