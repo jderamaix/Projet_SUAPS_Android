@@ -71,7 +71,7 @@
             style="@style/ElementHorizontal.Bouton"
             android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:onClick="addStudent"
+            android:onClick="ajouterEtudiant"
             android:text="@string/etiquetteBoutonAjout" />
 
     </LinearLayout>

@@ -44,11 +44,11 @@ public class MainActivity extends AppCompatActivity {
         }).attachToRecyclerView(view);
 
         // Test
-        _adapter.addStudent("Marcel");
-        _adapter.addStudent("Jeanne");
-        _adapter.addStudent("Martin");
-        _adapter.addStudent("Godot");
-        _adapter.addStudent("Philippe");
+        addStudent("Marcel");
+        addStudent("Jeanne");
+        addStudent("Martin");
+        addStudent("Godot");
+        addStudent("Philippe");
     }
 
     @Override
@@ -61,17 +61,21 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.configurerCours:
-                configClass(null);
+                configurerCours(null);
                 return true;
         }
         return super.onOptionsItemSelected(item);
     }
 
-    public void addStudent(View view) {
-        new AddDialog(this, _adapter).show(getSupportFragmentManager(), "ajoutEtudiant");
+    public void ajouterEtudiant(View view) {
+        new AddDialog(this).show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
-    public void configClass(View view) {
+    public void addStudent(String name) {
+        _adapter.addStudent(name);
+    }
+
+    public void configurerCours(View view) {
         new ConfigDialog(this).show(getSupportFragmentManager(),"configClasse");
     }
 
