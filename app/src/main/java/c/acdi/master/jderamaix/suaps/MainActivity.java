@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void ajouterEtudiant(View view) {
-        new AddDialog(this).show(getSupportFragmentManager(), "ajoutEtudiant");
+        new AddDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
     public void addStudent(String name) {
