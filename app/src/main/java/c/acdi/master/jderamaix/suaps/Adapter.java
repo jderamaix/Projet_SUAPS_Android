@@ -3,7 +3,6 @@ package c.acdi.master.jderamaix.suaps;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-//import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,13 +31,11 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     }
 
     public void addStudent(String name) {
-        //Log.i("Adapter.addStudent", name);  // debugging
         _dataset.add(new StudentEntry(name));
         notifyItemInserted(_dataset.size() - 1);
     }
 
     public void removeStudent(int i) {
-        //Log.i("Adapter.removeStudent",name);  // debugging
         _dataset.remove(i);
         // Pour des raisons encore inconnues,
         //`notifyItemRemoved(i);`
