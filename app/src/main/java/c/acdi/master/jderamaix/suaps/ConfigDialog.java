@@ -1,6 +1,5 @@
 package c.acdi.master.jderamaix.suaps;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
@@ -10,12 +9,9 @@ import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
-import android.widget.TextView;
 import android.widget.TimePicker;
 
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class ConfigDialog extends DialogFragment {
 
@@ -42,7 +38,10 @@ public class ConfigDialog extends DialogFragment {
                 .setPositiveButton(R.string.etiquetteConfigValider, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.configureClass(capacity.getValue(), new Date(1000*((duration.getCurrentHour() - 1)*3600 + duration.getCurrentMinute()*60)));
+                        activity.configureClass(
+                                capacity.getValue(),
+                                new Date(1000*((duration.getCurrentHour() - 1)*3600 + duration.getCurrentMinute()*60))
+                        );
                     }
                 })
                 .setNegativeButton(R.string.etiquetteConfigAnnuler, new DialogInterface.OnClickListener() {
