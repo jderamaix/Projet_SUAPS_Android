@@ -9,8 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.threeten.bp.Duration;
-
 import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
@@ -47,7 +45,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         // donne des problèmes considérables.
         // C'est pour cela que
         //`notifyDataSetChanged();`
-        // est utilisé ici.
+        // est utilisé ici
         notifyDataSetChanged();
     }
 
@@ -55,19 +53,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView _name, _elapsedTime;
+        public final TextView name, elapsedTime;
 
         public ViewHolder(View view) {
             super(view);
-            _name = view.findViewById(R.id.nomEtudiant);
-            _elapsedTime = view.findViewById(R.id.tempsEcoule);
+            name = view.findViewById(R.id.nomEtudiant);
+            elapsedTime = view.findViewById(R.id.tempsEcoule);
         }
-
-        public String name() { return (String) _name.getText(); }
-        public void name(String name) { _name.setText(name); }
-
-        public Duration elapsedTime() { return Duration.parse(_elapsedTime.getText()); }
-        public void elapsedTime(Duration duration) { _elapsedTime.setText(String.valueOf(duration.getSeconds())); }
     }
 
     @Override
@@ -77,7 +69,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
-        holder.name(_dataset.get(i).name());
+        holder.name.setText(_dataset.get(i).name());
         holder.itemView.setTag(i);
     }
 
