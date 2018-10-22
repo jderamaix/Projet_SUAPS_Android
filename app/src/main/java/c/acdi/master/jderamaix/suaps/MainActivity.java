@@ -21,6 +21,7 @@ public class MainActivity extends AppCompatActivity {
     // Élément principal de l'interface
     // Adaptateur de l'affichage des étudiants présents
     private Adapter _adapter;
+    private int _capacity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _adapter = new Adapter(this);
+        configureClass(5, new Date(1000*(20*60)));
 
         // Initialisation du RecyclerView
         RecyclerView view = (RecyclerView) findViewById(R.id.affichageEtudiants);
@@ -56,6 +58,17 @@ public class MainActivity extends AppCompatActivity {
         addStudent("Philippe");
     }
 
+    public void ajouterEtudiant(View view) {
+        new AddDialog(this).show(getSupportFragmentManager(), "ajoutEtudiant");
+    }
+
+    public void addStudent(String name) {
+        _adapter.addStudent(name);
+        ((TextView) findViewById(R.id.affichageOccupation)).setText(
+                getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
+        );
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.config_menu, menu);
@@ -72,22 +85,15 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    public void ajouterEtudiant(View view) {
-        new AddDialog(this).show(getSupportFragmentManager(), "ajoutEtudiant");
-    }
-
-    public void addStudent(String name) {
-        _adapter.addStudent(name);
-    }
-
     public void configurerCours(View view) {
         new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
     }
 
     public void configureClass(int capacity, Date minimumTime) {
+        _capacity = capacity;
         ((TextView) findViewById(R.id.affichageCapacite)).setText(String.valueOf(capacity));
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
-                String.valueOf(_adapter.getItemCount()) + "/" + capacity
+                getString(R.string.affichageOccupation,_adapter.getItemCount(), capacity)
         );
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(
                 DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE).format(minimumTime)
