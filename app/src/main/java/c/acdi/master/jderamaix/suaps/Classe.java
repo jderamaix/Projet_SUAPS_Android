@@ -1,47 +1,36 @@
 package c.acdi.master.jderamaix.suaps;
 
+
+/**
+ * Classe utilisé pour recevoir les information d'une personne par un get
+ */
 public class Classe {
 
-/*    private String nom;
-    private int numEtud;
+    private String nom_usuel;
+    private String prenom;
+    private String no_individu;
 
-
-    public void setNom(String nom){
-        this.nom = nom;
+    public void setNom_usuel(String nom){
+        this.nom_usuel = nom;
     }
 
-    public void setNumEtud(int numEtud){
-        this.numEtud = numEtud;
+    public void setPrenom(String prenom){
+        this.prenom = prenom;
+    }
+
+    public void setNo_individu(String no_individu){
+        this.no_individu = no_individu;
     }
 
     public String getNom(){
-        return this.nom;
+        return this.nom_usuel;
     }
 
-    public int getNumEtud(){
-        return this.numEtud;
-    }
-*/
-
-
-    private String titre;
-    private int id;
-
-
-    public void setTitre(String titre){
-        this.titre = titre;
+    public String getPrenom(){
+        return this.prenom;
     }
 
-    public void setid(int numid){
-        this.id = id;
+    public String getNo_individu(){
+        return this.no_individu;
     }
-
-    public String getTitre(){
-        return this.titre;
-    }
-
-    public int getid(){
-        return this.id;
-    }
-
 }

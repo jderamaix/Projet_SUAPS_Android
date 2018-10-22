@@ -13,4 +13,5 @@
     <string name="bidonTempsEcoule">00:00</string>
     <string name="etiquetteConfigValider">Valider</string>
     <string name="etiquetteConfigAnnuler">Annuler</string>
+    <string name="TextView_RFIDActivity">Veuillez badger</string>
 </resources>
