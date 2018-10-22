@@ -9,7 +9,12 @@ import android.support.v7.widget.helper.ItemTouchHelper;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.text.DateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,7 +81,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void configurerCours(View view) {
-        new ConfigDialog(this).show(getSupportFragmentManager(),"configClasse");
+        new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
+    }
+
+    public void configureClass(int capacity, Date minimumTime) {
+        ((TextView) findViewById(R.id.affichageCapacite)).setText(String.valueOf(capacity));
+        ((TextView) findViewById(R.id.affichageOccupation)).setText(
+                String.valueOf(_adapter.getItemCount()) + "/" + capacity
+        );
+        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(
+                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE).format(minimumTime)
+        );
     }
 
     public void Badger(View view) {
