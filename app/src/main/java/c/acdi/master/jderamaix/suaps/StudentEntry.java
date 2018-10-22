@@ -1,18 +1,18 @@
 package c.acdi.master.jderamaix.suaps;
 
-import org.threeten.bp.Duration;
+import java.util.Date;
 
 public class StudentEntry {
 
     private String _name;
-    private Duration _elapsedTime;
+    private Date _elapsedTime;
 
     public StudentEntry(String name) {
         _name = name;
-        _elapsedTime = Duration.ofHours(0);
+        _elapsedTime = new Date(0);
     }
 
-    public StudentEntry(String name, Duration elapsedTime) {
+    public StudentEntry(String name, Date elapsedTime) {
         _name = name;
         _elapsedTime = elapsedTime;
     }
@@ -22,8 +22,8 @@ public class StudentEntry {
     }
     public void name(String name) { _name = name; }
 
-    public Duration elapsedTime() {
+    public Date elapsedTime() {
         return _elapsedTime;
     }
-    public void elapsedTime(Duration elapsedTime) { _elapsedTime = elapsedTime; }
+    public void elapsedTime(Date elapsedTime) { _elapsedTime = elapsedTime; }
 }
