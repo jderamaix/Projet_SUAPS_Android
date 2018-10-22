@@ -32,8 +32,12 @@ public class ConfigDialog extends DialogFragment {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final View view = LayoutInflater.from(_context).inflate(R.layout.dialog_config,null);
-        final View main = LayoutInflater.from(_context).inflate(R.layout.activity_main,null);
+        LayoutInflater inflater = LayoutInflater.from(_context);
+        final View view = inflater.inflate(R.layout.dialog_config,null);
+        final View main = inflater.inflate(R.layout.activity_main,null);
+
+        final NumberPicker capacity = view.findViewById(R.id.configCapacite);
+        capacity.setMaxValue(20);
 
         final TimePicker duration = view.findViewById(R.id.configDuree);
         duration.setIs24HourView(true);
@@ -47,7 +51,7 @@ public class ConfigDialog extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         // Capacité
                         ((TextView) main.findViewById(R.id.affichageCapacite)).setText(
-                                String.valueOf(((NumberPicker) view.findViewById(R.id.configCapacite)).getValue())
+                                String.valueOf(capacity.getValue())
                         );
                         // Duree
                         Date d = new Date(1000*(duration.getCurrentHour()*3600 + duration.getCurrentMinute()*60));
