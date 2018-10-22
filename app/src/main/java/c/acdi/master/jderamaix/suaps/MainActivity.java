@@ -6,6 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
@@ -47,6 +49,22 @@ public class MainActivity extends AppCompatActivity {
         _adapter.addStudent("Martin");
         _adapter.addStudent("Godot");
         _adapter.addStudent("Philippe");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.config_menu, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.configurerCours:
+                configClass(null);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     public void addStudent(View view) {

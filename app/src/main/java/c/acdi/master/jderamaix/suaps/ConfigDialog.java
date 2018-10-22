@@ -33,6 +33,12 @@ public class ConfigDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final View view = LayoutInflater.from(_context).inflate(R.layout.dialog_config,null);
+        final View main = LayoutInflater.from(_context).inflate(R.layout.activity_main,null);
+
+        final TimePicker duration = view.findViewById(R.id.configDuree);
+        duration.setIs24HourView(true);
+        duration.setCurrentHour(0);
+        duration.setCurrentMinute(0);
 
         return new AlertDialog.Builder(_context)
                 .setView(view)
@@ -40,21 +46,19 @@ public class ConfigDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         // Capacité
-                        ((TextView) view.findViewById(R.id.affichageCapacite)).setText(
-                                ((NumberPicker) view.findViewById(R.id.configCapacite)).getValue()
+                        ((TextView) main.findViewById(R.id.affichageCapacite)).setText(
+                                String.valueOf(((NumberPicker) view.findViewById(R.id.configCapacite)).getValue())
                         );
                         // Duree
-                        TimePicker picker = (TimePicker) view.findViewById(R.id.configDuree);
-                        ((TextView) view.findViewById(R.id.affichageTempsMinimum)).setText(
-                                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE).format(new Date(0))
+                        Date d = new Date(1000*(duration.getCurrentHour()*3600 + duration.getCurrentMinute()*60));
+                        ((TextView) main.findViewById(R.id.affichageTempsMinimum)).setText(
+                                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE).format(d)
                         );
                     }
                 })
                 .setNegativeButton(R.string.etiquetteConfigAnnuler, new DialogInterface.OnClickListener() {
                     @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
+                    public void onClick(DialogInterface dialog, int which) {}
                 })
                 .create();
 
