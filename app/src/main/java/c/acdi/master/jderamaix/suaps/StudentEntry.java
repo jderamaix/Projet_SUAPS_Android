@@ -5,7 +5,7 @@ import java.util.Date;
 public class StudentEntry {
 
     public static long calculateTimeOffset(int hours, int minutes) {
-        return 1000*((hours - 1)*3600 + minutes*60);
+        return 60000*((hours - 1)*60 + minutes);
     }
 
     private String _name;
