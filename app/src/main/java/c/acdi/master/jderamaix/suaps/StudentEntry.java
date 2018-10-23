@@ -4,12 +4,16 @@ import java.util.Date;
 
 public class StudentEntry {
 
+    public static long calculateTimeOffset(int hours, int minutes) {
+        return 1000*((hours - 1)*3600 + minutes*60);
+    }
+
     private String _name;
     private Date _elapsedTime;
 
     public StudentEntry(String name) {
         _name = name;
-        _elapsedTime = new Date(0);
+        _elapsedTime = new Date(calculateTimeOffset(0, 0));
     }
 
     public StudentEntry(String name, Date elapsedTime) {
