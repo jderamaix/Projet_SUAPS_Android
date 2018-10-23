@@ -32,11 +32,7 @@ public class AddDialog extends DialogFragment {
                         activity.addStudent(((EditText) view.findViewById(R.id.saisieNomEtudiant)).getText().toString());
                     }
                 })
-                .setNegativeButton(R.string.etiquetteAjoutAnnuler, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int i) {
-                    }
-                })
+                .setNegativeButton(R.string.etiquetteAjoutAnnuler, null)
                 .create();
     }
 
