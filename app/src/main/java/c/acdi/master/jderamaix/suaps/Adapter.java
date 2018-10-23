@@ -1,6 +1,5 @@
 package c.acdi.master.jderamaix.suaps;
 
-import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -13,15 +12,18 @@ import java.util.ArrayList;
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
     private ArrayList<StudentEntry> _dataset;
+    private MainActivity _activity;
     private LayoutInflater _inflater;
 
-    public Adapter(Context context, ArrayList<StudentEntry> data) {
-        _inflater = LayoutInflater.from(context);
+    public Adapter(MainActivity activity, ArrayList<StudentEntry> data) {
+        _activity = activity;
+        _inflater = LayoutInflater.from(_activity);
         _dataset = data;
     }
 
-    public Adapter(Context context) {
-        _inflater = LayoutInflater.from(context);
+    public Adapter(MainActivity activity) {
+        _activity = activity;
+        _inflater = LayoutInflater.from(_activity);
         _dataset = new ArrayList<>();
     }
 
@@ -67,6 +69,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         holder.name.setText(_dataset.get(i).name());
+        holder.elapsedTime.setText(_activity.getString(R.string.affichageTempsEcoule, StudentEntry.calculateTimeOffset(0,0)));
         holder.itemView.setTag(i);
     }
 
