@@ -2,10 +2,15 @@ package c.acdi.master.jderamaix.suaps;
 
 import android.util.Log;
 
+import java.io.IOException;
+
+import okhttp3.Interceptor;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-public class ServiceGenerator {
+public class ServiceGenerator{
 
     private  static final String BASE_URL =  "http://192.168.43.238:8000/";
 
@@ -15,8 +20,28 @@ public class ServiceGenerator {
 
     private static Retrofit retrofit = builder.build();
 
+    private static OkHttpClient.Builder httpClient =
+            new OkHttpClient.Builder();
+
+    private static Interceptor interceptor = new Interceptor() {
+        @Override
+        public okhttp3.Response intercept(Chain chain) throws IOException {
+            Request request = chain.request();
+            okhttp3.Response response = chain.proceed(request);
+            //Code pour les erreurs possibles ici.
+
+            return response;
+        }
+    };
+
     public static <S> S createService(Class<S> serviceClass){
-        Log.e("Pendantcréationcall","Pendant creation calll");
+
+        if(!httpClient.interceptors().contains(interceptor)){
+            httpClient.addInterceptor(interceptor);
+            builder.client(httpClient.build());
+            retrofit = builder.build();
+        }
+
         return retrofit.create(serviceClass);
     }
 

@@ -14,4 +14,6 @@
     <string name="etiquetteConfigValider">Valider</string>
     <string name="etiquetteConfigAnnuler">Annuler</string>
     <string name="TextView_RFIDActivity">Veuillez badger</string>
+    <string name="confirmationCapacite">OK</string>
+    <string name="confirmationTemps">OK</string>
 </resources>

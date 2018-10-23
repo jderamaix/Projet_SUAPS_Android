@@ -1,36 +1,49 @@
 package c.acdi.master.jderamaix.suaps;
 
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 /**
  * Classe utilisé pour recevoir les information d'une personne par un get
  */
 public class Classe {
 
-    private String nom_usuel;
+    private String nom;
     private String prenom;
-    private String no_individu;
 
-    public void setNom_usuel(String nom){
-        this.nom_usuel = nom;
+    private int no_etudiant;
+    private SimpleDateFormat temps;
+
+
+    public void setNom(String nom){
+        this.nom = nom;
     }
 
     public void setPrenom(String prenom){
         this.prenom = prenom;
     }
 
-    public void setNo_individu(String no_individu){
-        this.no_individu = no_individu;
+
+    public void setNo_etudiant(int no_individu){
+        this.no_etudiant = no_individu;
     }
 
+    public void setTemps(SimpleDateFormat temps){ this.temps = temps;}
+
+
     public String getNom(){
-        return this.nom_usuel;
+        return this.nom;
     }
 
     public String getPrenom(){
         return this.prenom;
     }
 
-    public String getNo_individu(){
-        return this.no_individu;
+
+    public int getNo_etudiant(){
+        return this.no_etudiant;
     }
+
+    public SimpleDateFormat getTemps(){ return this.temps;}
 }

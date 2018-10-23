@@ -6,6 +6,7 @@ import java.util.List;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.Field;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 import retrofit2.http.Path;
@@ -25,8 +26,8 @@ public interface Client {
      * Get pour prendre les informations d'une personne
      *
      */
-    @GET("/c/{temp}")
-    Call<List<Classe>> Methode2(@Path("temp") String Variable);
+    @GET("/controlleur/listePersonne")
+    Call<List<Classe>> Methode2(/*@Path("temp") String Variable*/);
 
 
 
@@ -37,15 +38,14 @@ public interface Client {
     */
 
      @POST("/controlleur/{temp}")
-    Call<Task> EnvoieNumCarte(@Path("temp") String Variable, @Body Task task);
+    Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Field("num_carte") Task task);
 
 
     /**
      *Envoie les changements d'heures de séances et capacité d'accueil
      */
-    /*
-    @Post
-    */
+    @POST("controlleur/setSeance/{temp}")
+    Call<Void> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);
 
 
     /**

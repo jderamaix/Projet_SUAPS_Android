@@ -124,8 +124,10 @@ public class RFIDActivity extends AppCompatActivity {
         Intent resultIntent = new Intent();
         resultIntent.putExtra(PUBLIC_STATIC_STRING_IDENTIFIER, s);
         setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-    }
+        }
+
+
+
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
 

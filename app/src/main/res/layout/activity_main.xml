@@ -7,34 +7,87 @@
     android:orientation="vertical"
     tools:context=".MainActivity">
 
-    <LinearLayout style="@style/ConteneurHorizontal">
+    <LinearLayout style="@style/ConteneurHorizontal"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <TextView
             android:id="@+id/etiquetteCapacite"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
+            android:layout_weight="2"
             android:text="@string/etiquetteCapacite" />
 
-        <TextView
+        <EditText
             android:id="@+id/affichageCapacite"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
-            android:text="@string/affichageCapacite" />
+            android:layout_weight="0.75"
+            android:gravity="center"
+            android:text="@string/affichageCapacite"
+            android:background="@drawable/shape_edittext"
+            android:inputType="number"
+            />
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"/>
+
+        <Button
+            android:layout_weight="0.75"
+            style="@style/ElementHorizontal"
+            android:id="@+id/confirmationCapacite"
+            android:text="@string/confirmationCapacite"
+            android:onClick="ModificationCapacite"
+            />
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"/>
+
+
     </LinearLayout>
 
-    <LinearLayout style="@style/ConteneurHorizontal">
+    <android.support.v4.widget.Space
+        android:layout_width="wrap_content"
+        android:layout_height="10dp" />
+
+    <LinearLayout style="@style/ConteneurHorizontal"
+        android:descendantFocusability="beforeDescendants"
+        android:focusableInTouchMode="true">
 
         <TextView
             android:id="@+id/etiquetteTempsMinimum"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
+            android:layout_weight="2"
             android:text="@string/etiquetteTempsMinimum" />
 
-        <TextView
+        <EditText
             android:id="@+id/affichageTempsMinimum"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
-            android:text="@string/affichageTempsMinimum" />
+            android:layout_weight="0.75"
+            android:gravity="center"
+            android:text="@string/affichageTempsMinimum"
+            android:background="@drawable/shape_edittext"
+            android:inputType="datetime"/>
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"/>
+
+        <Button
+            style="@style/ElementHorizontal"
+            android:id="@+id/confirmtionTemps"
+            android:layout_weight="0.75"
+            android:text="@string/confirmationTemps"
+            android:onClick="ModificationHeure"
+            />
+
+        <android.support.v4.widget.Space
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.75"/>
     </LinearLayout>
 
     <Space

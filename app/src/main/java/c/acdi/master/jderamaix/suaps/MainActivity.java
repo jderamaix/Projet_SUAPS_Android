@@ -10,8 +10,11 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
 import android.util.Log;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.Toast;
 
+import java.io.IOError;
+import java.io.IOException;
 import java.util.Iterator;
 import java.util.List;
 
@@ -24,6 +27,7 @@ import static c.acdi.master.jderamaix.suaps.RFIDActivity.PUBLIC_STATIC_STRING_ID
 public class MainActivity extends AppCompatActivity {
 
     public static final int BadgeRequest = 1;
+    private static final String TAG = "MainActivity";
     private RecyclerView _view;
     private Adapter _adapter;
 
@@ -52,11 +56,12 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(_view);
 
+
         // Test
-        _adapter.addStudent("Marcel");
-        _adapter.addStudent("Jeanne");
-        _adapter.addStudent("Martin");
-        _adapter.addStudent("Godot");
+        _adapter.addStudent(new String(Character.toChars(0x1F60B)));
+        _adapter.addStudent(new String(Character.toChars(0x1F44C)));
+        _adapter.addStudent(new String(Character.toChars(0x1F438)));
+        _adapter.addStudent( new String(Character.toChars(0x1F438)));
         _adapter.addStudent("Philippe");
     }
 
@@ -69,7 +74,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void Badger(View view) {
-        Toast.makeText(this, "Pas encore implantée", Toast.LENGTH_SHORT).show();
         //Intent intent = new Intent(this, BadgeActivity.class);
         Intent intent = new Intent(this, RFIDActivity.class);
         startActivityForResult(intent,BadgeRequest);
@@ -115,31 +119,36 @@ public class MainActivity extends AppCompatActivity {
 
         Client client = ServiceGenerator.createService(Client.class);
 
-        /*
-        Call<Task> call_Post = client.EnvoieNumCarte("badgeage/",task);
+
+        Call<Void> call_Post = client.EnvoieNumCarte("badgeage/" + num_Carte,task);
 
 
-        call_Post.enqueue(new Callback<Task>() {
+        call_Post.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<Task> call, Response<Task> response) {
-                Log.e("Reponse recu","reponse recu");
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.e("TAG", "Laréponse est véritable");
+                }
             }
-
             @Override
-            public void onFailure(Call<Task> call, Throwable t) {
-                Log.e("échec de call"," echec de call");
-                Toast.makeText(MainActivity.this, "Le call a échoué. ", Toast.LENGTH_LONG).show();
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                }
 
             }
-        });*/
-
+        });
 
 
         Log.e("Post passé"," Post passé");
 
         //_adapter.addStudent(num_Carte);
 
-        Call<List<Classe>> call2 = client.Methode2("042d87ca253980");
+/*
+        Call<List<Classe>> call2 = client.Methode2();
 
         call2.enqueue(new Callback<List<Classe>>() {
             @Override
@@ -158,8 +167,9 @@ public class MainActivity extends AppCompatActivity {
                                     Classe classe = i.next();
                                     String nomEtud = classe.getNom();
                                     _adapter.addStudent(nomEtud);
-                                    if (classe.getNo_individu() != null) {
-                                        _adapter.addStudent(classe.getNo_individu());
+
+                                    if (classe.getNo_etudiant() != null) {
+                                        _adapter.addStudent(classe.getNo_etudiant());
                                     }
                                 }
                             }
@@ -177,6 +187,96 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("échec de call"," echec de call");
                 Toast.makeText(MainActivity.this, "Le call a échoué. ", Toast.LENGTH_LONG).show();
             }
+        });*/
+
+    }
+
+    public void ModificationCapacite(View view) {
+        //Toast.makeText(MainActivity.this,"Une modification de la capacité a été reperé.", Toast.LENGTH_SHORT).show();
+
+
+        EditText et_capacity = this.findViewById(R.id.affichageCapacite);
+        EditText et_temps = this.findViewById(R.id.affichageTempsMinimum);
+
+        String capacity = et_capacity.getText().toString();
+        String temps = et_temps.getText().toString();
+
+        AuaListeSeance auaListeSeance = new AuaListeSeance();
+
+        auaListeSeance.setLimitePersonnes(capacity);
+        auaListeSeance.setTempsSeance(temps);
+        auaListeSeance.setIdSeance(1);
+
+        Client client = ServiceGenerator.createService(Client.class);
+
+        Call<Void> call_Post = client.EnvoieTempsCapacite(capacity + "/" + temps + "/1",auaListeSeance);
+
+
+        Log.e(TAG,"On est juste avant le enqueue");
+
+        call_Post.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.e("Reponse recu","reponse recu");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                }
+            }
         });
+
+        Log.e(TAG,"On est juste après le enqueue");
+
+    }
+
+    public void ModificationHeure(View view) {
+        Toast.makeText(MainActivity.this,"Une modification de l'heure a été reperé.", Toast.LENGTH_SHORT).show();
+
+
+
+        EditText et_capacity = this.findViewById(R.id.affichageCapacite);
+        EditText et_temps = this.findViewById(R.id.affichageTempsMinimum);
+
+        String capacity = et_capacity.getText().toString();
+        String temps = et_temps.getText().toString();
+
+        AuaListeSeance auaListeSeance = new AuaListeSeance();
+
+        auaListeSeance.setLimitePersonnes(capacity);
+        auaListeSeance.setTempsSeance(temps);
+        auaListeSeance.setIdSeance(1);
+
+        Client client = ServiceGenerator.createService(Client.class);
+
+        Call<Void> call_Post = client.EnvoieTempsCapacite(capacity + "/" + temps + "/1",auaListeSeance);
+
+        Log.e(TAG,"On est juste avant le enqueue");
+
+
+
+        call_Post.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                Log.e("Reponse recu","reponse recu");
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+        Log.e(TAG,"On est juste après le enqueue");
+
+
     }
 }
