@@ -2,19 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/entreeEtudiant"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content">
+    android:layout_height="wrap_content"
+    android:layout_width="match_parent">
 
     <TextView
         android:id="@+id/nomEtudiant"
         style="@style/ElementHorizontal"
-        android:layout_weight="0.8" />
+        android:layout_weight="4" />
 
     <TextView
         android:id="@+id/tempsEcoule"
         style="@style/ElementHorizontal"
         android:text="@string/bidonTempsEcoule"
-        android:layout_weight="0.2"
+        android:layout_weight="1"
         android:textAlignment="center" />
 
 </LinearLayout>

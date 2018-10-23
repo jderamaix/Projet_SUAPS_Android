@@ -1,7 +1,7 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.app.Activity;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -14,19 +14,26 @@ public class AddDialog extends DialogFragment {
 
     // Code de la classe en soi-même
 
-    private Context _context;
+    private Activity _activity;
     private Adapter _adapter;
 
-    public AddDialog(Context context, Adapter adapter) {
-        _context = context;
+    public AddDialog() {
+        super();
+        _activity = getActivity();
+        _adapter = null;
+    }
+
+    public AddDialog(Activity activity, Adapter adapter) {
+        super();
+        _activity = activity;
         _adapter = adapter;
     }
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final View view = LayoutInflater.from(_context).inflate(R.layout.dialog_add, null);
+        final View view = LayoutInflater.from(_activity).inflate(R.layout.dialog_add, null);
 
-        return new AlertDialog.Builder(_context)
+        return new AlertDialog.Builder(_activity)
                 .setView(view)
                 .setPositiveButton(R.string.etiquetteAjoutAjouter, new DialogInterface.OnClickListener() {
                     @Override
@@ -37,7 +44,6 @@ public class AddDialog extends DialogFragment {
                 .setNegativeButton(R.string.etiquetteAjoutAnnuler, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
-                        // à compléter
                     }
                 })
                 .create();
