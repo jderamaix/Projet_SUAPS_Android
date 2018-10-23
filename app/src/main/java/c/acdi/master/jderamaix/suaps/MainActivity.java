@@ -12,9 +12,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.text.DateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -46,13 +44,13 @@ public class MainActivity extends AppCompatActivity {
         // Implémentation de la suppression par swipe
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
-            public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
+            public boolean onMove(RecyclerView view, RecyclerView.ViewHolder holder, RecyclerView.ViewHolder target) {
                 return false;
             }
 
             @Override
-            public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                _adapter.removeStudent((int) viewHolder.itemView.getTag());
+            public void onSwiped(RecyclerView.ViewHolder holder, int direction) {
+                _adapter.removeStudent((int) holder.itemView.getTag());
                 _updateAttendance();
             }
         }).attachToRecyclerView(view);
