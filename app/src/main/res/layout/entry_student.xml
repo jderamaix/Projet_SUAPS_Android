@@ -13,7 +13,7 @@
     <TextView
         android:id="@+id/tempsEcoule"
         style="@style/ElementHorizontal"
-        android:text="@string/bidonTempsEcoule"
+        android:text="@string/affichageTempsEcoule"
         android:layout_weight="1"
         android:textAlignment="center" />
 
