@@ -18,10 +18,16 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Affichage des données sur le cours
+    private int _capacity = 0;
+    private Date _duration = new Date();
+
+    public int capacity() { return _capacity; }
+    public Date duration() { return _duration; }
+
     // Élément principal de l'interface
     // Adaptateur de l'affichage des étudiants présents
     private Adapter _adapter;
-    private int _capacity;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -29,10 +35,10 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _adapter = new Adapter(this);
-        configureClass(5, new Date(1000*(20*60)));
+        configureClass(5, 1, 20);
 
         // Initialisation du RecyclerView
-        RecyclerView view = (RecyclerView) findViewById(R.id.affichageEtudiants);
+        RecyclerView view = findViewById(R.id.affichageEtudiants);
         view.setHasFixedSize(true);
         view.setAdapter(_adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
@@ -47,6 +53,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 _adapter.removeStudent((int) viewHolder.itemView.getTag());
+                _updateAttendance();
             }
         }).attachToRecyclerView(view);
 
@@ -58,15 +65,19 @@ public class MainActivity extends AppCompatActivity {
         addStudent("Philippe");
     }
 
+    private void _updateAttendance() {
+        ((TextView) findViewById(R.id.affichageOccupation)).setText(
+                getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
+        );
+    }
+
     public void ajouterEtudiant(View view) {
         new AddDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
     public void addStudent(String name) {
         _adapter.addStudent(name);
-        ((TextView) findViewById(R.id.affichageOccupation)).setText(
-                getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
-        );
+        _updateAttendance();
     }
 
     @Override
@@ -89,14 +100,14 @@ public class MainActivity extends AppCompatActivity {
         new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
     }
 
-    public void configureClass(int capacity, Date minimumTime) {
+    public void configureClass(int capacity, int minimumHours, int minimumMinutes) {
         _capacity = capacity;
-        ((TextView) findViewById(R.id.affichageCapacite)).setText(String.valueOf(capacity));
-        ((TextView) findViewById(R.id.affichageOccupation)).setText(
-                getString(R.string.affichageOccupation,_adapter.getItemCount(), capacity)
-        );
+        _duration.setTime(StudentEntry.calculateTimeOffset(minimumHours, minimumMinutes));
+        ((TextView) findViewById(R.id.affichageCapacite)).setText(
+                getString(R.string.affichageCapacite, _capacity));
+        _updateAttendance();
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(
-                DateFormat.getTimeInstance(DateFormat.SHORT, Locale.FRANCE).format(minimumTime)
+                getString(R.string.affichageTempsMinimum, _duration.getTime())
         );
     }
 
