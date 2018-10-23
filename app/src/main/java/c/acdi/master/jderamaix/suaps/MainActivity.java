@@ -1,6 +1,8 @@
 package c.acdi.master.jderamaix.suaps;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.app.Fragment;
 import android.app.Service;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,6 +17,8 @@ import android.widget.Toast;
 
 import java.io.IOError;
 import java.io.IOException;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
@@ -31,10 +35,23 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView _view;
     private Adapter _adapter;
 
+    private ArrayList<Classe> liste_Ultime;
+
+
+    public ArrayList<Classe> getListe_ultime() {
+        return liste_Ultime;
+    }
+
+    public void setListe_Ultime(ArrayList<Classe> liste_Ultime){
+        this.liste_Ultime = liste_Ultime;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        this.setListe_Ultime(new ArrayList<Classe>());
 
         _adapter = new Adapter(this);
 
@@ -52,7 +69,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
-                _adapter.removeStudent((int) viewHolder.itemView.getTag());
+                int index = (int) viewHolder.itemView.getTag();
+
+                _adapter.removeStudent(index);
+                Log.e("TAG5","" + index +"    " + MainActivity.this.getListe_ultime().size());
+                Log.e("TAG",((MainActivity.this.getListe_ultime()).get(index)).getNom());
+                MainActivity.this.getListe_ultime().remove(index);
+                //Log.e("TAGULT", ((MainActivity.this.getListe_ultime().get(index)).getNom()));
             }
         }).attachToRecyclerView(_view);
 
@@ -66,8 +89,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addStudent(View view) {
-        new AddDialog(this, _adapter).show(getSupportFragmentManager(), "ajoutEtudiant");
+        int sizeAvant = _adapter.getItemCount();
+        AddDialog adddialog = new AddDialog(this, _adapter);
+                adddialog.show(getSupportFragmentManager(), "ajoutEtudiant");
+        Log.e("TAGAPRES"," APRES");
+
     }
+
 
     public void configClass(View view) {
         new ConfigDialog(this).show(getSupportFragmentManager(),"configClasse");
@@ -97,11 +125,18 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode,resultCode,data);
         if(resultCode == Activity.RESULT_CANCELED){
             Toast.makeText(this,"L'activité Badger/RFID a été annulé",Toast.LENGTH_LONG).show();
+
+            Lancement_Num_Carte("1");
+
+
         } else if(resultCode == Activity.RESULT_OK) {
             if (requestCode == BadgeRequest) {
-                String data_num_carte_Etudiant = data.getStringExtra(PUBLIC_STATIC_STRING_IDENTIFIER);
-                Log.e("Identifiant carte étud", data_num_carte_Etudiant);
-                Lancement_Num_Carte(data_num_carte_Etudiant);
+                ArrayList<String> donnees = data.getStringArrayListExtra(PUBLIC_STATIC_STRING_IDENTIFIER);
+
+
+
+                Log.e("Identifiant carte étud", "On a fini l'activité secondaire");
+                Lancement_Num_Carte("1");
             }
         }
     }
@@ -112,14 +147,14 @@ public class MainActivity extends AppCompatActivity {
      *
      * @param num_Carte : Le numéro de la carte a envoyé à la base de donnée
      */
-    public void Lancement_Num_Carte(String num_Carte){
-        Log.e("Ajout étudiant","On ajoute l'étudiant");
 
-        Task task = new Task(num_Carte);
+    public void  Lancement_Num_Carte(String num_Carte){
+
+        //Task task = new Task(num_Carte);
 
         Client client = ServiceGenerator.createService(Client.class);
 
-
+/*
         Call<Void> call_Post = client.EnvoieNumCarte("badgeage/" + num_Carte,task);
 
 
@@ -147,8 +182,16 @@ public class MainActivity extends AppCompatActivity {
 
         //_adapter.addStudent(num_Carte);
 
-/*
+*/
         Call<List<Classe>> call2 = client.Methode2();
+
+        for(int i = 0; i < _adapter.getItemCount();){
+            _adapter.removeStudent(i);
+        }
+
+        for(int i = 0; i < this.getListe_ultime().size();){
+            this.getListe_ultime().remove(i);
+        }
 
         call2.enqueue(new Callback<List<Classe>>() {
             @Override
@@ -162,16 +205,19 @@ public class MainActivity extends AppCompatActivity {
                                 Classe classe = i.next();
                                 String nomEtud = classe.getNom();
                                 _adapter.addStudent(nomEtud);
+                                MainActivity.this.getListe_ultime().add(classe);
                             } else {
                                 while (i.hasNext()) {
                                     Classe classe = i.next();
                                     String nomEtud = classe.getNom();
                                     _adapter.addStudent(nomEtud);
-
+                                    MainActivity.this.getListe_ultime().add(classe);
+                                    //Log.e("TAG",classe.getTemps());
+/*
                                     if (classe.getNo_etudiant() != null) {
                                         _adapter.addStudent(classe.getNo_etudiant());
                                     }
-                                }
+*/                                }
                             }
                             Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
                         }
@@ -187,7 +233,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("échec de call"," echec de call");
                 Toast.makeText(MainActivity.this, "Le call a échoué. ", Toast.LENGTH_LONG).show();
             }
-        });*/
+        });
 
     }
 

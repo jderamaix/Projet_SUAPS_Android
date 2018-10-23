@@ -12,17 +12,37 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 
 public class RFIDActivity extends AppCompatActivity {
 
+    private ArrayList<String> donnees;
+
     public static final String PUBLIC_STATIC_STRING_IDENTIFIER = "PUBLIC_STATIC_STRING_IDENTIFIER" ;
     private NfcAdapter nfcAdapter;
+
+
+    public ArrayList<String> getdonnees() {
+        return donnees;
+    }
+
+    public void setDonnees(ArrayList<String> donnes){
+        this.donnees = donnes;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rfid_activite);
+
+        ArrayList<String> var_donnees = new ArrayList<String>();
+        this.setDonnees(var_donnees);
 
         // initialize NFCAdapter
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -121,12 +141,45 @@ public class RFIDActivity extends AppCompatActivity {
      * @param s est l'id de la carte étudiant
      */
     protected void envoi(String s){
+        Log.e("TAG","On passe dans l'ajout de variable string dans l'array");
+        this.getdonnees().add(s);
+        Client client = ServiceGenerator.createService(Client.class);
+
+        Task task = new Task(s);
+
+        Call<Void> call_Post = client.EnvoieNumCarte("badgeage/" + s,task);
+
+
+        call_Post.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.e("TAG", "Laréponse est véritable");
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                if(t instanceof IOException){
+                    Toast.makeText(RFIDActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(RFIDActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
+    }
+
+
+    @Override
+    public void onStop(){
+        super.onStop();
+        Log.e("TAG","On passe ici");
         Intent resultIntent = new Intent();
-        resultIntent.putExtra(PUBLIC_STATIC_STRING_IDENTIFIER, s);
+        resultIntent.putStringArrayListExtra(PUBLIC_STATIC_STRING_IDENTIFIER, this.getdonnees());
         setResult(Activity.RESULT_OK, resultIntent);
-        }
-
-
+        finish();
+    }
 
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {

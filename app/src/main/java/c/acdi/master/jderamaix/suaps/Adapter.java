@@ -18,6 +18,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     private ArrayList<StudentEntry> _dataset;
     private LayoutInflater _inflater;
 
+    public ArrayList<StudentEntry> get_dataset(){
+        return this._dataset;
+    }
+
     public Adapter(Context context, ArrayList<StudentEntry> data) {
         _inflater = LayoutInflater.from(context);
         _dataset = data;

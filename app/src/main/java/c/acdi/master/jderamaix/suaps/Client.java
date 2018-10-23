@@ -38,7 +38,11 @@ public interface Client {
     */
 
      @POST("/controlleur/{temp}")
-    Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Field("num_carte") Task task);
+    Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Body Task task);
+
+
+     @POST("/controlleur/addPersonne/{temp}")
+     Call<Void> EnvoieNom(@Path("temp") String Variable, @Body Task task);
 
 
     /**

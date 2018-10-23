@@ -13,7 +13,7 @@ public class Classe {
     private String prenom;
 
     private int no_etudiant;
-    private SimpleDateFormat temps;
+    private String duree;
 
 
     public void setNom(String nom){
@@ -29,7 +29,7 @@ public class Classe {
         this.no_etudiant = no_individu;
     }
 
-    public void setTemps(SimpleDateFormat temps){ this.temps = temps;}
+    public void setDuree(String temps){ this.duree = temps;}
 
 
     public String getNom(){
@@ -45,5 +45,5 @@ public class Classe {
         return this.no_etudiant;
     }
 
-    public SimpleDateFormat getTemps(){ return this.temps;}
+    public String getDuree(){ return this.duree;}
 }
