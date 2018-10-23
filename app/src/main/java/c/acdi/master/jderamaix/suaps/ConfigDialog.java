@@ -11,7 +11,8 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TimePicker;
 
-import java.util.Date;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class ConfigDialog extends DialogFragment {
 
@@ -25,29 +26,29 @@ public class ConfigDialog extends DialogFragment {
         final MainActivity activity = (MainActivity) getActivity();
         final View view = LayoutInflater.from(activity).inflate(R.layout.dialog_config,null);
 
+        // Initialiser la sélection de la capacité à la valeur actuelle
         final NumberPicker capacity = view.findViewById(R.id.configCapacite);
-        capacity.setMaxValue(20);
+        capacity.setMinValue(1);
+        capacity.setMaxValue(50);
+        capacity.setValue(activity.capacity());
 
+        // Initialiser la sélection du temps minimum
         final TimePicker duration = view.findViewById(R.id.configDuree);
         duration.setIs24HourView(true);
-        duration.setCurrentHour(0);
-        duration.setCurrentMinute(0);
+        Calendar source = Calendar.getInstance(Locale.FRANCE);
+        source.setTime(activity.duration());
+        duration.setCurrentHour(source.get(Calendar.HOUR_OF_DAY));
+        duration.setCurrentMinute(source.get(Calendar.MINUTE));
 
         return new AlertDialog.Builder(activity)
                 .setView(view)
                 .setPositiveButton(R.string.etiquetteConfigValider, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.configureClass(
-                                capacity.getValue(),
-                                new Date(1000*((duration.getCurrentHour() - 1)*3600 + duration.getCurrentMinute()*60))
-                        );
+                        activity.configureClass(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
                     }
                 })
-                .setNegativeButton(R.string.etiquetteConfigAnnuler, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {}
-                })
+                .setNegativeButton(R.string.etiquetteConfigAnnuler, null)
                 .create();
 
     }
