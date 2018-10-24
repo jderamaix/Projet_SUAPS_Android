@@ -21,8 +21,6 @@
             </intent-filter>
         </activity>
 
-        <activity android:name=".BadgeActivity"/>
-
         <activity android:name=".RFIDActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
