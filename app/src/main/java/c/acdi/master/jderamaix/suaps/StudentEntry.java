@@ -9,16 +9,23 @@ public class StudentEntry {
     }
 
     private String _name;
-    private Date _elapsedTime;
+    private String _elapsedTime;
+    private int _id;
 
     public StudentEntry(String name) {
         _name = name;
-        _elapsedTime = new Date(calculateTimeOffset(0, 0));
+        _elapsedTime = "00:00";
     }
 
-    public StudentEntry(String name, Date elapsedTime) {
+    public StudentEntry(String name, String elapsedTime) {
         _name = name;
         _elapsedTime = elapsedTime;
+    }
+
+    public StudentEntry(String name, String elapsedTime, int id){
+        this._name = name;
+        this._elapsedTime = elapsedTime;
+        this._id = id;
     }
 
     public String name() {
@@ -26,8 +33,11 @@ public class StudentEntry {
     }
     public void name(String name) { _name = name; }
 
-    public Date elapsedTime() {
+    public String elapsedTime() {
         return _elapsedTime;
     }
-    public void elapsedTime(Date elapsedTime) { _elapsedTime = elapsedTime; }
+    public void elapsedTime(String elapsedTime) { _elapsedTime = elapsedTime; }
+
+    public int id(){ return _id;}
+    public void id(int id){ this._id = id;}
 }

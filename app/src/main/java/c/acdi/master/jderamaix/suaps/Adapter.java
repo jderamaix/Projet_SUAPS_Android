@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.text.DateFormat;
 import java.util.ArrayList;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
@@ -36,6 +37,12 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         _dataset.add(new StudentEntry(name));
         notifyItemInserted(_dataset.size() - 1);
     }
+
+    public void addStudent(String name, String duree, int id) {
+        _dataset.add(new StudentEntry(name,duree,id));
+        notifyItemInserted(_dataset.size() - 1);
+    }
+
 
     public void removeStudent(int i) {
         _dataset.remove(i);

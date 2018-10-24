@@ -74,6 +74,7 @@ public class MainActivity extends AppCompatActivity {
         }).attachToRecyclerView(view);
 
         // Test
+        /*
         addStudent("Marcel");
         addStudent("Jeanne");
         addStudent("Martin");
@@ -82,12 +83,14 @@ public class MainActivity extends AppCompatActivity {
         addStudent(new String(Character.toChars(0x1F60B)));
         addStudent(new String(Character.toChars(0x1F44C)));
         addStudent(new String(Character.toChars(0x1F438)));
+        */
     }
 
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
                 getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
         );
+        Reinitialise_Liste();
     }
 
     public void ajouterEtudiant(View view) {
@@ -203,21 +206,20 @@ public class MainActivity extends AppCompatActivity {
 
         Call<List<Classe>> call2 = client.RecoitPersonnes();
 
-        for(int i = 0; i < _adapter.getItemCount();){
-            _adapter.removeStudent(i);
-        }
-
         call2.enqueue(new Callback<List<Classe>>() {
             @Override
             public void onResponse(Call<List<Classe>> call, Response<List<Classe>> response) {
                 List<Classe> classeList = response.body();
                 if(!(classeList == null)){
                     if(!(classeList.isEmpty())){
+                        for(int i = 0; i < _adapter.getItemCount();){
+                            _adapter.removeStudent(i);
+                        }
                             Iterator<Classe> i = classeList.iterator();
                             if(!i.hasNext()){
                                 Classe classe = i.next();
                                 String nomEtud = classe.getNom();
-                                _adapter.addStudent(nomEtud);
+                                _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
                             } else {
                                 while (i.hasNext()) {
                                     Classe classe = i.next();
@@ -236,8 +238,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Classe>> call, Throwable t) {
-                Log.e("échec de call"," echec de call");
-                Toast.makeText(MainActivity.this, "Le call a échoué. ", Toast.LENGTH_LONG).show();
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 	}

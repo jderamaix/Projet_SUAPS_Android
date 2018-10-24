@@ -19,10 +19,9 @@ public interface Client {
      *
      */
     @GET("/controlleur/listePersonne")
-    Call<List<Classe>> RecoitPersonnes(/*@Path("temp") String Variable*/);
+    Call<List<Classe>> RecoitPersonnes();
 
-
-
+    
 
     /**
      *Post pour envoyer une personne badgeant avec son numéro de carte
