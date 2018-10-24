@@ -36,10 +36,8 @@ public class ConfigDialog extends DialogFragment {
         // Initialiser la sélection du temps minimum
         final TimePicker duration = view.findViewById(R.id.configDuree);
         duration.setIs24HourView(true);
-        Calendar source = Calendar.getInstance(Locale.FRANCE);
-        source.setTime(activity.duration());
-        duration.setCurrentHour(source.get(Calendar.HOUR_OF_DAY));
-        duration.setCurrentMinute(source.get(Calendar.MINUTE));
+        duration.setCurrentHour(Integer.parseInt(activity.duration().substring(0,2)));
+        duration.setCurrentMinute(Integer.parseInt(activity.duration().substring(3)));
 
         return new AlertDialog.Builder(activity)
                 .setView(view)

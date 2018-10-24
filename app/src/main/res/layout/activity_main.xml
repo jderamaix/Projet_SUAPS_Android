@@ -19,7 +19,7 @@
             android:id="@+id/affichageCapacite"
             style="@style/ElementHorizontal"
             android:layout_weight="1"
-            android:text="@string/affichageCapacite" />
+            android:text="@string/affichageCapaciteBidon" />
     </LinearLayout>
 
     <LinearLayout style="@style/ConteneurHorizontal">
@@ -34,7 +34,7 @@
             android:id="@+id/affichageTempsMinimum"
             style="@style/ElementHorizontal"
             android:layout_weight="1"
-            android:text="@string/affichageTempsMinimum" />
+            android:text="@string/affichageTempsBidon" />
     </LinearLayout>
 
     <Space
@@ -43,9 +43,9 @@
 
     <TextView
         android:id="@+id/affichageOccupation"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="@string/affichageOccupation"
+        android:layout_height="wrap_content"
+        android:text="@string/affichageOccupationBidon"
         android:textAlignment="center" />
 
     <!-- Solution au bug du dimensionnement du RecyclerView

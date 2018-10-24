@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Affichage des données sur le cours
     private int _capacity = 0;
-    private Date _duration = new Date();
+    private String _duration = "00:00";
 
     public int capacity() { return _capacity; }
-    public Date duration() { return _duration; }
+    public String duration() { return _duration; }
 
     // Élément principal de l'interface
     // Adaptateur de l'affichage des étudiants présents
@@ -187,13 +187,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void configureClass(int capacity, int minimumHours, int minimumMinutes) {
         _capacity = capacity;
-        _duration.setTime(StudentEntry.calculateTimeOffset(minimumHours, minimumMinutes));
+        _duration = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
         ((TextView) findViewById(R.id.affichageCapacite)).setText(
                 getString(R.string.affichageCapacite, _capacity));
         _updateAttendance();
-        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(
-                getString(R.string.affichageTempsMinimum, _duration.getTime())
-        );
+        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
 
         // Avertir la base du changement
         ModificationCapaciteHeure();
@@ -291,7 +289,7 @@ public class MainActivity extends AppCompatActivity {
         Toast.makeText(MainActivity.this,"Une modification de la capacité/heure a été reperé.", Toast.LENGTH_SHORT).show();
 
         String capacity = getString(R.string.affichageCapacite, _capacity);
-        String temps = getString(R.string.affichageTempsMinimum, _duration);
+        String temps = _duration;
 
         AuaListeSeance auaListeSeance = new AuaListeSeance();
 
