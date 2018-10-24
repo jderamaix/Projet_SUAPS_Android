@@ -128,6 +128,9 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(
                 getString(R.string.affichageTempsMinimum, _duration.getTime())
         );
+
+        // Avertir la base du changement
+        ModificationCapaciteHeure();
     }
 
     public void Badger(View view) {
@@ -219,8 +222,8 @@ public class MainActivity extends AppCompatActivity {
     public void ModificationCapaciteHeure() {
         Toast.makeText(MainActivity.this,"Une modification de la capacité/heure a été reperé.", Toast.LENGTH_SHORT).show();
 
-        String capacity = "" + R.string.affichageCapacite;
-        String temps = "" + R.string.affichageTempsMinimum;
+        String capacity = getString(R.string.affichageCapacite, _capacity);
+        String temps = getString(R.string.affichageTempsMinimum, _duration);
 
         AuaListeSeance auaListeSeance = new AuaListeSeance();
 
