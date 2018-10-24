@@ -28,8 +28,8 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         _dataset = new ArrayList<>();
     }
 
-    public int getId(int i){
-        return _dataset.get(i).id();
+    public StudentEntry get(int i){
+        return _dataset.get(i);
     }
 
     @Override

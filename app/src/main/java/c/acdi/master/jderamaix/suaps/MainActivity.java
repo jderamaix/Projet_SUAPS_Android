@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int direction) {
 
-                int numero_id = _adapter.getId((int) holder.itemView.getTag());
+                int numero_id = _adapter.get((int) holder.itemView.getTag()).id();
 
                 String numero_id_chaine = "" + numero_id;
 
