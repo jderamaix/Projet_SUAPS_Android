@@ -224,8 +224,8 @@ public class MainActivity extends AppCompatActivity {
                                 while (i.hasNext()) {
                                     Classe classe = i.next();
                                     String nomEtud = classe.getNom();
-                                    _adapter.addStudent(nomEtud);
-                               }
+                                    _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
+                                }
                             }
                             Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
                     } else {

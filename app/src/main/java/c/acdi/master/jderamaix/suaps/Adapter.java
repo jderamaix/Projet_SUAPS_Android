@@ -76,7 +76,9 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         holder.name.setText(_dataset.get(i).name());
-        holder.elapsedTime.setText(_activity.getString(R.string.affichageTempsEcoule, StudentEntry.calculateTimeOffset(0,0)));
+        String Text = _dataset.get(i).elapsedTime();
+        holder.elapsedTime.setText(Text);
+        //holder.elapsedTime.setText(_activity.getString(R.string.affichageTempsEcoule, StudentEntry.calculateTimeOffset(0,0)));
         holder.itemView.setTag(i);
     }
 
