@@ -95,8 +95,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void addStudent(String name) {
-        _adapter.addStudent(name);
-        
         Client client = ServiceGenerator.createService(Client.class);
 
         Task task = new Task(name);
