@@ -18,7 +18,7 @@ public interface Client {
      * Get pour prendre les informations d'une personne
      *
      */
-    @GET("/controlleur/listePersonne")
+    @GET("/controlleur/listePersonne/1")
     Call<List<Classe>> RecoitPersonnes();
 
 
