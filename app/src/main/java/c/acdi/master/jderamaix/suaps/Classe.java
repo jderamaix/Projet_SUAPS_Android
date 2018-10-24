@@ -2,46 +2,42 @@ package c.acdi.master.jderamaix.suaps;
 
 public class Classe {
 
-/*    private String nom;
-    private int numEtud;
+
+    private String nom;
+    private String prenom;
+
+    private int no_etudiant;
+    private String duree;
 
 
     public void setNom(String nom){
         this.nom = nom;
     }
 
-    public void setNumEtud(int numEtud){
-        this.numEtud = numEtud;
+    public void setPrenom(String prenom){
+        this.prenom = prenom;
     }
+
+
+    public void setNo_etudiant(int no_individu){
+        this.no_etudiant = no_individu;
+    }
+
+    public void setDuree(String temps){ this.duree = temps;}
+
 
     public String getNom(){
         return this.nom;
     }
 
-    public int getNumEtud(){
-        return this.numEtud;
-    }
-*/
-
-
-    private String titre;
-    private int id;
-
-
-    public void setTitre(String titre){
-        this.titre = titre;
+    public String getPrenom(){
+        return this.prenom;
     }
 
-    public void setid(int numid){
-        this.id = id;
+
+    public int getNo_etudiant(){
+        return this.no_etudiant;
     }
 
-    public String getTitre(){
-        return this.titre;
-    }
-
-    public int getid(){
-        return this.id;
-    }
-
+    public String getDuree(){ return this.duree;}
 }
