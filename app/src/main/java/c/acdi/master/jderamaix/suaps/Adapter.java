@@ -28,6 +28,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         _dataset = new ArrayList<>();
     }
 
+    public int getId(int i){
+        return _dataset.get(i).id();
+    }
+
     @Override
     public int getItemCount() {
         return _dataset.size();

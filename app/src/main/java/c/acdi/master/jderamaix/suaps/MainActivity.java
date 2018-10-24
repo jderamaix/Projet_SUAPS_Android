@@ -68,7 +68,33 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int direction) {
+
+                int numero_id = _adapter.getId((int) holder.itemView.getTag());
+
+                String numero_id_chaine = "" + numero_id;
+
                 _adapter.removeStudent((int) holder.itemView.getTag());
+
+                Client client = ServiceGenerator.createService(Client.class);
+                Task task = new Task(numero_id_chaine);
+                Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,task);
+                call_Post.enqueue(new Callback<Void>() {
+                    @Override
+                    public void onResponse(Call<Void> call, Response<Void> response) {
+                        if (response.isSuccessful()) {
+                            Log.e("TAG", "Laréponse est véritable");
+                        }
+                    }
+                    @Override
+                    public void onFailure(Call<Void> call, Throwable t) {
+                        if(t instanceof IOException){
+                            Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
                 _updateAttendance();
             }
         }).attachToRecyclerView(view);
@@ -86,11 +112,23 @@ public class MainActivity extends AppCompatActivity {
         */
     }
 
+
+
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        Reinitialise_Liste();
+    }
+
+
+
+
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
                 getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
         );
-        Reinitialise_Liste();
+        //Reinitialise_Liste();
     }
 
     public void ajouterEtudiant(View view) {
@@ -102,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
 
         Task task = new Task(name);
 
-        Call<Void> call_Post = client.EnvoieNom("" + name,task);
+        Call<Void> call_Post = client.EnvoieNom("" + name, task);
 
 
         call_Post.enqueue(new Callback<Void>() {
@@ -110,12 +148,14 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.e("TAG", "La réponse est véritable");
+                    Reinitialise_Liste();
                 }
             }
+
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
 
-                if(t instanceof IOException){
+                if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
@@ -123,7 +163,6 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
-        _updateAttendance();
     }
 
     @Override
@@ -185,11 +224,11 @@ public class MainActivity extends AppCompatActivity {
         if(resultCode == Activity.RESULT_CANCELED){
             //Toast.makeText(this,"L'activité Badger/RFID a été annulé",Toast.LENGTH_LONG).show();
             if (requestCode == BadgeRequest) {
-                Reinitialise_Liste();
+                //Reinitialise_Liste();
             }
         } else if(resultCode == Activity.RESULT_OK) {
             if (requestCode == BadgeRequest) {
-		        Reinitialise_Liste();
+		        //Reinitialise_Liste();
             }
         }
     }

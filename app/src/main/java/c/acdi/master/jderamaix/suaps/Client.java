@@ -21,7 +21,13 @@ public interface Client {
     @GET("/controlleur/listePersonne")
     Call<List<Classe>> RecoitPersonnes();
 
-    
+
+    /**
+     * Post pour enlever quelqu'un selon son numero id
+     */
+    @POST("/controlleur/vuePresenceUpdate/{temp}")
+    Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body Task task);
+
 
     /**
      *Post pour envoyer une personne badgeant avec son numéro de carte
@@ -29,6 +35,7 @@ public interface Client {
     */
      @POST("/controlleur/{temp}")
     Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Body Task task);
+
 
 
 
