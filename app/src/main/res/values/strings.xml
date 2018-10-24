@@ -6,15 +6,13 @@
     <string name="etiquetteTempsMinimum">Temps Minimum : </string>
     <string name="affichageTemps">%02d:%02d</string>
     <string name="affichageTempsBidon">00:00</string>
-    <string name="affichageTempsMinimum">%tR</string>
-    <string name="affichageOccupation">%1$d/%2$d</string>
+    <string name="affichageOccupation">%d/%d</string>
     <string name="affichageOccupationBidon">0/0</string>
     <string name="etiquetteBoutonAjout">Ajouter</string>
     <string name="etiquetteBoutonBadge">BADGE</string>
     <string name="etiquetteAjoutAjouter">Ajouter</string>
     <string name="etiquetteAjoutAnnuler">Annuler</string>
     <string name="suggestionNomEtudiant">Nom de l\'étudiant(e)</string>
-    <string name="affichageTempsEcoule">%tR</string>
     <string name="etiquetteConfigValider">Valider</string>
     <string name="etiquetteConfigAnnuler">Annuler</string>
     <string name="etiquetteConfig">Configurer...</string>
