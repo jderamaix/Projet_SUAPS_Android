@@ -1,7 +1,5 @@
 package c.acdi.master.jderamaix.suaps;
 
-import java.util.Date;
-
 public class StudentEntry {
 
     public static long calculateTimeOffset(int hours, int minutes) {
@@ -23,19 +21,15 @@ public class StudentEntry {
     }
 
     public StudentEntry(String name, String elapsedTime, int id){
-        this._name = name;
-        this._elapsedTime = elapsedTime;
-        this._id = id;
+        _name = name;
+        _elapsedTime = elapsedTime;
+        _id = id;
     }
 
-    public String name() {
-        return _name;
-    }
+    public String name() { return _name; }
     public void name(String name) { _name = name; }
 
-    public String elapsedTime() {
-        return _elapsedTime;
-    }
+    public String elapsedTime() { return _elapsedTime; }
     public void elapsedTime(String elapsedTime) { _elapsedTime = elapsedTime; }
 
     public int id(){ return _id;}
