@@ -96,6 +96,32 @@ public class MainActivity extends AppCompatActivity {
 
     public void addStudent(String name) {
         _adapter.addStudent(name);
+        
+        Client client = ServiceGenerator.createService(Client.class);
+
+        Task task = new Task(name);
+
+        Call<Void> call_Post = client.EnvoieNom("" + name,task);
+
+
+        call_Post.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    Log.e("TAG", "La réponse est véritable");
+                }
+            }
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                }
+
+            }
+        });
         _updateAttendance();
     }
 
