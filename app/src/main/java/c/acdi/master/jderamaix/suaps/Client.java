@@ -15,23 +15,24 @@ import retrofit2.http.Path;
 public interface Client {
 
     /**
-     * Get pour prendre les informations d'une personne
-     *
+     * Requête pour prendre les informations de toutes personnes présentes
+     * Le 1 permet d'indiquer que la requête vient de l'application et non de l'affichage
      */
     @GET("/controlleur/listePersonne/1")
     Call<List<Classe>> RecoitPersonnes();
 
 
     /**
-     * Post pour enlever quelqu'un selon son numero id
+     * Requête pour enlever quelqu'un selon son numero id
+     * Prend en Body et en Path son numéro id
      */
     @POST("/controlleur/vuePresenceUpdate/{temp}")
     Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body Task task);
 
 
     /**
-     *Post pour envoyer une personne badgeant avec son numéro de carte
-     *
+     *Requête pour envoyer une personne badgeant avec son numéro de carte
+     *Prenden Bdy et en Path son numéro de carte
     */
      @POST("/controlleur/{temp}")
     Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Body Task task);
@@ -40,15 +41,16 @@ public interface Client {
 
 
     /**
-     *Post pour envoyer une personne badgeant avec son nom
-     *
+     *Requête pour envoyer une personne ajouter manuellement avec son nom
+     *Prend en Body et en Path son nom
     */
      @POST("/controlleur/addPersonne/{temp}")
      Call<Void> EnvoieNom(@Path("temp") String Variable, @Body Task task);
 
 
     /**
-     *Envoie les changements d'heures de séances et capacité d'accueil
+     *Requête envoyant les changements d'heures de séances et capacité d'accueil
+     * Prend en Path le string commposé de la capacité / heure  / 1
      */
     @POST("controlleur/setSeance/{temp}")
     Call<Void> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);

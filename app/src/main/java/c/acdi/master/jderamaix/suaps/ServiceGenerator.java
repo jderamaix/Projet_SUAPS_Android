@@ -10,6 +10,17 @@ import okhttp3.Request;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+/**
+ * Classe permettant la création d'un client pour les requêtes
+ * BASE_URL est la base des majorités des URLs utilisés dans les requêtes
+ * builder contient le builder de Retrofit
+ * retrofit contient le lancment de son builder
+ * httpClient contient son builder
+ * interceptor contient une classe permettant d'intercepter les messages d'erreurs des requêtes avant qu'elles
+ *      n'arrivent au codeles attendant et donc de généralisé du code pour des erreurs spécifiques
+ * createService est la méthode créant le client.
+ */
+
 public class ServiceGenerator{
 
     private  static final String BASE_URL =  "http://192.168.43.238:8000/";
@@ -29,6 +40,8 @@ public class ServiceGenerator{
             Request request = chain.request();
             okhttp3.Response response = chain.proceed(request);
             //Code pour les erreurs possibles ici.
+
+
 
             return response;
         }

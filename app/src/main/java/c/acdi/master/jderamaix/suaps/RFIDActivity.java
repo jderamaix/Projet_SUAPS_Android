@@ -134,14 +134,14 @@ public class RFIDActivity extends AppCompatActivity {
 
     /**
      * Méthode executé lors du postExecute de la tâche asynchrone
-     * On ajoute l'id de la carte éudiant (s) dans l'intent renvoyé à MainActivity
-     *  avec l'information du bon déroulement de l'activity avec RESULT_OK.
-     *  Puis on fini l'activité
+     * On envoie la requête informant la bdd que quelqu'un à badger avec son numéro de carte = s
+     * et on l'ajoute à l'array
      *
      * @param s est l'id de la carte étudiant
      */
     protected void envoi(String s){
         Log.e("TAG","On passe dans l'ajout de variable string dans l'array");
+        Toast.makeText(this, "Badgeage réussi", Toast.LENGTH_SHORT).show();
         this.getdonnees().add(s);
         Client client = ServiceGenerator.createService(Client.class);
 
@@ -170,11 +170,14 @@ public class RFIDActivity extends AppCompatActivity {
         });
     }
 
-
+    /**
+     * Méthode utilisée lorsque l'activité est arrêté ou mise en pause
+     * Ajoute l'array contenant les numéros de carte dans l'intent pour
+     * pouvoir les récupérer dans le main activity
+     */
     @Override
     public void onStop(){
         super.onStop();
-        Log.e("TAG","On passe ici");
         Intent resultIntent = new Intent();
         resultIntent.putStringArrayListExtra(PUBLIC_STATIC_STRING_IDENTIFIER, this.getdonnees());
         setResult(Activity.RESULT_OK, resultIntent);
