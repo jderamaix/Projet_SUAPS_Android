@@ -18,10 +18,15 @@ import android.widget.Toast;
 import java.io.IOError;
 import java.io.IOException;
 import java.lang.reflect.Array;
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Date;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -44,6 +49,10 @@ public class MainActivity extends AppCompatActivity {
     public static final int BadgeRequest = 1;
     private static final String TAG = "MainActivity";
 
+    // 3 minutes
+    private final static int INTERVAL = 60 * 3;
+
+    private final ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,10 +96,11 @@ public class MainActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
+                        String smiley = new String(Character.toChars(0x1F438));
                         if(t instanceof IOException){
-                            Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -98,10 +108,16 @@ public class MainActivity extends AppCompatActivity {
                 _updateAttendance();
             }
         }).attachToRecyclerView(view);
+
+        final ScheduledFuture<?> organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
     }
 
 
-
+    final Runnable AppelRun = new Runnable(){
+        public void run() {
+            Reinitialise_Liste();
+        }
+    };
 
     @Override
     public void onResume() {
@@ -144,7 +160,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Log.e("TAG", "La réponse est véritable");
                     Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     Reinitialise_Liste();
                 } else {
@@ -154,12 +169,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
-                if (t instanceof IOException) {
-                    Log.e("TAG",t.getMessage());
-                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                String smiley = new String(Character.toChars(0x1F438));
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -276,7 +290,6 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
                         _updateAttendance();
-                        Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("TAG","La liste est vide");
                     }
@@ -287,11 +300,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<Classe>> call, Throwable t) {
+                String smiley = new String(Character.toChars(0x1F438));
                 if(t instanceof IOException){
-                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
                 }
+
             }
         });
     }
@@ -300,8 +315,6 @@ public class MainActivity extends AppCompatActivity {
      * Méthode pour avertir la base de données du changement des paramètres de la séance
      */
     public void ModificationCapaciteHeure() {
-        Toast.makeText(MainActivity.this,"Une modification de la capacité/heure a été reperé.", Toast.LENGTH_SHORT).show();
-
         String capacity = getString(R.string.affichageCapacite, _capacity);
         String temps = _duration;
 
@@ -315,9 +328,6 @@ public class MainActivity extends AppCompatActivity {
 
         Call<Void> call_Post = client.EnvoieTempsCapacite(capacity + "/" + temps + "/1", auaListeSeance);
 
-
-        Log.e(TAG, "On est juste avant le enqueue");
-
         call_Post.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
@@ -326,15 +336,13 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-                if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                String smiley = new String(Character.toChars(0x1F438));
+                if(t instanceof IOException){
+                    Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
-        Log.e(TAG, "On est juste après le enqueue");
-
     }
 }

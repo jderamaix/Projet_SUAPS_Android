@@ -14,6 +14,8 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,7 +60,6 @@ public class RFIDActivity extends AppCompatActivity {
             Toast.makeText(this,"Il faut activer le NFC",Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
         }
-
     }
 
     /**
@@ -140,8 +141,6 @@ public class RFIDActivity extends AppCompatActivity {
      * @param s est l'id de la carte étudiant
      */
     protected void envoi(String s){
-        Log.e("TAG","On passe dans l'ajout de variable string dans l'array");
-        Toast.makeText(this, "Badgeage réussi", Toast.LENGTH_SHORT).show();
         this.getdonnees().add(s);
         Client client = ServiceGenerator.createService(Client.class);
 
@@ -154,16 +153,15 @@ public class RFIDActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
-                    Log.e("TAG", "Laréponse est véritable");
                 }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
-
+                String smiley = new String(Character.toChars(0x1F438));
                 if(t instanceof IOException){
-                    Toast.makeText(RFIDActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RFIDActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(RFIDActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RFIDActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
                 }
 
             }
