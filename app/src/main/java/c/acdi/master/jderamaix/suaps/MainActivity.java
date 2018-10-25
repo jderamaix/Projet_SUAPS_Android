@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
                         String smiley = new String(Character.toChars(0x1F438));
-                        if(t instanceof IOException){
+                        if (t instanceof IOException) {
                             Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                         } else {
                             Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
@@ -177,7 +177,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
-                if(t instanceof IOException){
+                if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
@@ -249,14 +249,14 @@ public class MainActivity extends AppCompatActivity {
      * @param data          : Intent contenant les données renvoyé par l'activité
      */
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data){
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
-        if(resultCode == Activity.RESULT_CANCELED){
+        if (resultCode == Activity.RESULT_CANCELED){
             //Toast.makeText(this,"L'activité Badger/RFID a été annulé",Toast.LENGTH_LONG).show();
             if (requestCode == BadgeRequest) {
                 //Reinitialise_Liste();
             }
-        } else if(resultCode == Activity.RESULT_OK) {
+        } else if (resultCode == Activity.RESULT_OK) {
             if (requestCode == BadgeRequest) {
 		        //Reinitialise_Liste();
             }
@@ -269,7 +269,7 @@ public class MainActivity extends AppCompatActivity {
 	* Méthode Vidant de la structure utilisée pour l'affichage les membres puis rajoutant
 	* dedans ceux obtenues avec un GET , permet de mettre à l'heure leur temps passé dans la salle.
 	*/
-    public void  Reinitialise_Liste(){
+    public void  Reinitialise_Liste() {
 
         Client client = ServiceGenerator.createService(Client.class);
 
@@ -279,9 +279,9 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<List<Classe>> call, Response<List<Classe>> response) {
                 List<Classe> classeList = response.body();
-                if(!(classeList == null)){
-                    if(!(classeList.isEmpty())){
-                        for(int i = 0; i < _adapter.getItemCount();){
+                if (!(classeList == null)) {
+                    if (!(classeList.isEmpty())) {
+                        for (int i = 0; i < _adapter.getItemCount();) {
                             _adapter.removeStudent(i);
                         }
                         Iterator<Classe> i = classeList.iterator();
@@ -301,7 +301,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<List<Classe>> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
-                if(t instanceof IOException){
+                if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
@@ -337,10 +337,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
-                if(t instanceof IOException){
+                if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de conversion " + smiley, Toast.LENGTH_SHORT).show();
                 }
             }
         });
