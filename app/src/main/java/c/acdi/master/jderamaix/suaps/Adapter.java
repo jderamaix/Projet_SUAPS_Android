@@ -28,8 +28,13 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         _dataset = new ArrayList<>();
     }
 
-    public int getId(int i){
-        return _dataset.get(i).id();
+    /**
+     * Accès direct à un élément du jeu de données.
+     * @param i L'indice de l'élément dans le jeu de données auquel accéder.
+     * @return  L'élément d'indice i dans le jeu de données.
+     */
+    public StudentEntry get(int i){
+        return _dataset.get(i);
     }
 
     @Override
@@ -37,17 +42,31 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         return _dataset.size();
     }
 
+    /**
+     * Ajouter un étudiant manuellement (ayant seulement son nom) au jeu de données.
+     * @param name Le nom de l'étudiant à ajouter.
+     */
     public void addStudent(String name) {
         _dataset.add(new StudentEntry(name));
         notifyItemInserted(_dataset.size() - 1);
     }
 
+    /**
+     * Ajouter un étudiant normalement au jeu de données.
+     * Cette méthode s'utilise aussi pour la mise à jour de l'affichage
+     * @param name  Le nom de l'étudiant à ajouter.
+     * @param duree Le temps passé dans la séance (dans le cas d'une mise à jour de l'affichage).
+     * @param id    L'identifiant de l'étudiant.
+     */
     public void addStudent(String name, String duree, int id) {
         _dataset.add(new StudentEntry(name,duree,id));
         notifyItemInserted(_dataset.size() - 1);
     }
 
-
+    /**
+     * Retirer un étudiant du jeu de données.
+     * @param i L'indice de l'entrée de l'étudiant dans le jeu.
+     */
     public void removeStudent(int i) {
         _dataset.remove(i);
         // Pour des raisons encore inconnues,

@@ -33,10 +33,10 @@ public class MainActivity extends AppCompatActivity {
 
     // Affichage des données sur le cours
     private int _capacity = 0;
-    private Date _duration = new Date();
+    private String _duration = "00:00";
 
     public int capacity() { return _capacity; }
-    public Date duration() { return _duration; }
+    public String duration() { return _duration; }
 
     // Élément principal de l'interface
     // Adaptateur de l'affichage des étudiants présents
@@ -69,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int direction) {
 
-                int numero_id = _adapter.getId((int) holder.itemView.getTag());
+                int numero_id = _adapter.get((int) holder.itemView.getTag()).id();
 
                 String numero_id_chaine = "" + numero_id;
 
@@ -98,18 +98,6 @@ public class MainActivity extends AppCompatActivity {
                 _updateAttendance();
             }
         }).attachToRecyclerView(view);
-
-        // Test
-        /*
-        addStudent("Marcel");
-        addStudent("Jeanne");
-        addStudent("Martin");
-        addStudent("Godot");
-        addStudent("Philippe");
-        addStudent(new String(Character.toChars(0x1F60B)));
-        addStudent(new String(Character.toChars(0x1F44C)));
-        addStudent(new String(Character.toChars(0x1F438)));
-        */
     }
 
 
@@ -123,18 +111,27 @@ public class MainActivity extends AppCompatActivity {
 
 
 
-
+    /**
+     * Méthode factorisant le code pour mettre à jour de l'affichage des présences.
+     */
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
                 getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
         );
-        //Reinitialise_Liste();
     }
 
+    /**
+     * Méthode pour lancer le dialogue d'ajout manuel.
+     * Il est un callback invoqué par le bouton R.id.ajouterEtudiant.
+     */
     public void ajouterEtudiant(View view) {
         new AddDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
+    /**
+     * Méthode pour ajouter un étudiant manuellement à la séance.
+     * @param name Le nom de l'étudiant à ajouter.
+     */
     public void addStudent(String name) {
         Client client = ServiceGenerator.createService(Client.class);
 
@@ -181,19 +178,28 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * Méthode pour lancer le dialogue de configuration de classe.
+     */
     public void configurerCours(View view) {
         new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
     }
 
+    /**
+     * Méthode permettant de changer la capacité et le temps minimum de la séance.
+     * Elle est destinée à être utilisée à la place des setters déclarées en haut.
+     *
+     * @param capacity       La nouvelle capacité de la séance
+     * @param minimumHours   Le nombre d'heures dans le nouveau temps minimum de la séance
+     * @param minimumMinutes Le nombre de minutes dans le nouveau temps minimum de la séance
+     */
     public void configureClass(int capacity, int minimumHours, int minimumMinutes) {
         _capacity = capacity;
-        _duration.setTime(StudentEntry.calculateTimeOffset(minimumHours, minimumMinutes));
+        _duration = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
         ((TextView) findViewById(R.id.affichageCapacite)).setText(
                 getString(R.string.affichageCapacite, _capacity));
         _updateAttendance();
-        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(
-                getString(R.string.affichageTempsMinimum, _duration.getTime())
-        );
+        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
 
         // Avertir la base du changement
         ModificationCapaciteHeure();
@@ -208,15 +214,14 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     *Méthode executé lors du retour d'un résultat (réussi ou non) de startActivityForResult	(Badgeage)
-     *  Regarde si L'activité a été annulé puis si il y a eu un problème
-     *  et finalement execute les méthodes nécessaires
+     * Méthode executé lors du retour d'un résultat (réussi ou non) de startActivityForResult	(Badgeage)
+     * Regarde si L'activité a été annulé puis si il y a eu un problème
+     * et finalement execute les méthodes nécessaires
      *
      * @param requestCode   : code utilisé pour différencier de quelle activité vient le résultat.
-     *        resultCode    : code utilisé pour savoir comment c'est passé
+     * @param resultCode    : code utilisé pour savoir comment c'est passé
      *                          l'activité donnant le résultat.
-     *        data          : Intent contenant les données renvoyé par l'activité
-     *
+     * @param data          : Intent contenant les données renvoyé par l'activité
      */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data){
@@ -236,8 +241,8 @@ public class MainActivity extends AppCompatActivity {
 
 
 	/**
-	*Méthode Vidant de la structure utilisée pour l'affichage les membres puis rajoutant 
-	*dedans ceux obtenues avec un GET , permet de mettre à l'heure leur temps passé dans la salle.
+	* Méthode Vidant de la structure utilisée pour l'affichage les membres puis rajoutant
+	* dedans ceux obtenues avec un GET , permet de mettre à l'heure leur temps passé dans la salle.
 	*/
     public void  Reinitialise_Liste(){
 
@@ -254,19 +259,20 @@ public class MainActivity extends AppCompatActivity {
                         for(int i = 0; i < _adapter.getItemCount();){
                             _adapter.removeStudent(i);
                         }
-                            Iterator<Classe> i = classeList.iterator();
-                            if(!i.hasNext()){
+                        Iterator<Classe> i = classeList.iterator();
+                        if(!i.hasNext()){
+                            Classe classe = i.next();
+                            String nomEtud = classe.getNom();
+                            _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
+                        } else {
+                            while (i.hasNext()) {
                                 Classe classe = i.next();
                                 String nomEtud = classe.getNom();
                                 _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
-                            } else {
-                                while (i.hasNext()) {
-                                    Classe classe = i.next();
-                                    String nomEtud = classe.getNom();
-                                    _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
-                                }
                             }
-                            Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
+                        }
+                        _updateAttendance();
+                        Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("TAG","La liste est vide");
                     }
@@ -284,14 +290,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-	}
+    }
 
-
+    /**
+     * Méthode pour avertir la base de données du changement des paramètres de la séance
+     */
     public void ModificationCapaciteHeure() {
         Toast.makeText(MainActivity.this,"Une modification de la capacité/heure a été reperé.", Toast.LENGTH_SHORT).show();
 
         String capacity = getString(R.string.affichageCapacite, _capacity);
-        String temps = getString(R.string.affichageTempsMinimum, _duration);
+        String temps = _duration;
 
         AuaListeSeance auaListeSeance = new AuaListeSeance();
 
