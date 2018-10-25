@@ -259,19 +259,20 @@ public class MainActivity extends AppCompatActivity {
                         for(int i = 0; i < _adapter.getItemCount();){
                             _adapter.removeStudent(i);
                         }
-                            Iterator<Classe> i = classeList.iterator();
-                            if(!i.hasNext()){
+                        Iterator<Classe> i = classeList.iterator();
+                        if(!i.hasNext()){
+                            Classe classe = i.next();
+                            String nomEtud = classe.getNom();
+                            _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
+                        } else {
+                            while (i.hasNext()) {
                                 Classe classe = i.next();
                                 String nomEtud = classe.getNom();
                                 _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
-                            } else {
-                                while (i.hasNext()) {
-                                    Classe classe = i.next();
-                                    String nomEtud = classe.getNom();
-                                    _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
-                                }
                             }
-                            Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
+                        }
+                        _updateAttendance();
+                        Toast.makeText(MainActivity.this, "Ajout des personnes", Toast.LENGTH_SHORT).show();
                     } else {
                         Log.e("TAG","La liste est vide");
                     }
@@ -289,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
-	}
+    }
 
     /**
      * Méthode pour avertir la base de données du changement des paramètres de la séance
