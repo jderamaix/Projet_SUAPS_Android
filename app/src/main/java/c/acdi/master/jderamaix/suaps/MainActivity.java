@@ -137,7 +137,7 @@ public class MainActivity extends AppCompatActivity {
 
         Task task = new Task(name);
 
-        Call<Void> call_Post = client.EnvoieNom("" + name, task);
+        Call<Void> call_Post = client.EnvoieNom(task.getString(),task);
 
 
         call_Post.enqueue(new Callback<Void>() {
@@ -145,7 +145,10 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<Void> call, Response<Void> response) {
                 if (response.isSuccessful()) {
                     Log.e("TAG", "La réponse est véritable");
+                    Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     Reinitialise_Liste();
+                } else {
+                    Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                 }
             }
 
@@ -153,6 +156,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<Void> call, Throwable t) {
 
                 if (t instanceof IOException) {
+                    Log.e("TAG",t.getMessage());
                     Toast.makeText(MainActivity.this, "This is an actual network failure :(, do what is needed to inform those it concern", Toast.LENGTH_SHORT).show();
                 } else {
                     Toast.makeText(MainActivity.this, "Conversion issue :( BIG BIG problem", Toast.LENGTH_SHORT).show();
