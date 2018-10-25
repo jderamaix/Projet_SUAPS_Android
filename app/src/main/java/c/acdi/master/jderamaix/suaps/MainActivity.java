@@ -285,17 +285,10 @@ public class MainActivity extends AppCompatActivity {
                             _adapter.removeStudent(i);
                         }
                         Iterator<Classe> i = classeList.iterator();
-                        if(!i.hasNext()){
+                        do {
                             Classe classe = i.next();
-                            String nomEtud = classe.getNom();
-                            _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
-                        } else {
-                            while (i.hasNext()) {
-                                Classe classe = i.next();
-                                String nomEtud = classe.getNom();
-                                _adapter.addStudent(nomEtud,classe.getDuree(),classe.getNo_etudiant());
-                            }
-                        }
+                            _adapter.addStudent(classe.getNom(),classe.getDuree(),classe.getNo_etudiant());
+                        } while (i.hasNext());
                         _updateAttendance();
                     } else {
                         Log.e("TAG","La liste est vide");
