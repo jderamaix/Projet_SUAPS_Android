@@ -126,6 +126,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onPause(){
+        super.onPause();
+        Toast.makeText(this, "On est sur onPause", Toast.LENGTH_SHORT).show();
+        organisateur.shutdownNow();
+    }
+
 
     /**
      * Méthode factorisant le code pour mettre à jour de l'affichage des présences.
