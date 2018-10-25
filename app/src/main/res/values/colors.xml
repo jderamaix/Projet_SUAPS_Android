@@ -7,7 +7,7 @@
     <color name="couleurTexteContreombrage">#FFFFFF</color>
     <color name="couleurTexteBidon">#777777</color>
     <color name="couleurEntreeTempsBon">#00BB00</color>
-    <color name="couleurEntreeTempsLimite">#FFFF00</color>
+    <color name="couleurEntreeTempsLimite">#CCCC00</color>
     <color name="couleurEntreeTempsDepasse">#FF0000</color>
     <color name="couleurAjoutAjouter">#00BB00</color>
     <color name="couleurAjoutAnnuler">#FF0000</color>

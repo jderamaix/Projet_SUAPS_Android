@@ -7,8 +7,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
@@ -99,8 +102,29 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         holder.name.setText(_dataset.get(i).name());
-        String Text = _dataset.get(i).elapsedTime();
-        holder.elapsedTime.setText(Text);
+        String shownTime = _dataset.get(i).elapsedTime();
+        {
+            Calendar studentTime = Calendar.getInstance(),
+                     targetTime = Calendar.getInstance(),
+                     sessionTime = Calendar.getInstance();
+            try {
+                SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.FRANCE);
+                studentTime.setTime(formatter.parse(shownTime));
+                targetTime.setTime(formatter.parse(shownTime));
+                targetTime.add(Calendar.MINUTE, 15);
+                sessionTime.setTime(formatter.parse(_activity.duration()));
+            } catch (ParseException e) {
+                throw new RuntimeException(e.getMessage());
+            }
+            if (studentTime.after(sessionTime)) {
+                holder.elapsedTime.setTextColor(_activity.getResources().getColor(R.color.couleurEntreeTempsDepasse));
+            } else if (targetTime.after(sessionTime)) {
+                holder.elapsedTime.setTextColor(_activity.getResources().getColor(R.color.couleurEntreeTempsLimite));
+            } else {
+                holder.elapsedTime.setTextColor(_activity.getResources().getColor(R.color.couleurEntreeTempsBon));
+            }
+        }
+        holder.elapsedTime.setText(shownTime);
         //holder.elapsedTime.setText(_activity.getString(R.string.affichageTempsEcoule, StudentEntry.calculateTimeOffset(0,0)));
         holder.itemView.setTag(i);
     }
