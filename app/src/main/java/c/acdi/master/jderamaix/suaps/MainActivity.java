@@ -281,9 +281,8 @@ public class MainActivity extends AppCompatActivity {
                 List<Classe> classeList = response.body();
                 if (!(classeList == null)) {
                     if (!(classeList.isEmpty())) {
-                        for (int i = 0; i < _adapter.getItemCount();) {
-                            _adapter.removeStudent(i);
-                        }
+                        while (_adapter.getItemCount() > 0)
+                            _adapter.removeStudent(0);
                         Iterator<Classe> i = classeList.iterator();
                         do {
                             Classe classe = i.next();
