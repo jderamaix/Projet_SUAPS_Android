@@ -16,10 +16,10 @@ public interface Client {
 
     /**
      * Requête pour prendre les informations de toutes personnes présentes
-     * Le 1 permet d'indiquer que la requête vient de l'application et non de l'affichage
+     * Le 1 permet d'indiquer que la requête vient de l'application et non de l'écran
      */
     @GET("/controlleur/listePersonne/1")
-    Call<List<Classe>> RecoitPersonnes();
+    Call<List<ModeleEtudiant>> RecoitPersonnes();
 
 
     /**
@@ -27,15 +27,15 @@ public interface Client {
      * Prend en Body et en Path son numéro id
      */
     @POST("/controlleur/vuePresenceUpdate/{temp}")
-    Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body Task task);
+    Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body NomIDCarteEtudiant IDEtudiant);
 
 
     /**
      *Requête pour envoyer une personne badgeant avec son numéro de carte
-     *Prenden Bdy et en Path son numéro de carte
+     *Prend en Body et en Path son numéro de carte
     */
      @POST("/controlleur/{temp}")
-    Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Body Task task);
+    Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
 
 
 
@@ -45,7 +45,7 @@ public interface Client {
      *Prend en Body et en Path son nom
     */
      @POST("/controlleur/addPersonne/{temp}")
-     Call<Void> EnvoieNom(@Path("temp") String Variable, @Body Task task);
+     Call<Void> EnvoieNom(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
 
 
     /**

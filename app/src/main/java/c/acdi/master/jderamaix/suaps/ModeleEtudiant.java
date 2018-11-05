@@ -1,11 +1,15 @@
 package c.acdi.master.jderamaix.suaps;
 
-public class Classe {
 
+/**
+  * Classe utilisé commemodèle pour représenter un étudiant et avoir les même types de données
+  *     que la base de données
+  */
+public class ModeleEtudiant {
 
+    //Les données obtenues de la base de données lors d'une requêtesur les étudiants
     private String nom;
     private String prenom;
-
     private int no_etudiant;
     private String duree;
 

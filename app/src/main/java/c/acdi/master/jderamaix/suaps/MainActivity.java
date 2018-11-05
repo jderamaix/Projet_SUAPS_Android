@@ -49,9 +49,10 @@ public class MainActivity extends AppCompatActivity {
     public static final int BadgeRequest = 1;
     private static final String TAG = "MainActivity";
 
-    // 3 minutes
+    // Intervalle utilisé pour la mise à jour périodique
     private final static int INTERVAL = 60 * 3;
 
+    //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
     private final ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
 
     @Override
@@ -85,8 +86,8 @@ public class MainActivity extends AppCompatActivity {
                 _adapter.removeStudent((int) holder.itemView.getTag());
 
                 Client client = ServiceGenerator.createService(Client.class);
-                Task task = new Task(numero_id_chaine);
-                Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,task);
+                NomIDCarteEtudiant IDEtudiant = new NomIDCarteEtudiant(numero_id_chaine);
+                Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,IDEtudiant);
                 call_Post.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
@@ -109,16 +110,23 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(view);
 
+        //Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
         final ScheduledFuture<?> organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
     }
 
-
+    //Créer un runnable lançant la mise à jour de l'affichage
     final Runnable AppelRun = new Runnable(){
         public void run() {
             Reinitialise_Liste();
         }
     };
 
+    /**
+     * Méthode invoqué quand MainActivity revient en premier plan,
+     * soit quand l'utilisateur était sur une autre application
+     * soit en revenant de RFIDActivity.
+     * Lance la mise à jour de l'affichage
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -126,10 +134,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    /**
+     * Méthode invoqué quand MainActivity va en second plan,
+     * Arrête la mise à jour régulière de l'affichage
+     */
     @Override
     protected void onPause(){
         super.onPause();
-        Toast.makeText(this, "On est sur onPause", Toast.LENGTH_SHORT).show();
         organisateur.shutdownNow();
     }
 
@@ -153,28 +164,37 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Méthode pour ajouter un étudiant manuellement à la séance.
+     * Crée le client et un receptacle de la méthode permettant l'intéraction voulue avec la base de données
+     * Puis applique la méthode asynchronement et si le résultat est réussi, réinitialise l'affichage
      * @param name Le nom de l'étudiant à ajouter.
      */
     public void addStudent(String name) {
+        //Creer le client permettant d'interargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
-        Task task = new Task(name);
+        //Créer un objet de classe Task utilisé pour stocker les informations envoyé par la requête à la base de données
+        NomIDCarteEtudiant nomEtudiant = new NomIDCarteEtudiant(name);
 
-        Call<Void> call_Post = client.EnvoieNom(task.getString(),task);
+        //Créer le receptacle de la méthode voulue à partie de client
+        //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
+        Call<Void> call_Post = client.EnvoieNom(nomEtudiant.getString(),nomEtudiant);
 
-
+        //Applique la requête à la base de données de façon asynchrone
         call_Post.enqueue(new Callback<Void>() {
             @Override
+            //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<Void> call, Response<Void> response) {
+                //Test si la requête c'est bien passé
                 if (response.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     Reinitialise_Liste();
                 } else {
-                    Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
+                    //Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                 }
             }
 
             @Override
+            //Si la requête n'est pas arrivé jusqu'à la base de données
             public void onFailure(Call<Void> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {
@@ -230,9 +250,14 @@ public class MainActivity extends AppCompatActivity {
         ModificationCapaciteHeure();
     }
 
+    /**
+     * Méthode appliqué quand le bouton boutonBadge est cliqué.
+     * Lance l'activité permettant de badger
+     * @param view
+     */
     public void Badger(View view) {
-        //Toast.makeText(this, "Pas encore implantée", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(this, RFIDActivity.class);
+        //Changer le startactivityforresult ==< on attend plus de result
         startActivityForResult(intent, BadgeRequest);
     }
 
@@ -248,6 +273,8 @@ public class MainActivity extends AppCompatActivity {
      *                          l'activité donnant le résultat.
      * @param data          : Intent contenant les données renvoyé par l'activité
      */
+//    Il n'y en a plus besoin, on appelle la méthode du get(ReinitialiseListe) automatiquement qund on revient sur mainactivity
+ /*
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -262,43 +289,59 @@ public class MainActivity extends AppCompatActivity {
             }
         }
     }
-
+*/
 
 
 	/**
-	* Méthode Vidant de la structure utilisée pour l'affichage les membres puis rajoutant
-	* dedans ceux obtenues avec un GET , permet de mettre à l'heure leur temps passé dans la salle.
+	 * Méthode vidant la structure utilisée pour l'affichage des participants puis rajoutant
+	 * dedans ceux obtenues de la base de données, permet aussi de mettre à l'heure leur temps passé dans la salle.
+     *
+     * Créer le client et le réceptacle de la méthode permettant l'intéraction voulue avec la base de données puis applique la méthode asynchronement
+     * Si un résultat est obtenue de la base de données, vérifie si il est non null et non vide(on veut quelquechose)
+     * Puis remplace l'affichage actuelle par celui obtenue à partir de la base de données.
 	*/
     public void  Reinitialise_Liste() {
 
+        //Créer le client permettant d'intérargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
-        Call<List<Classe>> call2 = client.RecoitPersonnes();
+        //Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
+        //RecoitPersonnes ne prend pas de paramètre
+        Call<List<ModeleEtudiant>> methodeCall = client.RecoitPersonnes();
 
-        call2.enqueue(new Callback<List<Classe>>() {
+        //Applique la requête à la base de données de façon asynchrone
+        methodeCall.enqueue(new Callback<List<ModeleEtudiant>>() {
             @Override
-            public void onResponse(Call<List<Classe>> call, Response<List<Classe>> response) {
-                List<Classe> classeList = response.body();
-                if (!(classeList == null)) {
-                    if (!(classeList.isEmpty())) {
+            //Si la requête est arrivé jusqu'à la base de données
+            public void onResponse(Call<List<ModeleEtudiant>> call, Response<List<ModeleEtudiant>> response) {
+                //Prend la partie de la reponse contenant les données voulues
+                List<ModeleEtudiant> etudiantList = response.body();
+                //Test si le conteneur de données est null
+                if (!(etudiantList == null)) {
+                    //test si le conteneur de onnées est vide
+                    if (!(etudiantList.isEmpty())) {
+                        //Enlève touts les étudiants de l'adapter
                         while (_adapter.getItemCount() > 0)
                             _adapter.removeStudent(0);
-                        Iterator<Classe> i = classeList.iterator();
+                        Iterator<ModeleEtudiant> i = etudiantList.iterator();
+                        //Ajoute tous les étudiants obtenue de la base de données dans l'adapter
                         do {
-                            Classe classe = i.next();
-                            _adapter.addStudent(classe.getNom(),classe.getDuree(),classe.getNo_etudiant());
+                            ModeleEtudiant etudiant = i.next();
+                            _adapter.addStudent(etudiant.getNom(),etudiant.getDuree(),etudiant.getNo_etudiant());
                         } while (i.hasNext());
+                        //Met à jour l'affichage
                         _updateAttendance();
                     } else {
-                        Log.e("TAG","La liste est vide");
+                        Log.e("TAG","La liste est vide, la base de données a eut un problème");
                     }
                 } else {
-                    Log.e("TAG","classe_list est null");
+                    Log.e("TAG","La réponse obtenue est null, il y a une erreur (différences de typage avec a base de données ou autres)");
                 }
             }
 
             @Override
-            public void onFailure(Call<List<Classe>> call, Throwable t) {
+            //Si la requête n'est pas arrivé jusqu'à la base de données
+            public void onFailure(Call<List<ModeleEtudiant>> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
@@ -311,29 +354,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour avertir la base de données du changement des paramètres de la séance
+     * Méthode pour envoyer à la base de données le changement des paramètres de la séance
+     *
+     * Créer les strings équivalent du temps et de la capacité,
+     * Créer l'objet de classe AuaListeSeance
+     * Créer le client permettant d'intéragir avec la base de données
+     * Utilise la méthode du client permettant l'interaction voulue avec la base de données
+     * EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
+     * Applique l'envoie de données à la base de données de façon asyncrone
      */
     public void ModificationCapaciteHeure() {
+
+        //Créer les strings équivalent du temps et de la capacité
         String capacity = getString(R.string.affichageCapacite, _capacity);
         String temps = _duration;
 
+        //Créer l'objet de classe AuaListeSeance
         AuaListeSeance auaListeSeance = new AuaListeSeance();
-
         auaListeSeance.setLimitePersonnes(capacity);
         auaListeSeance.setTempsSeance(temps);
         auaListeSeance.setIdSeance(1);
 
+        //Créer le client permettant d'intéragir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
+        //Utilise la méthode du client pour créer la requête permettant l'interaction voulue avec la base de données
+        //EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
         Call<Void> call_Post = client.EnvoieTempsCapacite(capacity + "/" + temps + "/1", auaListeSeance);
 
+        //Applique la requête à la base de données de façon asynchrone
         call_Post.enqueue(new Callback<Void>() {
             @Override
+            //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.e("Reponse recu", "reponse recu");
             }
 
             @Override
+            //Si la requête n'arrive pas jusqu'à la base de données
             public void onFailure(Call<Void> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {

@@ -135,7 +135,7 @@ public class RFIDActivity extends AppCompatActivity {
 
     /**
      * Méthode executé lors du postExecute de la tâche asynchrone
-     * On envoie la requête informant la bdd que quelqu'un à badger avec son numéro de carte = s
+     * On envoie la requête informant la base de données que quelqu'un à badger avec son numéro de carte = s
      * et on l'ajoute à l'array
      *
      * @param s est l'id de la carte étudiant
@@ -144,16 +144,14 @@ public class RFIDActivity extends AppCompatActivity {
         this.getdonnees().add(s);
         Client client = ServiceGenerator.createService(Client.class);
 
-        Task task = new Task(s);
+        NomIDCarteEtudiant carteEtudiant = new NomIDCarteEtudiant(s);
 
-        Call<Void> call_Post = client.EnvoieNumCarte("badgeage/" + s,task);
+        Call<Void> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
 
 
         call_Post.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
-                if (response.isSuccessful()) {
-                }
             }
             @Override
             public void onFailure(Call<Void> call, Throwable t) {
@@ -173,6 +171,8 @@ public class RFIDActivity extends AppCompatActivity {
      * Ajoute l'array contenant les numéros de carte dans l'intent pour
      * pouvoir les récupérer dans le main activity
      */
+    //Inutile maintenant qu'on peut réinitialiser l'affichage
+    /*
     @Override
     public void onStop(){
         super.onStop();
@@ -180,7 +180,7 @@ public class RFIDActivity extends AppCompatActivity {
         resultIntent.putStringArrayListExtra(PUBLIC_STATIC_STRING_IDENTIFIER, this.getdonnees());
         setResult(Activity.RESULT_OK, resultIntent);
         finish();
-    }
+    }*/
 
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
