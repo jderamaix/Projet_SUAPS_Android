@@ -126,7 +126,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             }
         }
         holder.elapsedTime.setText(shownTime);
-        //holder.elapsedTime.setText(_activity.getString(R.string.affichageTempsEcoule, StudentEntry.calculateTimeOffset(0,0)));
         holder.itemView.setTag(i);
     }
 

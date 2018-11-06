@@ -166,22 +166,6 @@ public class RFIDActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Méthode utilisée lorsque l'activité est arrêté ou mise en pause
-     * Ajoute l'array contenant les numéros de carte dans l'intent pour
-     * pouvoir les récupérer dans le main activity
-     */
-    //Inutile maintenant qu'on peut réinitialiser l'affichage
-    /*
-    @Override
-    public void onStop(){
-        super.onStop();
-        Intent resultIntent = new Intent();
-        resultIntent.putStringArrayListExtra(PUBLIC_STATIC_STRING_IDENTIFIER, this.getdonnees());
-        setResult(Activity.RESULT_OK, resultIntent);
-        finish();
-    }*/
-
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
 

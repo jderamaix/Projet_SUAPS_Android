@@ -1,6 +1,5 @@
 package c.acdi.master.jderamaix.suaps;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -12,17 +11,11 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.EditText;
 import android.widget.Toast;
 
-import java.io.IOError;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.sql.Time;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Date;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -31,8 +24,6 @@ import java.util.concurrent.TimeUnit;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-
-import static c.acdi.master.jderamaix.suaps.RFIDActivity.PUBLIC_STATIC_STRING_IDENTIFIER;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -261,35 +252,6 @@ public class MainActivity extends AppCompatActivity {
         startActivityForResult(intent, BadgeRequest);
     }
 
-
-
-    /**
-     * Méthode executé lors du retour d'un résultat (réussi ou non) de startActivityForResult	(Badgeage)
-     * Regarde si L'activité a été annulé puis si il y a eu un problème
-     * et finalement execute les méthodes nécessaires
-     *
-     * @param requestCode   : code utilisé pour différencier de quelle activité vient le résultat.
-     * @param resultCode    : code utilisé pour savoir comment c'est passé
-     *                          l'activité donnant le résultat.
-     * @param data          : Intent contenant les données renvoyé par l'activité
-     */
-//    Il n'y en a plus besoin, on appelle la méthode du get(ReinitialiseListe) automatiquement qund on revient sur mainactivity
- /*
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode,resultCode,data);
-        if (resultCode == Activity.RESULT_CANCELED){
-            //Toast.makeText(this,"L'activité Badger/RFID a été annulé",Toast.LENGTH_LONG).show();
-            if (requestCode == BadgeRequest) {
-                //Reinitialise_Liste();
-            }
-        } else if (resultCode == Activity.RESULT_OK) {
-            if (requestCode == BadgeRequest) {
-		        //Reinitialise_Liste();
-            }
-        }
-    }
-*/
 
 
 	/**
