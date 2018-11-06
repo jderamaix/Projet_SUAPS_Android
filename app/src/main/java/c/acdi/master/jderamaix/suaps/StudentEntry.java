@@ -2,6 +2,7 @@ package c.acdi.master.jderamaix.suaps;
 
 public class StudentEntry {
 
+    // Méthode de convenance pour calculer des heures
     public static long calculateTimeOffset(int hours, int minutes) {
         return 60000*((hours - 1)*60 + minutes);
     }
@@ -20,7 +21,7 @@ public class StudentEntry {
         _elapsedTime = elapsedTime;
     }
 
-    public StudentEntry(String name, String elapsedTime, int id){
+    public StudentEntry(String name, String elapsedTime, int id) {
         _name = name;
         _elapsedTime = elapsedTime;
         _id = id;

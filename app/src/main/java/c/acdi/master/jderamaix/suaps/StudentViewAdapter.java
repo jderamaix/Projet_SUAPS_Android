@@ -11,6 +11,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.Locale;
 
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
@@ -110,8 +111,9 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                      sessionTime = Calendar.getInstance();
             try {
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.FRANCE);
-                studentTime.setTime(formatter.parse(shownTime));
-                targetTime.setTime(formatter.parse(shownTime));
+                Date time = formatter.parse(shownTime);
+                studentTime.setTime(time);
+                targetTime.setTime(time);
                 targetTime.add(Calendar.MINUTE, 15);
                 sessionTime.setTime(formatter.parse(_activity.duration()));
             } catch (ParseException e) {

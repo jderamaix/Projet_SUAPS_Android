@@ -301,8 +301,8 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            @Override
             //Si la requête n'est pas arrivé jusqu'à la base de données
+            @Override
             public void onFailure(Call<List<ModeleEtudiant>> call, Throwable t) {
                 String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {
