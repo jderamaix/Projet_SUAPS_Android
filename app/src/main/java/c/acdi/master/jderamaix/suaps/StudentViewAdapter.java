@@ -1,5 +1,6 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -119,12 +120,13 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             } catch (ParseException e) {
                 throw new RuntimeException(e.getMessage());
             }
+            Resources resources = _activity.getResources();
             if (studentTime.after(sessionTime)) {
-                holder.elapsedTime.setTextColor(_activity.getResources().getColor(R.color.couleurEntreeTempsDepasse));
+                holder.elapsedTime.setTextColor(resources.getColor(R.color.couleurEntreeTempsDepasse));
             } else if (targetTime.after(sessionTime)) {
-                holder.elapsedTime.setTextColor(_activity.getResources().getColor(R.color.couleurEntreeTempsLimite));
+                holder.elapsedTime.setTextColor(resources.getColor(R.color.couleurEntreeTempsLimite));
             } else {
-                holder.elapsedTime.setTextColor(_activity.getResources().getColor(R.color.couleurEntreeTempsBon));
+                holder.elapsedTime.setTextColor(resources.getColor(R.color.couleurEntreeTempsBon));
             }
         }
         holder.elapsedTime.setText(shownTime);
