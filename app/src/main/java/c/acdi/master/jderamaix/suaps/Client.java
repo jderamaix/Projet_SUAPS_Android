@@ -23,6 +23,12 @@ public interface Client {
 
 
     /**
+     *
+     */
+    @GET("/controlleur/sendSeance")
+    Call<AuaListeSeance> RecoitParametre();
+
+    /**
      * Requête pour enlever quelqu'un selon son numero id
      * Prend en Body et en Path son numéro id
      */
@@ -35,7 +41,7 @@ public interface Client {
      *Prend en Body et en Path son numéro de carte
     */
      @POST("/controlleur/{temp}")
-    Call<Void> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
+    Call<NomIDCarteEtudiant> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
 
 
 

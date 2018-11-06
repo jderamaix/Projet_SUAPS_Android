@@ -12,6 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
 
+import org.json.JSONException;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.concurrent.Executors;
@@ -146,20 +148,28 @@ public class RFIDActivity extends AppCompatActivity {
 
         NomIDCarteEtudiant carteEtudiant = new NomIDCarteEtudiant(s);
 
-        Call<Void> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
+        Call<NomIDCarteEtudiant> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
 
 
-        call_Post.enqueue(new Callback<Void>() {
+        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
             @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
+
+                int statusCode = response.code();
+                Log.d("Response Code: ", "status Code: " + statusCode);
+                if (response.isSuccessful()) {
+                    NomIDCarteEtudiant Result = response.body();
+                    Toast.makeText(RFIDActivity.this,Result.getString(),Toast.LENGTH_SHORT).show();
+                } else {
+                    Log.e("TAG","erreur quelque part");
+                }
             }
             @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-                String smiley = new String(Character.toChars(0x1F438));
+            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
                 if(t instanceof IOException){
-                    Toast.makeText(RFIDActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RFIDActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(RFIDActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(RFIDActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
                 }
 
             }

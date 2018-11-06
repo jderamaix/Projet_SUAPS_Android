@@ -41,10 +41,12 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     // Intervalle utilisé pour la mise à jour périodique
-    private final static int INTERVAL = 60 * 3;
+    private final static int INTERVAL = 2;//60 * 3;
 
     //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
-    private final ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
+    private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
+    private ScheduledFuture<?> organisateurGerant;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -88,11 +90,10 @@ public class MainActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        String smiley = new String(Character.toChars(0x1F438));
                         if (t instanceof IOException) {
-                            Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(MainActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
@@ -102,7 +103,10 @@ public class MainActivity extends AppCompatActivity {
         }).attachToRecyclerView(view);
 
         //Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
-        final ScheduledFuture<?> organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
+        /*ScheduledFuture<?>*/ organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
+        organisateurGerant.cancel(true);
+
+
     }
 
     //Créer un runnable lançant la mise à jour de l'affichage
@@ -121,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
+        organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
         Reinitialise_Liste();
     }
 
@@ -132,9 +137,14 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
-        organisateur.shutdownNow();
+        organisateurGerant.cancel(true);
     }
 
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();;
+        organisateur.shutdown();
+    }
 
     /**
      * Méthode factorisant le code pour mettre à jour de l'affichage des présences.
@@ -187,11 +197,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //Si la requête n'est pas arrivé jusqu'à la base de données
             public void onFailure(Call<Void> call, Throwable t) {
-                String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Erreur de connexion , êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -276,25 +285,25 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<List<ModeleEtudiant>> call, Response<List<ModeleEtudiant>> response) {
+
+                Log.e("TAG","rafraichissement");
+
                 //Prend la partie de la reponse contenant les données voulues
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (!(etudiantList == null)) {
-                    //test si le conteneur de onnées est vide
-                    if (!(etudiantList.isEmpty())) {
                         //Enlève touts les étudiants de l'adapter
                         while (_adapter.getItemCount() > 0)
                             _adapter.removeStudent(0);
-                        Iterator<ModeleEtudiant> i = etudiantList.iterator();
+                    if(!etudiantList.isEmpty()) {
                         //Ajoute tous les étudiants obtenue de la base de données dans l'adapter
+                        Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
                             ModeleEtudiant etudiant = i.next();
-                            _adapter.addStudent(etudiant.getNom(),etudiant.getDuree(),etudiant.getNo_etudiant());
+                            _adapter.addStudent(etudiant.getNom(), etudiant.getDuree(), etudiant.getNo_etudiant());
                         } while (i.hasNext());
                         //Met à jour l'affichage
                         _updateAttendance();
-                    } else {
-                        Log.e("TAG","La liste est vide, la base de données a eut un problème");
                     }
                 } else {
                     Log.e("TAG","La réponse obtenue est null, il y a une erreur (différences de typage avec a base de données ou autres)");
@@ -304,11 +313,10 @@ public class MainActivity extends AppCompatActivity {
             //Si la requête n'est pas arrivé jusqu'à la base de données
             @Override
             public void onFailure(Call<List<ModeleEtudiant>> call, Throwable t) {
-                String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Erreur de connexion , êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Problème de convertion " + smiley, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
                 }
 
             }
@@ -316,7 +324,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour envoyer à la base de données le changement des paramètres de la séance
+     * Méthode pour envoyer à la base de données le changement des paramètres de temps minimum et de capacité de la séance
      *
      * Créer les strings équivalent du temps et de la capacité,
      * Créer l'objet de classe AuaListeSeance
@@ -355,11 +363,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //Si la requête n'arrive pas jusqu'à la base de données
             public void onFailure(Call<Void> call, Throwable t) {
-                String smiley = new String(Character.toChars(0x1F438));
                 if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion " + smiley + ", êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
-                    Toast.makeText(MainActivity.this, "Problème de conversion " + smiley, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, "Problème de conversion ", Toast.LENGTH_SHORT).show();
                 }
             }
         });
