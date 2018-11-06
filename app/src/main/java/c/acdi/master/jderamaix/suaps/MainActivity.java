@@ -45,7 +45,7 @@ public class MainActivity extends AppCompatActivity {
 
     // Élément principal de l'interface
     // Adaptateur de l'affichage des étudiants présents
-    private Adapter _adapter;
+    private StudentViewAdapter _adapter;
     public static final int BadgeRequest = 1;
     private static final String TAG = "MainActivity";
 
@@ -60,7 +60,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _adapter = new Adapter(this);
+        _adapter = new StudentViewAdapter(this);
         configureClass(5, 1, 20);
 
         // Initialisation du RecyclerView

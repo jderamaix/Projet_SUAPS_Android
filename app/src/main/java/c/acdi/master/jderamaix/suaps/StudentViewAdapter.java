@@ -13,19 +13,19 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
-public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
+public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
 
     private ArrayList<StudentEntry> _dataset;
     private MainActivity _activity;
     private LayoutInflater _inflater;
 
-    public Adapter(MainActivity activity, ArrayList<StudentEntry> data) {
+    public StudentViewAdapter(MainActivity activity, ArrayList<StudentEntry> data) {
         _activity = activity;
         _inflater = LayoutInflater.from(_activity);
         _dataset = data;
     }
 
-    public Adapter(MainActivity activity) {
+    public StudentViewAdapter(MainActivity activity) {
         _activity = activity;
         _inflater = LayoutInflater.from(_activity);
         _dataset = new ArrayList<>();
@@ -104,6 +104,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
         holder.name.setText(_dataset.get(i).name());
         String shownTime = _dataset.get(i).elapsedTime();
         {
+            // Horloges temporaires pour le calcul du temps restant
             Calendar studentTime = Calendar.getInstance(),
                      targetTime = Calendar.getInstance(),
                      sessionTime = Calendar.getInstance();
