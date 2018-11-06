@@ -54,7 +54,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _adapter = new StudentViewAdapter(this);
-        configureClass(5, 1, 20);
+
+        RenseignementCapaciteHeure();
+        //configureClass(5, 1, 20);
 
         // Initialisation du RecyclerView
         RecyclerView view = findViewById(R.id.affichageEtudiants);
@@ -247,7 +249,7 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
 
         // Avertir la base du changement
-        ModificationCapaciteHeure();
+        //ModificationCapaciteHeure();
     }
 
     /**
@@ -323,6 +325,53 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+
+
+
+    public void RenseignementCapaciteHeure() {
+
+        Client client = ServiceGenerator.createService(Client.class);
+
+        Call<List<AuaListeSeance>> call_Get  = client.RecoitParametre();
+
+        call_Get.enqueue(new Callback<List<AuaListeSeance>>() {
+            @Override
+            public void onResponse(Call<List<AuaListeSeance>> call, Response<List<AuaListeSeance>> response) {
+                if(response.isSuccessful()){
+
+
+                    List<AuaListeSeance> listeSeance = response.body();
+
+                    if(!listeSeance.isEmpty()) {
+
+                        int minimum_heure = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(0, 2));
+                        int minimum_minute = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(3, 5));
+
+                        Log.e("TAG", "Get des paramètres réussi");
+                        configureClass(Integer.parseInt(listeSeance.get(0).getLimitePersonnes()), minimum_heure, minimum_minute);
+                    }
+                } else {
+                    Log.e("TAG", "Get des paramètres non réussi");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<AuaListeSeance>> call, Throwable t) {
+                if (t instanceof IOException) {
+                    Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(MainActivity.this, "Problème de conversion ", Toast.LENGTH_SHORT).show();
+                    Log.e("TAG",t.getMessage());
+                    Log.e("TAG",t.toString());
+
+                }
+            }
+        });
+
+    }
+
+
+
     /**
      * Méthode pour envoyer à la base de données le changement des paramètres de temps minimum et de capacité de la séance
      *
@@ -333,15 +382,17 @@ public class MainActivity extends AppCompatActivity {
      * EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
      * Applique l'envoie de données à la base de données de façon asyncrone
      */
-    public void ModificationCapaciteHeure() {
+    public void ModificationCapaciteHeure(int capacity, int minimumHours, int minimumMinutes) {
 
         //Créer les strings équivalent du temps et de la capacité
-        String capacity = getString(R.string.affichageCapacite, _capacity);
-        String temps = _duration;
+        String capacite = getString(R.string.affichageCapacite, capacity);
+        String temps = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
+
+        configureClass(capacity,minimumHours,minimumMinutes);
 
         //Créer l'objet de classe AuaListeSeance
         AuaListeSeance auaListeSeance = new AuaListeSeance();
-        auaListeSeance.setLimitePersonnes(capacity);
+        auaListeSeance.setLimitePersonnes(capacite);
         auaListeSeance.setTempsSeance(temps);
         auaListeSeance.setIdSeance(1);
 
@@ -350,7 +401,7 @@ public class MainActivity extends AppCompatActivity {
 
         //Utilise la méthode du client pour créer la requête permettant l'interaction voulue avec la base de données
         //EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
-        Call<Void> call_Post = client.EnvoieTempsCapacite(capacity + "/" + temps + "/1", auaListeSeance);
+        Call<Void> call_Post = client.EnvoieTempsCapacite(capacite + "/" + temps + "/1", auaListeSeance);
 
         //Applique la requête à la base de données de façon asynchrone
         call_Post.enqueue(new Callback<Void>() {

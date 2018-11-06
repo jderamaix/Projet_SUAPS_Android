@@ -44,7 +44,8 @@ public class ConfigDialog extends DialogFragment {
                 .setPositiveButton(R.string.etiquetteConfigValider, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        activity.configureClass(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
+                        activity.ModificationCapaciteHeure(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
+                        //activity.configureClass(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
                     }
                 })
                 .setNegativeButton(R.string.etiquetteConfigAnnuler, null)

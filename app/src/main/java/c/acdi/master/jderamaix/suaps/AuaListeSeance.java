@@ -5,9 +5,19 @@ package c.acdi.master.jderamaix.suaps;
  * Occasionnée par l'utilisation de retrofit
  */
 public class AuaListeSeance {
-    private String tempsSeance;
     private String limitePersonnes;
+    private String tempsSeance;
     private int idSeance;
+
+    public AuaListeSeance(String limitePersonnes, String tempsSeance, int idSeance){
+        this.idSeance = idSeance;
+        this.limitePersonnes = limitePersonnes;
+        this.tempsSeance = tempsSeance;
+    }
+
+    public AuaListeSeance(){
+
+    }
 
     public void setTempsSeance(String tempsSeance){
         this.tempsSeance = tempsSeance;

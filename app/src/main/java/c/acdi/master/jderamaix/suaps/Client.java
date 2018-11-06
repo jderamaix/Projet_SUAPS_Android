@@ -26,7 +26,7 @@ public interface Client {
      *
      */
     @GET("/controlleur/sendSeance")
-    Call<AuaListeSeance> RecoitParametre();
+    Call<List<AuaListeSeance>> RecoitParametre();
 
     /**
      * Requête pour enlever quelqu'un selon son numero id
