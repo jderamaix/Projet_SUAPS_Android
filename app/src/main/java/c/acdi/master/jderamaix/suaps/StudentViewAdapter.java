@@ -122,11 +122,11 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
             }
             Resources resources = _activity.getResources();
             if (!studentTime.before(sessionTime)) {
-                holder.elapsedTime.setTextColor(resources.getColor(R.color.couleurEntreeTempsDepasse));
+                holder.itemView.setBackgroundColor(resources.getColor(R.color.couleurEntreeTempsDepasse));
             } else if (!targetTime.before(sessionTime)) {
-                holder.elapsedTime.setTextColor(resources.getColor(R.color.couleurEntreeTempsLimite));
+                holder.itemView.setBackgroundColor(resources.getColor(R.color.couleurEntreeTempsLimite));
             } else {
-                holder.elapsedTime.setTextColor(resources.getColor(R.color.couleurEntreeTempsBon));
+                holder.itemView.setBackgroundColor(resources.getColor(R.color.couleurEntreeTempsBon));
             }
         }
         holder.elapsedTime.setText(shownTime);
