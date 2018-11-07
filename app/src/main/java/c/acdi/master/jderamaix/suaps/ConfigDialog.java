@@ -6,14 +6,10 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TimePicker;
-
-import java.util.Calendar;
-import java.util.Locale;
 
 public class ConfigDialog extends DialogFragment {
 
@@ -45,7 +41,6 @@ public class ConfigDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         activity.ModificationCapaciteHeure(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
-                        //activity.configureClass(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
                     }
                 })
                 .setNegativeButton(R.string.etiquetteConfigAnnuler, null)
