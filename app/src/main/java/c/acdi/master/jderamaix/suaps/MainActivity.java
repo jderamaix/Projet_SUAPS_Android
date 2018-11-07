@@ -41,7 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
 
     // Intervalle utilisé pour la mise à jour périodique
-    private final static int INTERVAL = 2;//60 * 3;
+    private final static int INTERVAL = 6;//60 * 3;
 
     //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
