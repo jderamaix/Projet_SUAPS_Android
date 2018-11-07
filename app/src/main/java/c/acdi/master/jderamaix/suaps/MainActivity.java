@@ -115,6 +115,7 @@ public class MainActivity extends AppCompatActivity {
     final Runnable AppelRun = new Runnable(){
         public void run() {
             Reinitialise_Liste();
+            RenseignementCapaciteHeure();
         }
     };
 
