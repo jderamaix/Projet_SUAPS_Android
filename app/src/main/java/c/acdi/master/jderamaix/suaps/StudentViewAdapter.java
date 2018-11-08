@@ -46,15 +46,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     }
 
     /**
-     * Ajouter un étudiant manuellement (ayant seulement son nom) au jeu de données.
-     * @param name Le nom de l'étudiant à ajouter.
-     */
-    public void addStudent(String name) {
-        _dataset.add(new StudentEntry(name));
-        notifyItemInserted(_dataset.size() - 1);
-    }
-
-    /**
      * Ajouter un étudiant normalement au jeu de données.
      * Cette méthode s'utilise aussi pour la mise à jour de l'affichage
      * @param name  Le nom de l'étudiant à ajouter.

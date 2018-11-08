@@ -11,16 +11,6 @@ public class StudentEntry {
     private String _elapsedTime;
     private int _id;
 
-    public StudentEntry(String name) {
-        _name = name;
-        _elapsedTime = "00:00";
-    }
-
-    public StudentEntry(String name, String elapsedTime) {
-        _name = name;
-        _elapsedTime = elapsedTime;
-    }
-
     public StudentEntry(String name, String elapsedTime, int id) {
         _name = name;
         _elapsedTime = elapsedTime;
