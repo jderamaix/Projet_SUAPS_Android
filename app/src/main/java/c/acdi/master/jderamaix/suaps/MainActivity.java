@@ -295,9 +295,9 @@ public class MainActivity extends AppCompatActivity {
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (!(etudiantList == null)) {
-                        //Enlève touts les étudiants de l'adapter
-                        while (_adapter.getItemCount() > 0)
-                            _adapter.removeStudent(0);
+                    //Enlève touts les étudiants de l'adapter
+                    while (_adapter.getItemCount() > 0)
+                        _adapter.removeStudent(0);
                     if(!etudiantList.isEmpty()) {
                         //Ajoute tous les étudiants obtenue de la base de données dans l'adapter
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
