@@ -37,11 +37,12 @@ public interface Client {
 
 
     /**
-     *Requête pour envoyer une personne badgeant avec son numéro de carte
-     *Prend en Body et en Path son numéro de carte
+     * Requête pour envoyer une personne badgeant avec son numéro de carte
+     * Prend en Body et en Path son numéro de carte
+     * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
     */
      @POST("/controlleur/{temp}")
-    Call<NomIDCarteEtudiant> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
+    Call<String> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
 
 
 
@@ -55,9 +56,10 @@ public interface Client {
 
 
     /**
-     *Requête envoyant les changements d'heures de séances et capacité d'accueil
+     * Requête envoyant les changements d'heures de séances et capacité d'accueil
      * Prend en Path le string commposé de la capacité / heure  / 1
+     * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
      */
     @POST("controlleur/setSeance/{temp}")
-    Call<Void> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);
+    Call<String> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);
 }

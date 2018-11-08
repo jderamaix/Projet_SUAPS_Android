@@ -9,7 +9,10 @@ import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -26,6 +29,7 @@ public class RFIDActivity extends AppCompatActivity {
     public static final String PUBLIC_STATIC_STRING_IDENTIFIER = "PUBLIC_STATIC_STRING_IDENTIFIER" ;
     private NfcAdapter nfcAdapter;
 
+    public String TAG = "RFIDActivity";
 
     public ArrayList<String> getdonnees() {
         return donnees;
@@ -138,29 +142,32 @@ public class RFIDActivity extends AppCompatActivity {
      * @param s est l'id de la carte étudiant
      */
     protected void envoi(String s){
+
+        final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
+
         this.getdonnees().add(s);
         Client client = ServiceGenerator.createService(Client.class);
 
         NomIDCarteEtudiant carteEtudiant = new NomIDCarteEtudiant(s);
 
-        Call<NomIDCarteEtudiant> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
+        Call<String> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
 
 
-        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
+        call_Post.enqueue(new Callback<String>() {
             @Override
-            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
 
                 int statusCode = response.code();
-                Log.d("Response Code: ", "status Code: " + statusCode);
                 if (response.isSuccessful()) {
-                    NomIDCarteEtudiant Result = response.body();
-                    Toast.makeText(RFIDActivity.this,Result.getString(),Toast.LENGTH_SHORT).show();
+                    String Result = response.body();
+                    textView.setText(Result);
+                    Toast.makeText(RFIDActivity.this,Result,Toast.LENGTH_SHORT).show();
                 } else {
-                    Log.e("TAG","erreur quelque part");
+                    Log.e(TAG, "status Code: " + statusCode);
                 }
             }
             @Override
-            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 if(t instanceof IOException){
                     Toast.makeText(RFIDActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
