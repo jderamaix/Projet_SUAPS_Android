@@ -28,9 +28,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     }
 
     public StudentViewAdapter(MainActivity activity) {
-        _activity = activity;
-        _inflater = LayoutInflater.from(_activity);
-        _dataset = new ArrayList<>();
+        this(activity, new ArrayList<StudentEntry>());
     }
 
     /**
