@@ -92,11 +92,7 @@ public class MainActivity extends AppCompatActivity {
                     }
                     @Override
                     public void onFailure(Call<Void> call, Throwable t) {
-                        if (t instanceof IOException) {
-                            Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
-                        } else {
-                            Toast.makeText(MainActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
-                        }
+                        ServiceGenerator.Message(MainActivity.this, TAG, t);
                     }
                 });
 
@@ -145,7 +141,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onDestroy(){
-        super.onDestroy();;
+        super.onDestroy();
         organisateur.shutdown();
     }
 
@@ -200,12 +196,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //Si la requête n'est pas arrivé jusqu'à la base de données
             public void onFailure(Call<Void> call, Throwable t) {
-                if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion , êtes vous connecté ?", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
-                }
-
+                ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
     }
@@ -248,9 +239,6 @@ public class MainActivity extends AppCompatActivity {
                 getString(R.string.affichageCapacite, _capacity));
         _updateAttendance();
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
-
-        // Avertir la base du changement
-        //ModificationCapaciteHeure();
     }
 
     /**
@@ -316,12 +304,7 @@ public class MainActivity extends AppCompatActivity {
             //Si la requête n'est pas arrivé jusqu'à la base de données
             @Override
             public void onFailure(Call<List<ModeleEtudiant>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion , êtes vous connecté ?", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
-                }
-
+                ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
     }
@@ -358,16 +341,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<List<AuaListeSeance>> call, Throwable t) {
-                if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG,t.getMessage());
-                    Log.e(TAG,t.toString());
-                } else {
-                    Toast.makeText(MainActivity.this, "Problème de conversion ", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG,t.getMessage());
-                    Log.e(TAG,t.toString());
-
-                }
+                ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
 
@@ -419,11 +393,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //Si la requête n'arrive pas jusqu'à la base de données
             public void onFailure(Call<String> call, Throwable t) {
-                if (t instanceof IOException) {
-                    Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(MainActivity.this, "Problème de conversion ", Toast.LENGTH_SHORT).show();
-                }
+                ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
     }

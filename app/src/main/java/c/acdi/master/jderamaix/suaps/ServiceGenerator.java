@@ -1,6 +1,8 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -21,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
  * createService est la méthode créant le client.
  */
 
-public class ServiceGenerator{
+public class ServiceGenerator {
 
     private  static final String BASE_URL =  "http://192.168.43.238:8000/";
 
@@ -44,6 +46,16 @@ public class ServiceGenerator{
             return response;
         }
     };
+
+    public static void Message(Context c, String TAG, Throwable t) {
+        Toast.makeText(
+                c,
+                (t instanceof IOException)? "Erreur de connexion": "Problème de conversion",
+                Toast.LENGTH_SHORT
+        ).show();
+        Log.e(TAG,t.getMessage());
+        Log.e(TAG,t.toString());
+    }
 
     public static <S> S createService(Class<S> serviceClass){
 
