@@ -26,7 +26,7 @@ public class ConfigDialog extends DialogFragment {
         // Initialiser la sélection de la capacité à la valeur actuelle
         final NumberPicker capacity = view.findViewById(R.id.configCapacite);
         capacity.setMinValue(1);
-        capacity.setMaxValue(50);
+        capacity.setMaxValue(255);
         capacity.setValue(activity.capacity());
 
         // Initialiser la sélection du temps minimum
