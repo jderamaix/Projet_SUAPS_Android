@@ -383,13 +383,11 @@ public class MainActivity extends AppCompatActivity {
      * EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
      * Applique l'envoie de données à la base de données de façon asyncrone
      */
-    public void ModificationCapaciteHeure(int capacity, int minimumHours, int minimumMinutes) {
+    public void ModificationCapaciteHeure(final int capacity, final int minimumHours, final int minimumMinutes) {
 
         //Créer les strings équivalent du temps et de la capacité
         String capacite = getString(R.string.affichageCapacite, capacity);
         String temps = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
-
-        configureClass(capacity,minimumHours,minimumMinutes);
 
         //Créer l'objet de classe AuaListeSeance
         AuaListeSeance auaListeSeance = new AuaListeSeance(capacite, temps, 1);
@@ -407,6 +405,7 @@ public class MainActivity extends AppCompatActivity {
             //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<Void> call, Response<Void> response) {
                 Log.e("Reponse recu", "reponse recu");
+                configureClass(capacity,minimumHours,minimumMinutes);
             }
 
             @Override
