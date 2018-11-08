@@ -392,10 +392,7 @@ public class MainActivity extends AppCompatActivity {
         configureClass(capacity,minimumHours,minimumMinutes);
 
         //Créer l'objet de classe AuaListeSeance
-        AuaListeSeance auaListeSeance = new AuaListeSeance();
-        auaListeSeance.setLimitePersonnes(capacite);
-        auaListeSeance.setTempsSeance(temps);
-        auaListeSeance.setIdSeance(1);
+        AuaListeSeance auaListeSeance = new AuaListeSeance(capacite, temps, 1);
 
         //Créer le client permettant d'intéragir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
