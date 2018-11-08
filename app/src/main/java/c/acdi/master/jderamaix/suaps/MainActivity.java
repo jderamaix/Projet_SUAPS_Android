@@ -360,10 +360,12 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(Call<List<AuaListeSeance>> call, Throwable t) {
                 if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG,t.getMessage());
+                    Log.e(TAG,t.toString());
                 } else {
                     Toast.makeText(MainActivity.this, "Problème de conversion ", Toast.LENGTH_SHORT).show();
-                    Log.e("TAG",t.getMessage());
-                    Log.e("TAG",t.toString());
+                    Log.e(TAG,t.getMessage());
+                    Log.e(TAG,t.toString());
 
                 }
             }
@@ -397,20 +399,26 @@ public class MainActivity extends AppCompatActivity {
 
         //Utilise la méthode du client pour créer la requête permettant l'interaction voulue avec la base de données
         //EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
-        Call<Void> call_Post = client.EnvoieTempsCapacite(capacite + "/" + temps + "/1", auaListeSeance);
+        Call<String> call_Post = client.EnvoieTempsCapacite(capacite + "/" + temps + "/1", auaListeSeance);
 
         //Applique la requête à la base de données de façon asynchrone
-        call_Post.enqueue(new Callback<Void>() {
+        call_Post.enqueue(new Callback<String>() {
             @Override
             //Si la requête est arrivé jusqu'à la base de données
-            public void onResponse(Call<Void> call, Response<Void> response) {
-                Log.e("Reponse recu", "reponse recu");
-                configureClass(capacity,minimumHours,minimumMinutes);
+            public void onResponse(Call<String> call, Response<String> response) {
+                int statusCode = response.code();
+                if (response.isSuccessful()) {
+                    String Result = response.body();
+                    Toast.makeText(MainActivity.this, Result, Toast.LENGTH_SHORT).show();
+                    configureClass(capacity,minimumHours,minimumMinutes);
+                } else {
+                    Log.e(TAG, "status Code: " + statusCode);
+                }
             }
 
             @Override
             //Si la requête n'arrive pas jusqu'à la base de données
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 if (t instanceof IOException) {
                     Toast.makeText(MainActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
                 } else {
