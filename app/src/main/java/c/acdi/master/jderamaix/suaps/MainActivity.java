@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.Blob;
 import java.util.Iterator;
@@ -27,6 +28,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.MediaType;
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         _adapter = new StudentViewAdapter(this);
+
+
 
         RenseignementCapaciteHeure();
         //configureClass(5, 1, 20);
@@ -178,41 +184,23 @@ public class MainActivity extends AppCompatActivity {
         //Creer le client permettant d'interargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
-        //Créer un objet de classe ModeleEtudiant utilisé pour stocker les informations envoyé par la requête à la base de données
-        Drawable preimage = getDrawable(R.drawable.imagedefault);
+        //Créer un objet de classe PersonneNomPrenom utilisé pour stocker les informations envoyé par la requête à la base de données
 
-
-        Bitmap mIcon1 =
-                BitmapFactory.decodeResource(getApplicationContext().getResources(),R.drawable.imagedefault);
-
-        //Blob image = mIcon1.compress();
-
-        //Blob image = null;
-
-        preimage = null;
-
-        String prenom = "blah";
-        String postnom = "blouh";
-
-        //Image inti = getFileStreamPath("imagedefault.bmp");
-
-        PersonneAvecImage etudiant = new PersonneAvecImage(nom,prenom);
-
+        PersonneNomPrenom etudiant = new PersonneNomPrenom(nom,"Prenom a rajouter");
 
         //Créer le receptacle de la méthode voulue à partie de client
         //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
 
         Call<NomIDCarteEtudiant> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
 
-        //Call<NomIDCarteEtudiant> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom(),etudiant.getImage());
-
         //Applique la requête à la base de données de façon asynchrone
+
         call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
+
             @Override
             //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
                 //Test si la requête c'est bien passé
-                Log.e(TAG,response.toString());
                 if (response.isSuccessful()) {
                     Toast.makeText(MainActivity.this, response.body().getString(), Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
@@ -225,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             //Si la requête n'est pas arrivé jusqu'à la base de données
-            public void onFailure(Call<Void> call, Throwable t) {
+            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -422,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             //Si la requête n'arrive pas jusqu'à la base de données
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });

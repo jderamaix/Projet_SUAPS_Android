@@ -11,21 +11,16 @@ import java.sql.Blob;
  * Classe utilisé commemodèle pour représenter un étudiant et avoir les même types de données
  *     que la base de données
  */
-public class PersonneAvecImage {
+public class PersonneNomPrenom {
 
     //Les données obtenues de la base de données lors d'une requêtesur les étudiants
     private String nom;
     private String prenom;
-    //private Image image;
 
-
-    public PersonneAvecImage(String nom, String prenom/*,Image image*/){
+    public PersonneNomPrenom(String nom, String prenom){
         this.nom = nom;
         this.prenom = prenom;
-        //this.image = image;
     }
-
-//    public void setImage(Image image){ this.image = image;}
 
     public void setNom(String nom){
         this.nom = nom;
@@ -34,9 +29,6 @@ public class PersonneAvecImage {
     public void setPrenom(String prenom){
         this.prenom = prenom;
     }
-
-
-  //  public Image getImage(){return this.image;}
 
     public String getNom(){
         return this.nom;

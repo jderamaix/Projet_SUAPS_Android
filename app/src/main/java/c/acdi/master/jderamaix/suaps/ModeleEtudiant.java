@@ -17,16 +17,12 @@ public class ModeleEtudiant {
     private String prenom;
     private int no_etudiant;
     private String duree;
-    private Drawable image;
 
 
-    public ModeleEtudiant(String nom, String prenom,Drawable image){
+    public ModeleEtudiant(String nom, String prenom){
         this.nom = nom;
         this.prenom = prenom;
-        this.image = image;
     }
-
-    public void setImage(Drawable image){ this.image = image;}
 
     public void setNom(String nom){
         this.nom = nom;
@@ -42,8 +38,6 @@ public class ModeleEtudiant {
     }
 
     public void setDuree(String temps){ this.duree = temps;}
-
-    public Drawable getImage(){return this.image;}
 
     public String getNom(){
         return this.nom;

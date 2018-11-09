@@ -167,7 +167,7 @@ public class RFIDActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
                 ServiceGenerator.Message(RFIDActivity.this, TAG, t);
             }
         });
