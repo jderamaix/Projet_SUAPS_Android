@@ -6,6 +6,7 @@ import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -17,6 +18,7 @@ import org.w3c.dom.Text;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -34,6 +36,8 @@ public class RFIDActivity extends AppCompatActivity {
     public ArrayList<String> getdonnees() {
         return donnees;
     }
+
+    public int counter = 0;
 
     public void setDonnees(ArrayList<String> donnes){
         this.donnees = donnes;
@@ -148,26 +152,34 @@ public class RFIDActivity extends AppCompatActivity {
         this.getdonnees().add(s);
         Client client = ServiceGenerator.createService(Client.class);
 
-        NomIDCarteEtudiant carteEtudiant = new NomIDCarteEtudiant(s);
+        Call<ReponseRequete> call_Post = client.EnvoieNumCarte(s);
 
-        Call<NomIDCarteEtudiant> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
-
-
-        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
+        call_Post.enqueue(new Callback<ReponseRequete>() {
             @Override
-            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
+            public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
 
-                int statusCode = response.code();
-                if (response.isSuccessful()) {
-                    String Result = response.body().getString();
+                int statusCode = reponse.code();
+                if (reponse.isSuccessful()) {
+                    String Result = reponse.body().getReponse();
                     textView.setText(Result);
-                    Toast.makeText(RFIDActivity.this,Result,Toast.LENGTH_SHORT).show();
+                    counter = 0;
+                    new CountDownTimer(4000, 1000) {
+                        @Override
+                        public void onTick(long millisUntilFinished) {
+                            counter++;
+                        }
+
+                        public void onFinish(){
+                            String texteAffichage = "Veuillez Badger" ;
+                            textView.setText(texteAffichage);
+                        }
+                    }.start();
                 } else {
                     Log.e(TAG, "status Code: " + statusCode);
                 }
             }
             @Override
-            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
+            public void onFailure(Call<ReponseRequete> call, Throwable t) {
                 ServiceGenerator.Message(RFIDActivity.this, TAG, t);
             }
         });

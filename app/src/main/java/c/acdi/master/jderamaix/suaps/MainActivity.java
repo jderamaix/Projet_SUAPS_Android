@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 import okhttp3.MediaType;
 import okhttp3.MultipartBody;
 import okhttp3.RequestBody;
+import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -192,16 +193,16 @@ public class MainActivity extends AppCompatActivity {
         //Créer le receptacle de la méthode voulue à partie de client
         //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
 
-        Call<NomIDCarteEtudiant> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
+        Call<ReponseRequete> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
 
         //Applique la requête à la base de données de façon asynchrone
-        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
+        call_Post.enqueue(new Callback<ReponseRequete>() {
             @Override
             //Si la requête est arrivé jusqu'à la base de données
-            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
-                //Test si la requête c'est bien passé
-                if (response.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, response.body().getString(), Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
+                //Test si la requête c'est bien ReponseRequetepassé
+                if (reponse.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     Reinitialise_Liste();
                 } else {
@@ -212,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             //Si la requête n'est pas arrivé jusqu'à la base de données
-            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
+            public void onFailure(Call<ReponseRequete> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -344,7 +345,6 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<List<AuaListeSeance>> call, Response<List<AuaListeSeance>> response) {
                 if(response.isSuccessful()){
 
-
                     List<AuaListeSeance> listeSeance = response.body();
 
                     if(!listeSeance.isEmpty()) {
@@ -352,7 +352,6 @@ public class MainActivity extends AppCompatActivity {
                         int minimum_heure = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(0, 2));
                         int minimum_minute = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(3, 5));
 
-                        Log.e(TAG, "Get des paramètres réussi");
                         configureClass(Integer.parseInt(listeSeance.get(0).getLimitePersonnes()), minimum_heure, minimum_minute);
                     }
                 } else {
@@ -386,25 +385,23 @@ public class MainActivity extends AppCompatActivity {
         String capacite = getString(R.string.affichageCapacite, capacity);
         String temps = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
 
-        //Créer l'objet de classe AuaListeSeance
-        AuaListeSeance auaListeSeance = new AuaListeSeance(capacite, temps, 1);
 
         //Créer le client permettant d'intéragir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
         //Utilise la méthode du client pour créer la requête permettant l'interaction voulue avec la base de données
         //EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
-        Call<NomIDCarteEtudiant> call_Post = client.EnvoieTempsCapacite(capacite + "/" + temps + "/1", auaListeSeance);
+
+        Call<ReponseRequete> call_Post = client.EnvoieTempsCapacite(capacite, temps,"1");
 
         //Applique la requête à la base de données de façon asynchrone
-        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
+        call_Post.enqueue(new Callback<ReponseRequete>() {
             @Override
             //Si la requête est arrivé jusqu'à la base de données
-            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
-                int statusCode = response.code();
-                if (response.isSuccessful()) {
-                    String Result = response.body().getString();
-                    Toast.makeText(MainActivity.this, Result, Toast.LENGTH_SHORT).show();
+            public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
+                int statusCode = reponse.code();
+                if (reponse.isSuccessful()) {
+                    Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
                     configureClass(capacity,minimumHours,minimumMinutes);
                 } else {
                     Log.e(TAG, "status Code: " + statusCode);
@@ -413,7 +410,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             //Si la requête n'arrive pas jusqu'à la base de données
-            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
+            public void onFailure(Call<ReponseRequete> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });

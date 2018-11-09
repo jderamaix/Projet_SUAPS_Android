@@ -52,8 +52,9 @@ public interface Client {
      * Prend en Body et en Path son numéro de carte
      * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
     */
-     @POST("/controlleur/{temp}")
-    Call<NomIDCarteEtudiant> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
+    @FormUrlEncoded
+     @POST("/controlleur/badgeage")
+    Call<ReponseRequete> EnvoieNumCarte(@Field("numeroCarte") String numeroCarte);
 
 
 
@@ -64,8 +65,8 @@ public interface Client {
     */
     @FormUrlEncoded
     @POST("/controlleur/addPersonne")
-    Call<NomIDCarteEtudiant> EnvoieNom(@Field("nom") String nom,
-                                       @Field("prenom") String prenom
+    Call<ReponseRequete> EnvoieNom(@Field("nom") String nom,
+                                   @Field("prenom") String prenom
     );
 
     /**
@@ -73,6 +74,10 @@ public interface Client {
      * Prend en Path le string commposé de la capacité / heure  / 1
      * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
      */
-    @POST("controlleur/setSeance/{temp}")
-    Call<NomIDCarteEtudiant> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);
+    @FormUrlEncoded
+    @POST("controlleur/setSeance")
+    Call<ReponseRequete> EnvoieTempsCapacite(@Field("capacite") String capacite,
+                                                @Field("temps") String temps,
+                                                @Field("id") String id);
+
 }
