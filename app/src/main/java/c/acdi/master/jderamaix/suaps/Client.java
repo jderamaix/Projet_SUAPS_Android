@@ -62,9 +62,9 @@ public interface Client {
     */
     @FormUrlEncoded
      @POST("/controlleur/addPersonne")
-    Call<NomIDCarteEtudiant> EnvoieNom(@Field("nom") String nom,
-                                       @Field("prenom") String prenom/*,
-                                       @Field("image") Image image*/);
+    Call<String> EnvoieNom(@Field("nom") String nom,
+                           @Field("prenom") String prenom/*,
+                           @Field("image") Image image*/);
 
     /**
      * Requête envoyant les changements d'heures de séances et capacité d'accueil

@@ -202,19 +202,19 @@ public class MainActivity extends AppCompatActivity {
         //Créer le receptacle de la méthode voulue à partie de client
         //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
 
-        Call<NomIDCarteEtudiant> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
+        Call<String> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
 
         //Call<NomIDCarteEtudiant> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom(),etudiant.getImage());
 
         //Applique la requête à la base de données de façon asynchrone
-        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
+        call_Post.enqueue(new Callback<String>() {
             @Override
             //Si la requête est arrivé jusqu'à la base de données
-            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
+            public void onResponse(Call<String> call, Response<String> response) {
                 //Test si la requête c'est bien passé
                 Log.e(TAG,response.toString());
                 if (response.isSuccessful()) {
-                    Toast.makeText(MainActivity.this, response.body().getString(), Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, response.body(), Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     Reinitialise_Liste();
                 } else {
@@ -225,7 +225,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             //Si la requête n'est pas arrivé jusqu'à la base de données
-            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
+            public void onFailure(Call<String> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -307,7 +307,7 @@ public class MainActivity extends AppCompatActivity {
             //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<List<ModeleEtudiant>> call, Response<List<ModeleEtudiant>> response) {
 
-                Log.e("TAG","rafraichissement");
+                Log.e(TAG,"rafraichissement");
 
                 //Prend la partie de la reponse contenant les données voulues
                 List<ModeleEtudiant> etudiantList = response.body();
@@ -327,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
                         _updateAttendance();
                     }
                 } else {
-                    Log.e("TAG","La réponse obtenue est null, il y a une erreur (différences de typage avec a base de données ou autres)");
+                    Log.e(TAG,"La réponse obtenue est null, il y a une erreur (différences de typage avec a base de données ou autres)");
                 }
             }
 
@@ -361,11 +361,11 @@ public class MainActivity extends AppCompatActivity {
                         int minimum_heure = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(0, 2));
                         int minimum_minute = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(3, 5));
 
-                        Log.e("TAG", "Get des paramètres réussi");
+                        Log.e(TAG, "Get des paramètres réussi");
                         configureClass(Integer.parseInt(listeSeance.get(0).getLimitePersonnes()), minimum_heure, minimum_minute);
                     }
                 } else {
-                    Log.e("TAG", "Get des paramètres non réussi");
+                    Log.e(TAG, "Get des paramètres non réussi");
                 }
             }
 
