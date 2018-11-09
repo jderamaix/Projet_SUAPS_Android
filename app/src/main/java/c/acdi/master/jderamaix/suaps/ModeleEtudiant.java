@@ -1,6 +1,11 @@
 package c.acdi.master.jderamaix.suaps;
 
 
+import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
+
+import java.sql.Blob;
+
 /**
   * Classe utilisé commemodèle pour représenter un étudiant et avoir les même types de données
   *     que la base de données
@@ -12,7 +17,16 @@ public class ModeleEtudiant {
     private String prenom;
     private int no_etudiant;
     private String duree;
+    private Drawable image;
 
+
+    public ModeleEtudiant(String nom, String prenom,Drawable image){
+        this.nom = nom;
+        this.prenom = prenom;
+        this.image = image;
+    }
+
+    public void setImage(Drawable image){ this.image = image;}
 
     public void setNom(String nom){
         this.nom = nom;
@@ -29,6 +43,7 @@ public class ModeleEtudiant {
 
     public void setDuree(String temps){ this.duree = temps;}
 
+    public Drawable getImage(){return this.image;}
 
     public String getNom(){
         return this.nom;

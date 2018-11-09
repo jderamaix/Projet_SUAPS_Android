@@ -150,16 +150,16 @@ public class RFIDActivity extends AppCompatActivity {
 
         NomIDCarteEtudiant carteEtudiant = new NomIDCarteEtudiant(s);
 
-        Call<String> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
+        Call<NomIDCarteEtudiant> call_Post = client.EnvoieNumCarte("badgeage/" + s,carteEtudiant);
 
 
-        call_Post.enqueue(new Callback<String>() {
+        call_Post.enqueue(new Callback<NomIDCarteEtudiant>() {
             @Override
-            public void onResponse(Call<String> call, Response<String> response) {
+            public void onResponse(Call<NomIDCarteEtudiant> call, Response<NomIDCarteEtudiant> response) {
 
                 int statusCode = response.code();
                 if (response.isSuccessful()) {
-                    String Result = response.body();
+                    String Result = response.body().getString();
                     textView.setText(Result);
                     Toast.makeText(RFIDActivity.this,Result,Toast.LENGTH_SHORT).show();
                 } else {
@@ -167,7 +167,7 @@ public class RFIDActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<String> call, Throwable t) {
+            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
                 ServiceGenerator.Message(RFIDActivity.this, TAG, t);
             }
         });
