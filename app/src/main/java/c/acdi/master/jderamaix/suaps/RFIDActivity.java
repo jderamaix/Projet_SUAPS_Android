@@ -167,13 +167,8 @@ public class RFIDActivity extends AppCompatActivity {
                 }
             }
             @Override
-            public void onFailure(Call<NomIDCarteEtudiant> call, Throwable t) {
-                if(t instanceof IOException){
-                    Toast.makeText(RFIDActivity.this, "Erreur de connexion, êtes vous connecté ?", Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(RFIDActivity.this, "Problème de convertion ", Toast.LENGTH_SHORT).show();
-                }
-
+            public void onFailure(Call<String> call, Throwable t) {
+                ServiceGenerator.Message(RFIDActivity.this, TAG, t);
             }
         });
     }
