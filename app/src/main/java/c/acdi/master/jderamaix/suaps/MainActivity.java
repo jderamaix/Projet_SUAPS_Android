@@ -308,7 +308,11 @@ public class MainActivity extends AppCompatActivity {
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
                             ModeleEtudiant etudiant = i.next();
-                            _adapter.addStudent(etudiant.getNom(), etudiant.getDuree(), etudiant.getNo_etudiant());
+                            _adapter.addStudent(
+                                    getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
+                                    etudiant.getDuree(),
+                                    etudiant.getNo_etudiant()
+                            );
                         } while (i.hasNext());
                         //Met à jour l'affichage
                         _updateAttendance();

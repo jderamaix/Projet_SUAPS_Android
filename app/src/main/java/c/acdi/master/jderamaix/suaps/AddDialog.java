@@ -30,8 +30,8 @@ public class AddDialog extends DialogFragment {
                     @Override
                     public void onClick(DialogInterface dialog, int i) {
                         activity.addStudent(
-                                ((EditText) view.findViewById(R.id.saisieNomEtudiant)).getText().toString(),
-                                ((EditText) view.findViewById(R.id.saisiePrenomEtudiant)).getText().toString()
+                                ((EditText) view.findViewById(R.id.saisiePrenomEtudiant)).getText().toString(),
+                                ((EditText) view.findViewById(R.id.saisieNomEtudiant)).getText().toString()
                         );
                     }
                 })
