@@ -2,14 +2,23 @@ package c.acdi.master.jderamaix.suaps;
 
 
 
+import android.graphics.drawable.Drawable;
+import android.media.Image;
+import android.provider.Telephony;
+
+import java.sql.Blob;
 import java.util.List;
 
 import okhttp3.ResponseBody;
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
+import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
+import retrofit2.http.Multipart;
 import retrofit2.http.POST;
+import retrofit2.http.Part;
 import retrofit2.http.Path;
 
 public interface Client {
@@ -42,7 +51,7 @@ public interface Client {
      * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
     */
      @POST("/controlleur/{temp}")
-    Call<String> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
+    Call<NomIDCarteEtudiant> EnvoieNumCarte(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
 
 
 
@@ -51,9 +60,11 @@ public interface Client {
      *Requête pour envoyer une personne ajouter manuellement avec son nom
      *Prend en Body et en Path son nom
     */
-     @POST("/controlleur/addPersonne/{temp}")
-     Call<Void> EnvoieNom(@Path("temp") String Variable, @Body NomIDCarteEtudiant nomEtudiant);
-
+    @FormUrlEncoded
+     @POST("/controlleur/addPersonne")
+    Call<NomIDCarteEtudiant> EnvoieNom(@Field("nom") String nom,
+                                       @Field("prenom") String prenom/*,
+                                       @Field("image") Image image*/);
 
     /**
      * Requête envoyant les changements d'heures de séances et capacité d'accueil
@@ -61,5 +72,5 @@ public interface Client {
      * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
      */
     @POST("controlleur/setSeance/{temp}")
-    Call<String> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);
+    Call<NomIDCarteEtudiant> EnvoieTempsCapacite(@Path("temp") String Variable, @Body AuaListeSeance auaListeSeance);
 }
