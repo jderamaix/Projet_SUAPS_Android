@@ -166,14 +166,15 @@ public class MainActivity extends AppCompatActivity {
      * Méthode pour ajouter un étudiant manuellement à la séance.
      * Crée le client et un receptacle de la méthode permettant l'intéraction voulue avec la base de données
      * Puis applique la méthode asynchronement et si le résultat est réussi, réinitialise l'affichage
-     * @param name Le nom de l'étudiant à ajouter.
+     * @param firstName Le prénom de l'étudiant à ajouter.
+     * @param lastName  Le nom de l'étudiant à ajouter.
      */
-    public void addStudent(String name) {
+    public void addStudent(String firstName, String lastName) {
         //Creer le client permettant d'interargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
         //Créer un objet de classe Task utilisé pour stocker les informations envoyé par la requête à la base de données
-        NomIDCarteEtudiant nomEtudiant = new NomIDCarteEtudiant(name);
+        NomIDCarteEtudiant nomEtudiant = new NomIDCarteEtudiant(firstName + lastName);
 
         //Créer le receptacle de la méthode voulue à partie de client
         //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task

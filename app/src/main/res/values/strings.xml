@@ -13,6 +13,7 @@
     <string name="etiquetteAjoutAjouter">Ajouter</string>
     <string name="etiquetteAjoutAnnuler">Annuler</string>
     <string name="suggestionNomEtudiant">Nom de l\'étudiant(e)</string>
+    <string name="suggestionPrenomEtudiant">Prénom de l\'étudiant(e)</string>
     <string name="etiquetteConfigValider">Valider</string>
     <string name="etiquetteConfigAnnuler">Annuler</string>
     <string name="etiquetteConfig">Configurer...</string>
