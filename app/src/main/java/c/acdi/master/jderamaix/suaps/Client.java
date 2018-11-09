@@ -9,6 +9,8 @@ import android.provider.Telephony;
 import java.sql.Blob;
 import java.util.List;
 
+import okhttp3.MultipartBody;
+import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -61,10 +63,10 @@ public interface Client {
      *Prend en Body et en Path son nom
     */
     @FormUrlEncoded
-     @POST("/controlleur/addPersonne")
-    Call<String> EnvoieNom(@Field("nom") String nom,
-                           @Field("prenom") String prenom/*,
-                           @Field("image") Image image*/);
+    @POST("/controlleur/addPersonne")
+    Call<NomIDCarteEtudiant> EnvoieNom(@Field("nom") String nom,
+                                       @Field("prenom") String prenom
+    );
 
     /**
      * Requête envoyant les changements d'heures de séances et capacité d'accueil
