@@ -245,10 +245,10 @@ public class MainActivity extends AppCompatActivity {
                 //Prend la partie de la reponse contenant les données voulues
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
-                if (!(etudiantList == null)) {
+                if (etudiantList != null) {
+                    // Construire un ArrayList d'entrées...
+                    ArrayList<StudentEntry> dataset = new ArrayList<>();
                     if (!etudiantList.isEmpty()) {
-                        // Construire un ArrayList d'entrées...
-                        ArrayList<StudentEntry> dataset = new ArrayList<>();
                         //... et y ajouter tous les étudiants obtenue de la base de données ...
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
@@ -259,10 +259,10 @@ public class MainActivity extends AppCompatActivity {
                                     etudiant.getNo_etudiant()
                             ));
                         } while (i.hasNext());
-                        //... pour mettre à jour l'adaptateur de manière atomique
-                        _adapter.dataset(dataset);
-                        _updateAttendance();
                     }
+                    //... pour mettre à jour l'adaptateur de manière atomique
+                    _adapter.dataset(dataset);
+                    _updateAttendance();
                 } else {
                     Log.e(TAG,"La réponse obtenue est null, il y a une erreur (différences de typage avec a base de données ou autres)");
                 }
