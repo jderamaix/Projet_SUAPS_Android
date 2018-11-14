@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             Log.e("TAG", "Laréponse est véritable");
-                            Reinitialise_Liste();
+                            ReinitialiseAffichage();
                         }
                     }
                     @Override
@@ -116,7 +116,7 @@ public class MainActivity extends AppCompatActivity {
     //Créer un runnable lançant la mise à jour de l'affichage
     final Runnable AppelRun = new Runnable(){
         public void run() {
-            Reinitialise_Liste();
+            ReinitialiseAffichage();
             RenseignementCapaciteHeure();
         }
     };
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
-        Reinitialise_Liste();
+        ReinitialiseAffichage();
     }
 
 
@@ -197,7 +197,7 @@ public class MainActivity extends AppCompatActivity {
                 if (reponse.isSuccessful()) {
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
-                    Reinitialise_Liste();
+                    ReinitialiseAffichage();
                 } else {
                     Toast.makeText(MainActivity.this, "probleme petit", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
@@ -273,7 +273,7 @@ public class MainActivity extends AppCompatActivity {
      * Si un résultat est obtenue de la base de données, vérifie si il est non null et non vide(on veut quelquechose)
      * Puis remplace l'affichage actuelle par celui obtenue à partir de la base de données.
 	*/
-    public void  Reinitialise_Liste() {
+    public void ReinitialiseAffichage() {
 
         //Créer le client permettant d'intérargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
