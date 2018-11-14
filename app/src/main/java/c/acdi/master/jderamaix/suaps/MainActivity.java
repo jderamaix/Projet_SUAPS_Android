@@ -21,6 +21,7 @@ import android.widget.Toast;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -91,8 +92,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String numero_id_chaine = "" + numero_id;
 
-                _adapter.removeStudent((int) holder.itemView.getTag());
-
                 Client client = ServiceGenerator.createService(Client.class);
                 NomIDCarteEtudiant IDEtudiant = new NomIDCarteEtudiant(numero_id_chaine);
                 Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,IDEtudiant);
@@ -101,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             Log.e("TAG", "Laréponse est véritable");
+                            Reinitialise_Liste();
                         }
                     }
                     @Override
@@ -301,21 +301,21 @@ public class MainActivity extends AppCompatActivity {
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (!(etudiantList == null)) {
-                    //Enlève touts les étudiants de l'adapter
-                    while (_adapter.getItemCount() > 0)
-                        _adapter.removeStudent(0);
-                    if(!etudiantList.isEmpty()) {
-                        //Ajoute tous les étudiants obtenue de la base de données dans l'adapter
+                    // Construire un ArrayList d'entrées...
+                    ArrayList<StudentEntry> dataset = new ArrayList<>();
+                    if (!etudiantList.isEmpty()) {
+                        //... et y ajouter tous les étudiants obtenue de la base de données ...
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
                             ModeleEtudiant etudiant = i.next();
-                            _adapter.addStudent(
+                            dataset.add(new StudentEntry(
                                     getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
                                     etudiant.getDuree(),
                                     etudiant.getNo_etudiant()
-                            );
+                            ));
                         } while (i.hasNext());
-                        //Met à jour l'affichage
+                        //... pour mettre à jour l'adaptateur de manière atomique
+                        _adapter.dataset(dataset);
                         _updateAttendance();
                     }
                 } else {
