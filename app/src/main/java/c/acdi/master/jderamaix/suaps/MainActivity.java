@@ -362,7 +362,7 @@ public class MainActivity extends AppCompatActivity {
      * EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
      * Applique l'envoie de données à la base de données de façon asyncrone
      */
-    public void ModificationCapaciteHeure(final int capacity, final int minimumHours, final int minimumMinutes) {
+    public void ModificationCapaciteHeure(int capacity, int minimumHours, int minimumMinutes) {
 
         //Créer les strings équivalent du temps et de la capacité
         String capacite = getString(R.string.affichageCapacite, capacity);
@@ -385,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
                 int statusCode = reponse.code();
                 if (reponse.isSuccessful()) {
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
-                    configureClass(capacity,minimumHours,minimumMinutes);
+                    RenseignementCapaciteHeure();
                 } else {
                     Log.e(TAG, "status Code: " + statusCode);
                 }
