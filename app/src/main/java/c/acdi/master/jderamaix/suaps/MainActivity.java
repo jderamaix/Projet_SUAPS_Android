@@ -58,7 +58,6 @@ public class MainActivity extends AppCompatActivity {
 
 
         RenseignementCapaciteHeure();
-        //configureClass(5, 1, 20);
 
         // Initialisation du RecyclerView
         RecyclerView view = findViewById(R.id.affichageEtudiants);
@@ -147,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     /**
-     * Méthode factorisant le code pour mettre à jour de l'affichage des présences.
+     * Méthode factorisant le code pour mettre à jour l'affichage des présences.
      */
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
