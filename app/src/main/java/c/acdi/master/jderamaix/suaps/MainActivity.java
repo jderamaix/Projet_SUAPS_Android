@@ -1,13 +1,8 @@
 package c.acdi.master.jderamaix.suaps;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DrawableUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -18,9 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.File;
-import java.io.IOException;
-import java.sql.Blob;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -28,10 +21,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import okhttp3.MediaType;
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -91,8 +80,6 @@ public class MainActivity extends AppCompatActivity {
 
                 String numero_id_chaine = "" + numero_id;
 
-                _adapter.removeStudent((int) holder.itemView.getTag());
-
                 Client client = ServiceGenerator.createService(Client.class);
                 NomIDCarteEtudiant IDEtudiant = new NomIDCarteEtudiant(numero_id_chaine);
                 Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,IDEtudiant);
@@ -101,6 +88,7 @@ public class MainActivity extends AppCompatActivity {
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
                             Log.e("TAG", "Laréponse est véritable");
+                            ReinitialiseAffichage();
                         }
                     }
                     @Override
@@ -108,8 +96,6 @@ public class MainActivity extends AppCompatActivity {
                         ServiceGenerator.Message(MainActivity.this, TAG, t);
                     }
                 });
-
-                _updateAttendance();
             }
         }).attachToRecyclerView(view);
 
@@ -123,7 +109,7 @@ public class MainActivity extends AppCompatActivity {
     //Créer un runnable lançant la mise à jour de l'affichage
     final Runnable AppelRun = new Runnable(){
         public void run() {
-            Reinitialise_Liste();
+            ReinitialiseAffichage();
             RenseignementCapaciteHeure();
         }
     };
@@ -138,7 +124,7 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
-        Reinitialise_Liste();
+        ReinitialiseAffichage();
     }
 
 
@@ -204,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
                 if (reponse.isSuccessful()) {
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
-                    Reinitialise_Liste();
+                    ReinitialiseAffichage();
                 } else {
                     Toast.makeText(MainActivity.this, "probleme petit", Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
@@ -280,7 +266,7 @@ public class MainActivity extends AppCompatActivity {
      * Si un résultat est obtenue de la base de données, vérifie si il est non null et non vide(on veut quelquechose)
      * Puis remplace l'affichage actuelle par celui obtenue à partir de la base de données.
 	*/
-    public void  Reinitialise_Liste() {
+    public void ReinitialiseAffichage() {
 
         //Créer le client permettant d'intérargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
@@ -301,21 +287,21 @@ public class MainActivity extends AppCompatActivity {
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (!(etudiantList == null)) {
-                    //Enlève touts les étudiants de l'adapter
-                    while (_adapter.getItemCount() > 0)
-                        _adapter.removeStudent(0);
-                    if(!etudiantList.isEmpty()) {
-                        //Ajoute tous les étudiants obtenue de la base de données dans l'adapter
+                    if (!etudiantList.isEmpty()) {
+                        // Construire un ArrayList d'entrées...
+                        ArrayList<StudentEntry> dataset = new ArrayList<>();
+                        //... et y ajouter tous les étudiants obtenue de la base de données ...
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
                             ModeleEtudiant etudiant = i.next();
-                            _adapter.addStudent(
+                            dataset.add(new StudentEntry(
                                     getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
                                     etudiant.getDuree(),
                                     etudiant.getNo_etudiant()
-                            );
+                            ));
                         } while (i.hasNext());
-                        //Met à jour l'affichage
+                        //... pour mettre à jour l'adaptateur de manière atomique
+                        _adapter.dataset(dataset);
                         _updateAttendance();
                     }
                 } else {
@@ -348,11 +334,12 @@ public class MainActivity extends AppCompatActivity {
                     List<AuaListeSeance> listeSeance = response.body();
 
                     if(!listeSeance.isEmpty()) {
+                        AuaListeSeance seance = listeSeance.get(0);
 
-                        int minimum_heure = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(0, 2));
-                        int minimum_minute = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(3, 5));
+                        int minimum_heure = Integer.parseInt(seance.getTempsSeance().substring(0, 2));
+                        int minimum_minute = Integer.parseInt(seance.getTempsSeance().substring(3, 5));
 
-                        configureClass(Integer.parseInt(listeSeance.get(0).getLimitePersonnes()), minimum_heure, minimum_minute);
+                        configureClass(Integer.parseInt(seance.getLimitePersonnes()), minimum_heure, minimum_minute);
                     }
                 } else {
                     Log.e(TAG, "Get des paramètres non réussi");

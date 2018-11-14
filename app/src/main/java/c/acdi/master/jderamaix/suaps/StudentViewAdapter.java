@@ -45,33 +45,6 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         return _dataset.size();
     }
 
-    /**
-     * Ajouter un étudiant normalement au jeu de données.
-     * Cette méthode s'utilise aussi pour la mise à jour de l'affichage
-     * @param name  Le nom de l'étudiant à ajouter.
-     * @param duree Le temps passé dans la séance (dans le cas d'une mise à jour de l'affichage).
-     * @param id    L'identifiant de l'étudiant.
-     */
-    public void addStudent(String name, String duree, int id) {
-        _dataset.add(new StudentEntry(name,duree,id));
-        notifyItemInserted(_dataset.size() - 1);
-    }
-
-    /**
-     * Retirer un étudiant du jeu de données.
-     * @param i L'indice de l'entrée de l'étudiant dans le jeu.
-     */
-    public void removeStudent(int i) {
-        _dataset.remove(i);
-        // Pour des raisons encore inconnues,
-        //`notifyItemRemoved(i);`
-        // donne des problèmes considérables.
-        // C'est pour cela que
-        //`notifyDataSetChanged();`
-        // est utilisé ici
-        notifyDataSetChanged();
-    }
-
 
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -120,6 +93,12 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         }
         holder.elapsedTime.setText(shownTime);
         holder.itemView.setTag(i);
+    }
+
+    public ArrayList<StudentEntry> dataset() { return _dataset; }
+    public void dataset(ArrayList<StudentEntry> dataset) {
+        _dataset = dataset;
+        notifyDataSetChanged();
     }
 
 }
