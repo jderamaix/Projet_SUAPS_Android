@@ -106,14 +106,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    //Créer un runnable lançant la mise à jour de l'affichage
-    final Runnable AppelRun = new Runnable(){
-        public void run() {
-            ReinitialiseAffichage();
-            RenseignementCapaciteHeure();
-        }
-    };
-
     /**
      * Méthode invoqué quand MainActivity revient en premier plan,
      * soit quand l'utilisateur était sur une autre application
@@ -145,12 +137,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
+     * Créer un runnable lançant la mise à jour de l'affichage
+     */
+    final Runnable AppelRun = new Runnable(){
+        public void run() {
+            ReinitialiseAffichage();
+            RenseignementCapaciteHeure();
+        }
+    };
+
+    /**
      * Méthode factorisant le code pour mettre à jour de l'affichage des présences.
      */
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
                 getString(R.string.affichageOccupation, _adapter.getItemCount(), _capacity)
         );
+    }
+
+    /**
+     * Méthode appliqué quand le bouton boutonBadge est cliqué.
+     * Lance l'activité permettant de badger
+     * @param view
+     */
+    public void Badger(View view) {
+        Intent intent = new Intent(this, RFIDActivity.class);
+        //Changer le startactivityforresult ==< on attend plus de result
+        startActivityForResult(intent, BadgeRequest);
     }
 
     /**
@@ -205,67 +218,14 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.config_menu, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case R.id.configurerCours:
-                configurerCours(null);
-                return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
     /**
-     * Méthode pour lancer le dialogue de configuration de classe.
-     */
-    public void configurerCours(View view) {
-        new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
-    }
-
-    /**
-     * Méthode permettant de changer la capacité et le temps minimum de la séance.
-     * Elle est destinée à être utilisée à la place des setters déclarées en haut.
-     *
-     * @param capacity       La nouvelle capacité de la séance
-     * @param minimumHours   Le nombre d'heures dans le nouveau temps minimum de la séance
-     * @param minimumMinutes Le nombre de minutes dans le nouveau temps minimum de la séance
-     */
-    public void configureClass(int capacity, int minimumHours, int minimumMinutes) {
-        _capacity = capacity;
-        _duration = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
-        ((TextView) findViewById(R.id.affichageCapacite)).setText(
-                getString(R.string.affichageCapacite, _capacity));
-        _updateAttendance();
-        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
-    }
-
-    /**
-     * Méthode appliqué quand le bouton boutonBadge est cliqué.
-     * Lance l'activité permettant de badger
-     * @param view
-     */
-    public void Badger(View view) {
-        Intent intent = new Intent(this, RFIDActivity.class);
-        //Changer le startactivityforresult ==< on attend plus de result
-        startActivityForResult(intent, BadgeRequest);
-    }
-
-
-
-	/**
-	 * Méthode vidant la structure utilisée pour l'affichage des participants puis rajoutant
-	 * dedans ceux obtenues de la base de données, permet aussi de mettre à l'heure leur temps passé dans la salle.
+     * Méthode vidant la structure utilisée pour l'affichage des participants puis rajoutant
+     * dedans ceux obtenues de la base de données, permet aussi de mettre à l'heure leur temps passé dans la salle.
      *
      * Créer le client et le réceptacle de la méthode permettant l'intéraction voulue avec la base de données puis applique la méthode asynchronement
      * Si un résultat est obtenue de la base de données, vérifie si il est non null et non vide(on veut quelquechose)
      * Puis remplace l'affichage actuelle par celui obtenue à partir de la base de données.
-	*/
+     */
     public void ReinitialiseAffichage() {
 
         //Créer le client permettant d'intérargir avec la base de données
@@ -317,8 +277,45 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.config_menu, menu);
+        return true;
+    }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.configurerCours:
+                configurerCours(null);
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
+    /**
+     * Méthode pour lancer le dialogue de configuration de classe.
+     */
+    public void configurerCours(View view) {
+        new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
+    }
+
+    /**
+     * Méthode permettant de changer la capacité et le temps minimum de la séance.
+     * Elle est destinée à être utilisée à la place des setters déclarées en haut.
+     *
+     * @param capacity       La nouvelle capacité de la séance
+     * @param minimumHours   Le nombre d'heures dans le nouveau temps minimum de la séance
+     * @param minimumMinutes Le nombre de minutes dans le nouveau temps minimum de la séance
+     */
+    public void configureClass(int capacity, int minimumHours, int minimumMinutes) {
+        _capacity = capacity;
+        _duration = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
+        ((TextView) findViewById(R.id.affichageCapacite)).setText(
+                getString(R.string.affichageCapacite, _capacity));
+        _updateAttendance();
+        ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
+    }
 
     public void RenseignementCapaciteHeure() {
 
