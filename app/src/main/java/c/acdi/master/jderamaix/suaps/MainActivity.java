@@ -103,8 +103,6 @@ public class MainActivity extends AppCompatActivity {
                         ServiceGenerator.Message(MainActivity.this, TAG, t);
                     }
                 });
-
-                _updateAttendance();
             }
         }).attachToRecyclerView(view);
 
