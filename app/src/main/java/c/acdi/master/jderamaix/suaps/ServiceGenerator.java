@@ -41,8 +41,6 @@ public class ServiceGenerator {
         public okhttp3.Response intercept(Chain chain) throws IOException {
             Request request = chain.request();
             okhttp3.Response response = chain.proceed(request);
-            //Code pour les erreurs possibles ici.
-
             return response;
         }
     };

@@ -26,30 +26,20 @@ import retrofit2.Response;
 
 public class RFIDActivity extends AppCompatActivity {
 
-    private ArrayList<String> donnees;
-
-    public static final String PUBLIC_STATIC_STRING_IDENTIFIER = "PUBLIC_STATIC_STRING_IDENTIFIER" ;
+    // Le NFcAdapter utilisé pour intérargir avec le téléphone pour tout ce qui concerne la puce NFC
     private NfcAdapter nfcAdapter;
 
+    // Tag utilisé pour permettre des recherches plus efficaces avec des Log.
     public String TAG = "RFIDActivity";
 
-    public ArrayList<String> getdonnees() {
-        return donnees;
-    }
-
-    public int counter = 0;
-
-    public void setDonnees(ArrayList<String> donnes){
-        this.donnees = donnes;
-    }
+    // Int utilisé dans la gestion des messages informatifs concernant les utlisateurs,
+    // permettant de pouvoir réafficher le message initial de demande de badgeage.
+    public int compteur = 0;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rfid_activite);
-
-        ArrayList<String> var_donnees = new ArrayList<String>();
-        this.setDonnees(var_donnees);
 
         // initialize NFCAdapter
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
@@ -145,45 +135,6 @@ public class RFIDActivity extends AppCompatActivity {
      *
      * @param s est l'id de la carte étudiant
      */
-    protected void envoi(String s){
-
-        final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
-
-        this.getdonnees().add(s);
-        Client client = ServiceGenerator.createService(Client.class);
-
-        Call<ReponseRequete> call_Post = client.EnvoieNumCarte(s);
-
-        call_Post.enqueue(new Callback<ReponseRequete>() {
-            @Override
-            public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
-
-                int statusCode = reponse.code();
-                if (reponse.isSuccessful()) {
-                    String Result = reponse.body().getReponse();
-                    textView.setText(Result);
-                    counter = 0;
-                    new CountDownTimer(4000, 1000) {
-                        @Override
-                        public void onTick(long millisUntilFinished) {
-                            counter++;
-                        }
-
-                        public void onFinish(){
-                            String texteAffichage = "Veuillez Badger" ;
-                            textView.setText(texteAffichage);
-                        }
-                    }.start();
-                } else {
-                    Log.e(TAG, "status Code: " + statusCode);
-                }
-            }
-            @Override
-            public void onFailure(Call<ReponseRequete> call, Throwable t) {
-                ServiceGenerator.Message(RFIDActivity.this, TAG, t);
-            }
-        });
-    }
 
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
@@ -208,11 +159,65 @@ public class RFIDActivity extends AppCompatActivity {
             return idEtudiant; //le return permet d'aller dans la méthode onPostExecute
         }
 
+
+        /**
+         *
+         * @param s : contient le numéro de la carte de l'étudiant ayant badgé.
+         */
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
-            envoi(s); //ici la méthode envoi est un exemple mais ici est l'endroit où il faut
-            //effectuer des actions une fois le traitement terminé.
+
+            final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
+
+            Client client = ServiceGenerator.createService(Client.class);
+
+            Call<ReponseRequete> call_Post = client.EnvoieNumCarte(s);
+
+            call_Post.enqueue(new Callback<ReponseRequete>() {
+                //Méthode étant appliqué lorsque la requête est reçu par la base de données.
+                @Override
+                public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
+
+                    int statusCode = reponse.code();
+                    if (reponse.isSuccessful()) {
+                        String Result = reponse.body().getReponse();
+                        textView.setText(Result);
+                        compteur = 0;
+
+                        // Créé et lance un compteur permettant de remettre le message du TextView affiché
+                        //   à celui indiquant de badger après qu'un temps donnée ce soit passer.
+                        new CountDownTimer(4000, 1000) {
+                            @Override
+                            //Méthode s'aplliquantà chaque tick, soit à chaque miliseconde,
+                            //  ici augmentant la valeur du compteur de 1.
+                            public void onTick(long millisUntilFinished) {
+                                compteur++;
+                            }
+
+                            //Méthode s'appliquant lorsque l
+                            public void onFinish(){
+                                String texteAffichage = "Veuillez Badger" ;
+                                textView.setText(texteAffichage);
+                            }
+                        }.start();
+                    } else {
+                        //Affiche dans le log d'erreur le statut de la requête(réussi, problème de typage, ...).
+                        Log.e(TAG, "status Code: " + reponse.code());
+                    }
+                }
+                //Méthode étant appliqué lorque la requête n'arrive pas jusqu'à la base de données.
+                @Override
+                public void onFailure(Call<ReponseRequete> call, Throwable t) {
+                    //Méthode contenant les messages à afficher pour l'utilisateur en cas de problème récurrent.
+                    //  RFIDActivity.this est le context de l'activité pour pouvoir afficher des toats,
+                    //  TAG permet de facilité la recherche de message dans les logs,
+                    //  t est l'objet contenant le message d'erreur dela requête.
+                    ServiceGenerator.Message(RFIDActivity.this, TAG, t);
+                }
+            });
+
+
         }
     }
 
