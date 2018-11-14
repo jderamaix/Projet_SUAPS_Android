@@ -1,13 +1,8 @@
 package c.acdi.master.jderamaix.suaps;
 
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.drawable.Drawable;
-import android.media.Image;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.DrawableUtils;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.helper.ItemTouchHelper;
@@ -348,11 +343,12 @@ public class MainActivity extends AppCompatActivity {
                     List<AuaListeSeance> listeSeance = response.body();
 
                     if(!listeSeance.isEmpty()) {
+                        AuaListeSeance seance = listeSeance.get(0);
 
-                        int minimum_heure = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(0, 2));
-                        int minimum_minute = Integer.parseInt(listeSeance.get(0).getTempsSeance().substring(3, 5));
+                        int minimum_heure = Integer.parseInt(seance.getTempsSeance().substring(0, 2));
+                        int minimum_minute = Integer.parseInt(seance.getTempsSeance().substring(3, 5));
 
-                        configureClass(Integer.parseInt(listeSeance.get(0).getLimitePersonnes()), minimum_heure, minimum_minute);
+                        configureClass(Integer.parseInt(seance.getLimitePersonnes()), minimum_heure, minimum_minute);
                     }
                 } else {
                     Log.e(TAG, "Get des paramètres non réussi");
