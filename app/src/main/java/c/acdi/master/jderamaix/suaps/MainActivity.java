@@ -158,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
      * Il est un callback invoqué par le bouton R.id.ajouterEtudiant.
      */
     public void ajouterEtudiant(View view) {
-        new AddDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
+        new AddStudentDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
     /**
