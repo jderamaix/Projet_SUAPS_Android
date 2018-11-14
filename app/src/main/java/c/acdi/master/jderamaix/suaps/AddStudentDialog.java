@@ -10,11 +10,11 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
-public class AddDialog extends DialogFragment {
+public class AddStudentDialog extends DialogFragment {
 
     // Code de la classe en soi-même
 
-    public AddDialog() {
+    public AddStudentDialog() {
         super();
     }
 
