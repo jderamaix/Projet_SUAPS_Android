@@ -23,11 +23,6 @@
         <activity android:name=".RFIDActivity"
             android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity">
-            <intent-filter>
-                <category android:name="android.intent.category.LAUNCHER" />
-                <action android:name="android.nfc.action.TAG_DISCOVERED"/>
-                <category android:name="android.intent.category.DEFAULT"/>
-            </intent-filter>
         </activity>
     </application>
 

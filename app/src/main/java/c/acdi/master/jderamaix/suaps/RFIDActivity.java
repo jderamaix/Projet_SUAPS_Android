@@ -161,28 +161,41 @@ public class RFIDActivity extends AppCompatActivity {
 
 
         /**
-         *
+         * Méthode appliqué quand le numéro de la carte ayant badgé a finalement été obtenue,
+         *   Créé la requête pour envoyé le numéro à la base de données et affiché les informations
+         *   relatifs à la requête .
          * @param s : contient le numéro de la carte de l'étudiant ayant badgé.
          */
         @Override
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
+            //Recherche le TextView utilisé pour afficher les infromations relatives au badgeage
             final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
 
+            //Appelle le ServiceGenerator pour générer la requête.
             Client client = ServiceGenerator.createService(Client.class);
 
+            //Prépare l'envoie de la requête en instanciant le Call avec la méthode approprié pour la requête voulue,
+            //  ici l'envoie du numéro de la carte d'un étudiant.
             Call<ReponseRequete> call_Post = client.EnvoieNumCarte(s);
 
+            //Méthode envoyant la requête asynchronement à la base de données et sotckant la réponse obtenue (erreur ou réussite) dans CallBack
+            //Ici le traitement de CallBack est directement appliqué :
+            //  onResponse si la requête est considérée réussite.
+            //  onFailure si la requête est considérée ratée.
             call_Post.enqueue(new Callback<ReponseRequete>() {
-                //Méthode étant appliqué lorsque la requête est reçu par la base de données.
+                //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèes ayant occurés.
                 @Override
                 public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
 
-                    int statusCode = reponse.code();
+                    //Test si la requête a réussi ( Aucune erreur comme l'erreur 404 ou 500).
                     if (reponse.isSuccessful()) {
+                        //Change le message du TextView pour informer les utilisateurs du résultat du badgeage
+                        //  (Manque de place dans la séance, badgeage réussi, ...).
                         String Result = reponse.body().getReponse();
                         textView.setText(Result);
+                        //Réinitialise le compteur pour pouvoir le relancer.
                         compteur = 0;
 
                         // Créé et lance un compteur permettant de remettre le message du TextView affiché
@@ -192,27 +205,37 @@ public class RFIDActivity extends AppCompatActivity {
                             //Méthode s'aplliquantà chaque tick, soit à chaque miliseconde,
                             //  ici augmentant la valeur du compteur de 1.
                             public void onTick(long millisUntilFinished) {
+                                //Augmente le compteur de 1 pour atteindre la limite.
                                 compteur++;
                             }
 
-                            //Méthode s'appliquant lorsque l
+                            //Méthode s'appliquant lorsque le compteur arrive au temps fixé.
                             public void onFinish(){
+                                //Remet le message du TextView à sa valeur de base indiquant de badger.
                                 String texteAffichage = "Veuillez Badger" ;
                                 textView.setText(texteAffichage);
                             }
                         }.start();
                     } else {
-                        //Affiche dans le log d'erreur le statut de la requête(réussi, problème de typage, ...).
+                        //Affiche dans le log d'erreur le statut de la requête, soit quelle type d'erreur a été rencontré comme l'erreur 404 ou 500.
                         Log.e(TAG, "status Code: " + reponse.code());
                     }
                 }
-                //Méthode étant appliqué lorque la requête n'arrive pas jusqu'à la base de données.
+
+                /**
+                 * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+                 *   - la connexion au serveur,
+                 *   - la création de la requête,
+                 *   - la transformation de la réponse en objet java.
+                 * call : La requête provoquant le onFailure.
+                 * t    : objet contenant le message et le code d'erreur provoqué par la requête.
+                 */
                 @Override
                 public void onFailure(Call<ReponseRequete> call, Throwable t) {
                     //Méthode contenant les messages à afficher pour l'utilisateur en cas de problème récurrent.
                     //  RFIDActivity.this est le context de l'activité pour pouvoir afficher des toats,
                     //  TAG permet de facilité la recherche de message dans les logs,
-                    //  t est l'objet contenant le message d'erreur dela requête.
+                    //  t est l'objet contenant le message et le code d'erreur provoqué par la requête.
                     ServiceGenerator.Message(RFIDActivity.this, TAG, t);
                 }
             });
