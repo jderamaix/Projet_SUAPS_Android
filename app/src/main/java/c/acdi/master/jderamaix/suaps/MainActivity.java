@@ -294,9 +294,9 @@ public class MainActivity extends AppCompatActivity {
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (!(etudiantList == null)) {
-                    // Construire un ArrayList d'entrées...
-                    ArrayList<StudentEntry> dataset = new ArrayList<>();
                     if (!etudiantList.isEmpty()) {
+                        // Construire un ArrayList d'entrées...
+                        ArrayList<StudentEntry> dataset = new ArrayList<>();
                         //... et y ajouter tous les étudiants obtenue de la base de données ...
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
