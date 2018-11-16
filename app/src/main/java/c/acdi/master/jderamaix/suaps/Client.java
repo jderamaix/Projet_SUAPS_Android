@@ -1,28 +1,36 @@
 package c.acdi.master.jderamaix.suaps;
 
 
-
-import android.graphics.drawable.Drawable;
-import android.media.Image;
-import android.provider.Telephony;
-
-import java.sql.Blob;
 import java.util.List;
 
-import okhttp3.MultipartBody;
-import okhttp3.RequestBody;
-import okhttp3.ResponseBody;
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
-import retrofit2.http.Multipart;
 import retrofit2.http.POST;
-import retrofit2.http.Part;
 import retrofit2.http.Path;
 
+
+/**
+ *  Classe utilisé pour contenir tous les corps de requête.
+ *  Ce sont ces méthodes qui doivent être appellés pour l'instantion du Call pour les requêtes.
+ *  Méthode type :
+ *          @ précède le typ de requête voulu.
+ *          Peut-être utilisé avec pour exemple : GET, POST, PUT, PATCH.
+ *          Suit ensuite soit :
+ *          - Une partie de l'URL, le début étant donnée dans l'instanciation de retrofit.
+ *          - La partie entière de l'URL si une partie n'ai pas donnée lors de l'instanciation de retrofit.
+ *          - Rien si @Url est utilisé comme paramètre de la méthode.
+ *
+ *          La réponse attendu de la requête, pouvant aller de Call<void> à Call<List<T>>
+ *              en passant par Call<T>.
+ *
+ *         Nom de la méthode
+ *
+ *         Paramètre(s) : @Path, @Body, @Field ou autres.
+ *
+ */
 public interface Client {
 
     /**
@@ -30,7 +38,7 @@ public interface Client {
      * Le 1 permet d'indiquer que la requête vient de l'application et non de l'écran
      */
     @GET("/controlleur/listePersonne/1")
-    Call<List<ModeleEtudiant>> RecoitPersonnes();
+    Call<List<ModeleUtilisateur>> RecoitPersonnes();
 
 
     /**
@@ -44,7 +52,7 @@ public interface Client {
      * Prend en Body et en Path son numéro id
      */
     @POST("/controlleur/vuePresenceUpdate/{temp}")
-    Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body NomIDCarteEtudiant IDEtudiant);
+    Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body NumeroIDCarteEtudiant IDEtudiant);
 
 
     /**

@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -21,6 +22,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import okio.Buffer;
+import okio.BufferedSink;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -38,10 +41,11 @@ public class MainActivity extends AppCompatActivity {
     // Adaptateur de l'affichage des étudiants présents
     private StudentViewAdapter _adapter;
     public static final int BadgeRequest = 1;
+    // TAG est utilisé pour recherche plus facilement dans les logs.
     private static final String TAG = "MainActivity";
 
     // Intervalle utilisé pour la mise à jour périodique
-    private final static int INTERVAL = 6;//60 * 3;
+    private final static int INTERVAL = 6;
 
     //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
@@ -80,13 +84,13 @@ public class MainActivity extends AppCompatActivity {
                 String numero_id_chaine = "" + numero_id;
 
                 Client client = ServiceGenerator.createService(Client.class);
-                NomIDCarteEtudiant IDEtudiant = new NomIDCarteEtudiant(numero_id_chaine);
+                NumeroIDCarteEtudiant IDEtudiant = new NumeroIDCarteEtudiant(numero_id_chaine);
                 Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,IDEtudiant);
                 call_Post.enqueue(new Callback<Void>() {
                     @Override
                     public void onResponse(Call<Void> call, Response<Void> response) {
                         if (response.isSuccessful()) {
-                            Log.e("TAG", "Laréponse est véritable");
+                            Log.e("TAG", "La personne a été enlevée");
                             ReinitialiseAffichage();
                         }
                     }
@@ -184,14 +188,10 @@ public class MainActivity extends AppCompatActivity {
         //Creer le client permettant d'interargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
-        //Créer un objet de classe PersonneNomPrenom utilisé pour stocker les informations envoyé par la requête à la base de données
-
-        PersonneNomPrenom etudiant = new PersonneNomPrenom(lastName,firstName);
-
         //Créer le receptacle de la méthode voulue à partie de client
         //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
 
-        Call<ReponseRequete> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
+        Call<ReponseRequete> call_Post = client.EnvoieNom(lastName, firstName);
 
         //Applique la requête à la base de données de façon asynchrone
         call_Post.enqueue(new Callback<ReponseRequete>() {
@@ -232,27 +232,27 @@ public class MainActivity extends AppCompatActivity {
 
         //Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
         //RecoitPersonnes ne prend pas de paramètre
-        Call<List<ModeleEtudiant>> methodeCall = client.RecoitPersonnes();
+        Call<List<ModeleUtilisateur>> methodeCall = client.RecoitPersonnes();
 
         //Applique la requête à la base de données de façon asynchrone
-        methodeCall.enqueue(new Callback<List<ModeleEtudiant>>() {
+        methodeCall.enqueue(new Callback<List<ModeleUtilisateur>>() {
             @Override
             //Si la requête est arrivé jusqu'à la base de données
-            public void onResponse(Call<List<ModeleEtudiant>> call, Response<List<ModeleEtudiant>> response) {
+            public void onResponse(Call<List<ModeleUtilisateur>> call, Response<List<ModeleUtilisateur>> response) {
 
                 Log.e(TAG,"rafraichissement");
 
                 //Prend la partie de la reponse contenant les données voulues
-                List<ModeleEtudiant> etudiantList = response.body();
+                List<ModeleUtilisateur> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (!(etudiantList == null)) {
                     if (!etudiantList.isEmpty()) {
                         // Construire un ArrayList d'entrées...
                         ArrayList<StudentEntry> dataset = new ArrayList<>();
                         //... et y ajouter tous les étudiants obtenue de la base de données ...
-                        Iterator<ModeleEtudiant> i = etudiantList.iterator();
+                        Iterator<ModeleUtilisateur> i = etudiantList.iterator();
                         do {
-                            ModeleEtudiant etudiant = i.next();
+                            ModeleUtilisateur etudiant = i.next();
                             dataset.add(new StudentEntry(
                                     getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
                                     etudiant.getDuree(),
@@ -270,7 +270,7 @@ public class MainActivity extends AppCompatActivity {
 
             //Si la requête n'est pas arrivé jusqu'à la base de données
             @Override
-            public void onFailure(Call<List<ModeleEtudiant>> call, Throwable t) {
+            public void onFailure(Call<List<ModeleUtilisateur>> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
