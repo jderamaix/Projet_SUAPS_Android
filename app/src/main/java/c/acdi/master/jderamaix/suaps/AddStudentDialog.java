@@ -10,6 +10,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.EditText;
 
+/**
+ * Classe représentant la dialogue d'ajout manuel d'étudiant à la base.
+ */
 public class AddStudentDialog extends DialogFragment {
 
     // Code de la classe en soi-même

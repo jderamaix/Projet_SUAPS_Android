@@ -11,6 +11,9 @@ import android.view.View;
 import android.widget.NumberPicker;
 import android.widget.TimePicker;
 
+/**
+ * Classe représentant le dialogue de configuration de la séance.
+ */
 public class ConfigDialog extends DialogFragment {
 
     public ConfigDialog() {
@@ -29,7 +32,7 @@ public class ConfigDialog extends DialogFragment {
         capacity.setMaxValue(255);
         capacity.setValue(activity.capacity());
 
-        // Initialiser la sélection du temps minimum
+        // Initialiser la sélection du temps minimum au temps minimum actuel
         final TimePicker duration = view.findViewById(R.id.configDuree);
         duration.setIs24HourView(true);
         duration.setCurrentHour(Integer.parseInt(activity.duration().substring(0,2)));
