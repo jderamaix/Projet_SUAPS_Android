@@ -8,12 +8,13 @@ import android.media.Image;
 import java.sql.Blob;
 
 /**
- * Classe utilisé commemodèle pour représenter un étudiant et avoir les même types de données
- *     que la base de données
+ * Classe représentant un étudiant et alignée sur les types de la base de données
  */
 public class PersonneNomPrenom {
 
-    //Les données obtenues de la base de données lors d'une requêtesur les étudiants
+    /*
+     * Données fournies par la base de données.
+     */
     private String nom;
     private String prenom;
 

@@ -1,15 +1,11 @@
 package c.acdi.master.jderamaix.suaps;
 
 
-import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-
-import java.sql.Blob;
 
 /**
-  * Classe utilisé commemodèle pour représenter un étudiant et avoir les même types de données
-  *     que la base de données
-  */
+ * Classe représentant un étudiant et s'alignant aux types de la base de données
+ * @see Client#RecoitPersonnes()
+ */
 public class ModeleEtudiant {
 
     //Les données obtenues de la base de données lors d'une requêtesur les étudiants

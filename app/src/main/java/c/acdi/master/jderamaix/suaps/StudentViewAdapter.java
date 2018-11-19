@@ -1,6 +1,7 @@
 package c.acdi.master.jderamaix.suaps;
 
 import android.content.res.Resources;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -15,31 +16,57 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+/**
+ * Adaptateur pour l'affichage des étudiants présents.
+ */
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
 
+    /**
+     * Le jeu de données.
+     */
     private ArrayList<StudentEntry> _dataset;
+    /**
+     * L'Activity, qui doit avoir la même signature que l'activité principale au cas où de la
+     * communication serait nécessaire.
+     * @see AddStudentDialog#onCreateDialog(Bundle)
+     * @see ConfigDialog#onCreateDialog(Bundle)
+     */
     private MainActivity _activity;
+    /**
+     * Le gonfleur, vers laquelle on garde une référence afin d'éviter d'en recréer à chaque
+     * création de ViewHolder.
+     */
     private LayoutInflater _inflater;
 
+    /**
+     * Constructeur à signature complète.
+     */
     public StudentViewAdapter(MainActivity activity, ArrayList<StudentEntry> data) {
         _activity = activity;
         _inflater = LayoutInflater.from(_activity);
         _dataset = data;
     }
 
+    /**
+     * Constructeur à signature légère (pour l'initialisation par exemple).
+     */
     public StudentViewAdapter(MainActivity activity) {
         this(activity, new ArrayList<StudentEntry>());
     }
 
     /**
-     * Accès direct à un élément du jeu de données.
-     * @param i L'indice de l'élément dans le jeu de données auquel accéder.
-     * @return  L'élément d'indice i dans le jeu de données.
+     * Accède directement à une entrée d'étudiant du jeu de données.
+     * @param i L'indice de l'entrée d'étudiant dans le jeu de données auquel accéder.
+     * @return  L'entrée d'étudiant d'indice i dans le jeu de données.
      */
     public StudentEntry get(int i){
         return _dataset.get(i);
     }
 
+    /**
+     * Obtenir la taille du jeu de données.
+     * @return La taille du jeu de données.
+     */
     @Override
     public int getItemCount() {
         return _dataset.size();
@@ -47,6 +74,9 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
 
 
+    /**
+     * La classe des instances contenant les vues vers les entrées du jeu de données.
+     */
     public static class ViewHolder extends RecyclerView.ViewHolder {
 
         public final TextView name, elapsedTime;
@@ -58,17 +88,25 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         }
     }
 
+    /**
+     * @see RecyclerView.Adapter#onCreateViewHolder(ViewGroup, int)
+     */
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         return new ViewHolder(_inflater.inflate(R.layout.entry_student, parent, false));
     }
 
+    /**
+     * @see RecyclerView.Adapter#onBindViewHolder(RecyclerView.ViewHolder, int)
+     */
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int i) {
         holder.name.setText(_dataset.get(i).name());
         String shownTime = _dataset.get(i).elapsedTime();
         {
-            // Horloges temporaires pour le calcul du temps restant
+            /*
+             * Horloges temporaires pour le calcul du temps restant
+             */
             Calendar studentTime = Calendar.getInstance(),
                      targetTime = Calendar.getInstance(),
                      sessionTime = Calendar.getInstance();
@@ -95,7 +133,10 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
         holder.itemView.setTag(i);
     }
 
-    public ArrayList<StudentEntry> dataset() { return _dataset; }
+    /**
+     * Modifie atomiquement le jeu de données.
+     * @see MainActivity#ReinitialiseAffichage()
+     */
     public void dataset(ArrayList<StudentEntry> dataset) {
         _dataset = dataset;
         notifyDataSetChanged();

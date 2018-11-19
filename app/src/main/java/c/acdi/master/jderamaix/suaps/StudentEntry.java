@@ -1,15 +1,24 @@
 package c.acdi.master.jderamaix.suaps;
 
+/**
+ * Contient les données nécessaires pour l'affichage d'un étudiant présent à une séance.
+ */
 public class StudentEntry {
 
-    // Méthode de convenance pour calculer des heures
-    public static long calculateTimeOffset(int hours, int minutes) {
-        return 60000*((hours - 1)*60 + minutes);
-    }
-
+    /**
+     * Nom et prénom (en une seule chaîne)
+     */
     private String _name;
+    /**
+     * Temps passé à la séance
+     */
     private String _elapsedTime;
+    /**
+     * Identifiant de l'étudiant pour la séance
+     */
     private int _id;
+
+
 
     public StudentEntry(String name, String elapsedTime, int id) {
         _name = name;
@@ -23,6 +32,6 @@ public class StudentEntry {
     public String elapsedTime() { return _elapsedTime; }
     public void elapsedTime(String elapsedTime) { _elapsedTime = elapsedTime; }
 
-    public int id(){ return _id;}
-    public void id(int id){ this._id = id;}
+    public int id() { return _id;}
+    public void id(int id) { this._id = id;}
 }

@@ -1,5 +1,8 @@
 package c.acdi.master.jderamaix.suaps;
 
+/**
+ * Classe utilisé pour les réponses de la base, qui sont systématiquement de type chaîne.
+ */
 public class ReponseRequete {
 
     private String reponse;

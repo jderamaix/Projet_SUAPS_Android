@@ -1,5 +1,6 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -27,23 +28,41 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Affichage des données sur le cours
+    /**
+     * Identifiant de l'Activity gérant le badgeage.
+     * @see RFIDActivity
+     */
+    public static final int BadgeRequest = 1;
+    /**
+     * Tag repérant cet Activity dans les messages d'erreur.
+     * @see ServiceGenerator#Message(Context, String, Throwable)
+     */
+    private static final String TAG = "MainActivity";
+    /**
+     * Intervalle utilisé pour la mise à jour périodique.
+     */
+    private final static int INTERVAL = 6;//60 * 3;
+
+    /**
+     * Capacité d'accueil du cours.
+     */
     private int _capacity = 0;
+    /**
+     * Durée minimale du cours.
+     */
     private String _duration = "00:00";
 
     public int capacity() { return _capacity; }
     public String duration() { return _duration; }
 
-    // Élément principal de l'interface
-    // Adaptateur de l'affichage des étudiants présents
+    /**
+     * Adaptateur de l'affichage des étudiants présents.
+     */
     private StudentViewAdapter _adapter;
-    public static final int BadgeRequest = 1;
-    private static final String TAG = "MainActivity";
 
-    // Intervalle utilisé pour la mise à jour périodique
-    private final static int INTERVAL = 6;//60 * 3;
-
-    //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
+    /**
+     * L'organisateur pour la mise à jour régulière de l'affichage.
+     */
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> organisateurGerant;
 
@@ -53,19 +72,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _adapter = new StudentViewAdapter(this);
-
-
-
+        /*
+         * Initialiser l'affichage de la configuration de la séance
+         */
         RenseignementCapaciteHeure();
 
-        // Initialisation du RecyclerView
+        /*
+         * Initialiser l'affichage des présences
+         */
+        _adapter = new StudentViewAdapter(this);
         RecyclerView view = findViewById(R.id.affichageEtudiants);
         view.setHasFixedSize(true);
         view.setAdapter(_adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
 
-        // Implémentation de la suppression par swipe
+        /*
+         * Implémenter la suppression de présences par swipe
+         */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView view, RecyclerView.ViewHolder holder, RecyclerView.ViewHolder target) {
@@ -98,18 +121,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(view);
 
-        //Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
-        /*ScheduledFuture<?>*/ organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
+        /*
+         * Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
+         */
+        organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
         organisateurGerant.cancel(true);
 
 
     }
 
     /**
-     * Méthode invoqué quand MainActivity revient en premier plan,
+     * Lance la mise à jour de l'affichage,
+     * invoqué quand MainActivity revient en premier plan,
      * soit quand l'utilisateur était sur une autre application
      * soit en revenant de RFIDActivity.
-     * Lance la mise à jour de l'affichage
      */
     @Override
     public void onResume() {
@@ -120,8 +145,8 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Méthode invoqué quand MainActivity va en second plan,
-     * Arrête la mise à jour régulière de l'affichage
+     * Arrête la mise à jour régulière de l'affichage,
+     * invoqué quand MainActivity va en second plan.
      */
     @Override
     protected void onPause(){
@@ -136,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Créer un runnable lançant la mise à jour de l'affichage
+     * Runnable mettant à jour l'affichage
      */
     final Runnable AppelRun = new Runnable(){
         public void run() {
@@ -146,7 +171,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     /**
-     * Méthode factorisant le code pour mettre à jour l'affichage des présences.
+     * Met à jour l'affichage des présences,
+     * créée pour factoriser cette opération qui est plus fréquente que prévue.
      */
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
@@ -155,9 +181,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode appliqué quand le bouton boutonBadge est cliqué.
-     * Lance l'activité permettant de badger
-     * @param view
+     * Lance l'activité permettant de badger,
+     * invoqué comme callback du bouton boutonBadge.
      */
     public void Badger(View view) {
         Intent intent = new Intent(this, RFIDActivity.class);
@@ -166,51 +191,63 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour lancer le dialogue d'ajout manuel.
-     * Il est un callback invoqué par le bouton R.id.ajouterEtudiant.
+     * Lance le dialogue d'ajout manuel,
+     * invoqué comme callback du bouton boutonAjout.
      */
     public void ajouterEtudiant(View view) {
         new AddStudentDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
     /**
-     * Méthode pour ajouter un étudiant manuellement à la séance.
-     * Crée le client et un receptacle de la méthode permettant l'intéraction voulue avec la base de données
-     * Puis applique la méthode asynchronement et si le résultat est réussi, réinitialise l'affichage
+     * Ajoute un étudiant manuellement à la séance en :
+     *   Créant le client et un receptacle de la méthode permettant l'intéraction voulue avec la base de données
+     *   Puis appliquant la méthode asynchronement et réinitialisant l'affichage si le résultat est réussi
      * @param firstName Le prénom de l'étudiant à ajouter.
      * @param lastName  Le nom de l'étudiant à ajouter.
      */
     public void addStudent(String firstName, String lastName) {
-        //Creer le client permettant d'interargir avec la base de données
+        /*
+         * Créer le client interagissant avec la base de données
+         */
         Client client = ServiceGenerator.createService(Client.class);
 
-        //Créer un objet de classe PersonneNomPrenom utilisé pour stocker les informations envoyé par la requête à la base de données
-
+        /*
+         * Créer une instance de PersonneNomPrenom pour stocker les informations envoyées
+         * par la requête à la base de données
+         */
         PersonneNomPrenom etudiant = new PersonneNomPrenom(lastName,firstName);
 
-        //Créer le receptacle de la méthode voulue à partie de client
-        //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
-
+        /*
+         * Créer le receptacle de la méthode voulue à partir du client
+         * EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance
+         * de Task
+         */
         Call<ReponseRequete> call_Post = client.EnvoieNom(etudiant.getNom(),etudiant.getPrenom());
 
-        //Applique la requête à la base de données de façon asynchrone
+        /*
+         * Applique la requête à la base de données de façon asynchrone
+         */
         call_Post.enqueue(new Callback<ReponseRequete>() {
+            /*
+             * Si la requête est arrivé jusqu'à la base de données
+             */
             @Override
-            //Si la requête est arrivé jusqu'à la base de données
             public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
-                //Test si la requête c'est bien ReponseRequetepassé
+                /*
+                 * Test si la requête c'est bien ReponseRequetepassé
+                 */
                 if (reponse.isSuccessful()) {
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     ReinitialiseAffichage();
                 } else {
                     Toast.makeText(MainActivity.this, "probleme petit", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                 }
             }
 
+            /*
+             * Si la requête n'est pas arrivé jusqu'à la base de données
+             */
             @Override
-            //Si la requête n'est pas arrivé jusqu'à la base de données
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
@@ -218,26 +255,24 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode vidant la structure utilisée pour l'affichage des participants puis rajoutant
-     * dedans ceux obtenues de la base de données, permet aussi de mettre à l'heure leur temps passé dans la salle.
-     *
-     * Créer le client et le réceptacle de la méthode permettant l'intéraction voulue avec la base de données puis applique la méthode asynchronement
-     * Si un résultat est obtenue de la base de données, vérifie si il est non null et non vide(on veut quelquechose)
-     * Puis remplace l'affichage actuelle par celui obtenue à partir de la base de données.
+     * Met à jour l'affichage en :
+     *   Demandant la vue à la base
+     *   Mettant à jour atomiquement l'adaptateur si la vue reçue n'est pas vide.
      */
     public void ReinitialiseAffichage() {
 
-        //Créer le client permettant d'intérargir avec la base de données
+        // Créer le client permettant d'intérargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
-        //Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
-        //RecoitPersonnes ne prend pas de paramètre
+        // Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
+        // RecoitPersonnes ne prend pas de paramètre
         Call<List<ModeleEtudiant>> methodeCall = client.RecoitPersonnes();
 
-        //Applique la requête à la base de données de façon asynchrone
+        // Applique la requête à la base de données de façon asynchrone
         methodeCall.enqueue(new Callback<List<ModeleEtudiant>>() {
-            @Override
+
             //Si la requête est arrivé jusqu'à la base de données
+            @Override
             public void onResponse(Call<List<ModeleEtudiant>> call, Response<List<ModeleEtudiant>> response) {
 
                 Log.e(TAG,"rafraichissement");
@@ -246,10 +281,15 @@ public class MainActivity extends AppCompatActivity {
                 List<ModeleEtudiant> etudiantList = response.body();
                 //Test si le conteneur de données est null
                 if (etudiantList != null) {
-                    // Construire un ArrayList d'entrées...
+                    /*
+                     * Construire un ArrayList d'entrées...
+                     */
                     ArrayList<StudentEntry> dataset = new ArrayList<>();
+
                     if (!etudiantList.isEmpty()) {
-                        //... et y ajouter tous les étudiants obtenue de la base de données ...
+                        /*
+                         * ... et y ajouter tous les étudiants obtenue de la base de données ...
+                         */
                         Iterator<ModeleEtudiant> i = etudiantList.iterator();
                         do {
                             ModeleEtudiant etudiant = i.next();
@@ -260,7 +300,9 @@ public class MainActivity extends AppCompatActivity {
                             ));
                         } while (i.hasNext());
                     }
-                    //... pour mettre à jour l'adaptateur de manière atomique
+                    /*
+                     * ... pour mettre à jour l'adaptateur de manière atomique
+                     */
                     _adapter.dataset(dataset);
                     _updateAttendance();
                 } else {
@@ -268,7 +310,9 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            //Si la requête n'est pas arrivé jusqu'à la base de données
+            /*
+             * Si la requête n'est pas arrivé jusqu'à la base de données
+             */
             @Override
             public void onFailure(Call<List<ModeleEtudiant>> call, Throwable t) {
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
@@ -276,12 +320,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @see AppCompatActivity#onCreateOptionsMenu(Menu)
+     * */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.config_menu, menu);
         return true;
     }
 
+    /**
+     * @see AppCompatActivity#onOptionsItemSelected(MenuItem)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -293,14 +343,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour lancer le dialogue de configuration de classe.
+     * Lance le dialogue de configuration de classe,
+     * invoqué comme option du menu principal.
      */
     public void configurerCours(View view) {
         new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
     }
 
     /**
-     * Méthode permettant de changer la capacité et le temps minimum de la séance.
+     * Change la capacité et le temps minimum de la séance.
      * Elle est destinée à être utilisée à la place des setters déclarées en haut.
      *
      * @param capacity       La nouvelle capacité de la séance
@@ -316,6 +367,9 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
     }
 
+    /**
+     * Renseigne la configuration actuelle de la séance en la demandant à la base de données.
+     */
     public void RenseignementCapaciteHeure() {
 
         Client client = ServiceGenerator.createService(Client.class);
@@ -325,11 +379,11 @@ public class MainActivity extends AppCompatActivity {
         call_Get.enqueue(new Callback<List<AuaListeSeance>>() {
             @Override
             public void onResponse(Call<List<AuaListeSeance>> call, Response<List<AuaListeSeance>> response) {
-                if(response.isSuccessful()){
+                if (response.isSuccessful()) {
 
                     List<AuaListeSeance> listeSeance = response.body();
 
-                    if(!listeSeance.isEmpty()) {
+                    if (!listeSeance.isEmpty()) {
                         AuaListeSeance seance = listeSeance.get(0);
 
                         int minimum_heure = Integer.parseInt(seance.getTempsSeance().substring(0, 2));
@@ -353,7 +407,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Méthode pour envoyer à la base de données le changement des paramètres de temps minimum et de capacité de la séance
+     * Met à jour la configuration de la séance en l'envoyant à la base de données.
      *
      * Créer les strings équivalent du temps et de la capacité,
      * Créer l'objet de classe AuaListeSeance

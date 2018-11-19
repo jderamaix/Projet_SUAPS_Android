@@ -1,7 +1,7 @@
 package c.acdi.master.jderamaix.suaps;
 
 /**
- * Classe qui fait l'interface entre l'application et la base de données
+ * Classe représentant une séance ainsi que ses caractéristiques.
  * Occasionnée par l'utilisation de retrofit
  */
 public class AuaListeSeance {
