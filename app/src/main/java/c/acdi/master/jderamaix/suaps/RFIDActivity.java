@@ -156,7 +156,7 @@ public class RFIDActivity extends AppCompatActivity {
             String idEtudiant = dumpTagData(tagId);
             //Log.e("Identifiant carte Etu",idEtudiant);
 
-            return idEtudiant; //le return permet d'aller dans la méthode onPostExecute
+            return idEtudiant; //le return finissant doInBackground, la méthode onPostExecute est executé.
         }
 
 
@@ -180,16 +180,16 @@ public class RFIDActivity extends AppCompatActivity {
             //  ici l'envoie du numéro de la carte d'un étudiant.
             Call<ReponseRequete> call_Post = client.EnvoieNumCarte(s);
 
-            //Méthode envoyant la requête asynchronement à la base de données et sotckant la réponse obtenue (erreur ou réussite) dans CallBack
+            //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
             //Ici le traitement de CallBack est directement appliqué :
-            //  onResponse si la requête est considérée réussite.
+            //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
             //  onFailure si la requête est considérée ratée.
             call_Post.enqueue(new Callback<ReponseRequete>() {
-                //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèes ayant occurés.
+                //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
                 @Override
                 public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
 
-                    //Test si la requête a réussi ( Aucune erreur comme l'erreur 404 ou 500).
+                    //Test si la requête a réussi ( code http allant de 200 à 299).
                     if (reponse.isSuccessful()) {
                         //Change le message du TextView pour informer les utilisateurs du résultat du badgeage
                         //  (Manque de place dans la séance, badgeage réussi, ...).
@@ -227,8 +227,8 @@ public class RFIDActivity extends AppCompatActivity {
                  *   - la connexion au serveur,
                  *   - la création de la requête,
                  *   - la transformation de la réponse en objet java.
-                 * call : La requête provoquant le onFailure.
-                 * t    : objet contenant le message et le code d'erreur provoqué par la requête.
+                 * @Param call : La requête provoquant le onFailure.
+                 * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
                  */
                 @Override
                 public void onFailure(Call<ReponseRequete> call, Throwable t) {

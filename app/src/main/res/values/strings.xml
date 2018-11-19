@@ -19,4 +19,5 @@
     <string name="etiquetteConfigAnnuler">Annuler</string>
     <string name="etiquetteConfig">Configurer...</string>
     <string name="TextView_RFIDActivity">Veuillez badger</string>
+    <string name="image_carte_etudiant">Image d\'une carte d\'étudiant de l\'université d\'Angers.</string>
 </resources>

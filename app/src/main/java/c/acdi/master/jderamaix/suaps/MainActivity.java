@@ -47,7 +47,7 @@ public class MainActivity extends AppCompatActivity {
     // Intervalle utilisé pour la mise à jour périodique
     private final static int INTERVAL = 6;
 
-    //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
+    //L'orgaisateur et son gérant, utilisé pour lancer, stopper et supprimer la mise à jour de l'afichage à intervalle régulier.
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> organisateurGerant;
 
@@ -83,26 +83,51 @@ public class MainActivity extends AppCompatActivity {
 
                 String numero_id_chaine = "" + numero_id;
 
+                //Créé le client utilisé pour intérargir avec la base de données.
                 Client client = ServiceGenerator.createService(Client.class);
                 NumeroIDCarteEtudiant IDEtudiant = new NumeroIDCarteEtudiant(numero_id_chaine);
-                Call<Void> call_Post = client.EnleverPersonne("" + numero_id_chaine,IDEtudiant);
+
+                //Créer le receptacle de la méthode voulue à partir du client
+                //EnleverPersonne prend en paramètre le String et le NumeroIdCarteEtudiant correspondant à l'id de l'utilisateur à enlever.
+                Call<Void> call_Post = client.EnleverPersonne(numero_id_chaine,IDEtudiant);
+
+                // Implémentation de la suppression par swipe
+                //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+                //Ici le traitement de CallBack est directement appliqué :
+                //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+                //  onFailure si la requête est considérée ratée.
                 call_Post.enqueue(new Callback<Void>() {
                     @Override
+                    //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
                     public void onResponse(Call<Void> call, Response<Void> response) {
+                        //Test si la requête a réussi ( code http allant de 200 à 299).
                         if (response.isSuccessful()) {
                             Log.e("TAG", "La personne a été enlevée");
+                            //Met à jour l'affichage.
                             ReinitialiseAffichage();
+                        } else {
+                            //Affiche le code de la reponse, soit le code http de la requête.
+                            Log.e(TAG, "Status code : " + response.code());
                         }
                     }
                     @Override
+                    /**
+                     * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+                     *   - la connexion au serveur,
+                     *   - la création de la requête,
+                     *   - la transformation de la réponse en objet java (ne peut pas causer de problème ici, aucune réponse n'est attendu).
+                     * @Param call : La requête provoquant le onFailure.
+                     * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+                     */
                     public void onFailure(Call<Void> call, Throwable t) {
+                        //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                         ServiceGenerator.Message(MainActivity.this, TAG, t);
                     }
                 });
             }
         }).attachToRecyclerView(view);
 
-        //Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
+        //Créer un organisateur fixé à une intervalle de INTERVAL secondes appellant AppelRun.
         /*ScheduledFuture<?>*/ organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
         organisateurGerant.cancel(true);
 
@@ -113,11 +138,12 @@ public class MainActivity extends AppCompatActivity {
      * Méthode invoqué quand MainActivity revient en premier plan,
      * soit quand l'utilisateur était sur une autre application
      * soit en revenant de RFIDActivity.
-     * Lance la mise à jour de l'affichage
+     * Lance la mise à jour de l'affichage et relance l'organisateur s'occupant de la mise à jour automatique des données.
      */
     @Override
     public void onResume() {
         super.onResume();
+        //Toutes les INTERVAL secondes, applique la méthode AppelRun.
         organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
         ReinitialiseAffichage();
     }
@@ -125,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     /**
      * Méthode invoqué quand MainActivity va en second plan,
-     * Arrête la mise à jour régulière de l'affichage
+     * Arrête la mise à jour automatique de l'affichage.
      */
     @Override
     protected void onPause(){
@@ -133,6 +159,10 @@ public class MainActivity extends AppCompatActivity {
         organisateurGerant.cancel(true);
     }
 
+    /**
+     * Méthode invoqué quand l'activité est détruite,
+     * Détruit l'organisateur.
+     */
     @Override
     protected void onDestroy(){
         super.onDestroy();
@@ -140,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Créer un runnable lançant la mise à jour de l'affichage
+     * Créer un runnable lançant la mise à jour de l'affichage.
      */
     final Runnable AppelRun = new Runnable(){
         public void run() {
@@ -185,33 +215,43 @@ public class MainActivity extends AppCompatActivity {
      * @param lastName  Le nom de l'étudiant à ajouter.
      */
     public void addStudent(String firstName, String lastName) {
-        //Creer le client permettant d'interargir avec la base de données
+        //Créé le client permettant d'interargir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
         //Créer le receptacle de la méthode voulue à partie de client
-        //EnvoieNom prend en paramètre le string correspondant au nom de l'étudiant et une instance de Task
-
+        //EnvoieNom prend en paramètre le nom et le prénom de l'utilisateur.
         Call<ReponseRequete> call_Post = client.EnvoieNom(lastName, firstName);
 
-        //Applique la requête à la base de données de façon asynchrone
+        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+        //Ici le traitement de CallBack est directement appliqué :
+        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+        //  onFailure si la requête est considérée ratée.
         call_Post.enqueue(new Callback<ReponseRequete>() {
             @Override
-            //Si la requête est arrivé jusqu'à la base de données
+            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
-                //Test si la requête c'est bien ReponseRequetepassé
+                //Test si la requête a réussi ( code http allant de 200 à 299).
                 if (reponse.isSuccessful()) {
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
                     //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     ReinitialiseAffichage();
                 } else {
-                    Toast.makeText(MainActivity.this, "probleme petit", Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(MainActivity.this, String.format("Response is %s ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
-                }
+                    //Affiche le code de la reponse, soit le code http de la requête.
+                    Log.e(TAG,"Status code : " + reponse.code());
+               }
             }
 
             @Override
-            //Si la requête n'est pas arrivé jusqu'à la base de données
+            /**
+             * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+             *   - la connexion au serveur,
+             *   - la création de la requête,
+             *   - la transformation de la réponse en objet java (ici un ReponseRequete).
+             * @Param call : La requête provoquant le onFailure.
+             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             */
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
+                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -234,43 +274,56 @@ public class MainActivity extends AppCompatActivity {
         //RecoitPersonnes ne prend pas de paramètre
         Call<List<ModeleUtilisateur>> methodeCall = client.RecoitPersonnes();
 
-        //Applique la requête à la base de données de façon asynchrone
+        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+        //Ici le traitement de CallBack est directement appliqué :
+        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+        //  onFailure si la requête est considérée ratée.
         methodeCall.enqueue(new Callback<List<ModeleUtilisateur>>() {
             @Override
-            //Si la requête est arrivé jusqu'à la base de données
+            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<List<ModeleUtilisateur>> call, Response<List<ModeleUtilisateur>> response) {
-
-                Log.e(TAG,"rafraichissement");
-
-                //Prend la partie de la reponse contenant les données voulues
-                List<ModeleUtilisateur> etudiantList = response.body();
-                //Test si le conteneur de données est null
-                if (etudiantList != null) {
-                    // Construire un ArrayList d'entrées...
-                    ArrayList<StudentEntry> dataset = new ArrayList<>();
-                    if (!etudiantList.isEmpty()) {
-                        //... et y ajouter tous les étudiants obtenue de la base de données ...
-                        Iterator<ModeleUtilisateur> i = etudiantList.iterator();
-                        do {
-                            ModeleUtilisateur etudiant = i.next();
-                            dataset.add(new StudentEntry(
-                                    getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
-                                    etudiant.getDuree(),
-                                    etudiant.getNo_etudiant()
-                            ));
-                        } while (i.hasNext());
+                //Test si la requête a réussi ( code http allant de 200 à 299).
+                if (response.isSuccessful()) {
+                    //Prend la partie de la reponse contenant les données voulues
+                    List<ModeleUtilisateur> etudiantList = response.body();
+                    //Test si le conteneur de données est null
+                    if (etudiantList != null) {
+                        // Construire un ArrayList d'entrées...
+                        ArrayList<StudentEntry> dataset = new ArrayList<>();
+                        if (!etudiantList.isEmpty()) {
+                            //... et y ajouter tous les étudiants obtenue de la base de données ...
+                            Iterator<ModeleUtilisateur> i = etudiantList.iterator();
+                            do {
+                                ModeleUtilisateur etudiant = i.next();
+                                dataset.add(new StudentEntry(
+                                        getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
+                                        etudiant.getDuree(),
+                                        etudiant.getNo_etudiant()
+                                ));
+                            } while (i.hasNext());
+                        }
+                        //... pour mettre à jour l'adaptateur de manière atomique
+                        _adapter.dataset(dataset);
+                        _updateAttendance();
+                    } else {
+                        Log.e(TAG, "La liste d'utilisateur est vide.");
                     }
-                    //... pour mettre à jour l'adaptateur de manière atomique
-                    _adapter.dataset(dataset);
-                    _updateAttendance();
                 } else {
-                    Log.e(TAG,"La réponse obtenue est null, il y a une erreur (différences de typage avec a base de données ou autres)");
+                    //Affiche le code de la reponse, soit le code http de la requête.
+                    Log.e(TAG,"Status code : " + response.code());
                 }
             }
 
-            //Si la requête n'est pas arrivé jusqu'à la base de données
-            @Override
+            /**
+             * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+             *   - la connexion au serveur,
+             *   - la création de la requête,
+             *   - la transformation de la réponse en objet java (ici une liste de ModeleUtilisateur).
+             * @Param call : La requête provoquant le onFailure.
+             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             */            @Override
             public void onFailure(Call<List<ModeleUtilisateur>> call, Throwable t) {
+                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -318,32 +371,56 @@ public class MainActivity extends AppCompatActivity {
 
     public void RenseignementCapaciteHeure() {
 
+        //Créé le client à partir du ServiceGenerator, il sera utilisé pour intérargir avec la base de données.
         Client client = ServiceGenerator.createService(Client.class);
 
+        //Utilise la méthode du client pour créer la requête permettant l'intéraction voulue avec la base de données.
+        //RecoitParametre n'a pas besoin de paramètre.
         Call<List<AuaListeSeance>> call_Get  = client.RecoitParametre();
 
+        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+        //Ici le traitement de CallBack est directement appliqué :
+        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+        //  onFailure si la requête est considérée ratée.
         call_Get.enqueue(new Callback<List<AuaListeSeance>>() {
             @Override
+            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<List<AuaListeSeance>> call, Response<List<AuaListeSeance>> response) {
+                //Test si la requête a réussi (code http allant de 200 à 299).
                 if(response.isSuccessful()){
 
+                    //Prend la partie de response correspondant à l'objet envoyé par la base de données.
                     List<AuaListeSeance> listeSeance = response.body();
 
+                    //Test si la liste de séance obtenu par la requête n'est pas vide.
                     if(!listeSeance.isEmpty()) {
+                        //Prend la première valeur de la liste de séance, pour l'instant il n'y en a qu'une d'envoyée.
                         AuaListeSeance seance = listeSeance.get(0);
 
+                        //Sépare le temps limite de la séance en deux parties, une pour les heures et l'autre pour les minutes.
                         int minimum_heure = Integer.parseInt(seance.getTempsSeance().substring(0, 2));
                         int minimum_minute = Integer.parseInt(seance.getTempsSeance().substring(3, 5));
 
+                        //Met à jour l'affichage de l'application.
                         configureClass(Integer.parseInt(seance.getLimitePersonnes()), minimum_heure, minimum_minute);
                     }
                 } else {
-                    Log.e(TAG, "Get des paramètres non réussi");
+                    //Affiche le code de la reponse, soit le code http de la requête.
+                    Log.e(TAG, "status Code: " + response.code());
                 }
             }
 
             @Override
+            /**
+             * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+             *   - la connexion au serveur,
+             *   - la création de la requête,
+             *   - la transformation de la réponse en objet java (ici une Liste de AuaListeSeance).
+             * @Param call : La requête provoquant le onFailure.
+             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             */
             public void onFailure(Call<List<AuaListeSeance>> call, Throwable t) {
+                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -355,45 +432,62 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Méthode pour envoyer à la base de données le changement des paramètres de temps minimum et de capacité de la séance
      *
-     * Créer les strings équivalent du temps et de la capacité,
-     * Créer l'objet de classe AuaListeSeance
-     * Créer le client permettant d'intéragir avec la base de données
+     * Récupère le temps et la limite de personnes de la séance des paramètres pour avoir le bon type de données pour intérargir avec la base de données..
+     * Créé le client permettant d'intéragir avec la base de données.
      * Utilise la méthode du client permettant l'interaction voulue avec la base de données
-     * EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
-     * Applique l'envoie de données à la base de données de façon asyncrone
+     * EnvoieTempsCapactie prend en paramètre une partie de l'URL et les paramètres de la séance à envoyer à la base de données.
+     * Applique la requête à la base de données de façon asyncrone.
+     *
+     * @Param capacity          : La nouvelle capacité limite de personnes de la séance.
+     * @Param minimumHours      : La partie heure du nouveau temps limite de la séance.
+     * @Param minimumMinutes    : La partie minute du nouveau temps limite de la séance.
      */
     public void ModificationCapaciteHeure(int capacity, int minimumHours, int minimumMinutes) {
 
-        //Créer les strings équivalent du temps et de la capacité
+        //Les strings contenant le temps et la capacité de la séance
         String capacite = getString(R.string.affichageCapacite, capacity);
         String temps = getString(R.string.affichageTemps, minimumHours, minimumMinutes);
 
 
-        //Créer le client permettant d'intéragir avec la base de données
+        //Créé le client permettant d'intéragir avec la base de données
         Client client = ServiceGenerator.createService(Client.class);
 
-        //Utilise la méthode du client pour créer la requête permettant l'interaction voulue avec la base de données
-        //EnvoieTempsCapactie prend en paramètre une partie de l'URL et l'objet de classe AuaListeSeance contenant les données à envoyé.
+        //Utilise la méthode du client pour créer la requête permettant l'intéraction voulue avec la base de données.
+        //EnvoieTempsCapactie prend en paramètre la capacité, le temps et l'id d'une séance, pour l'instant il n'y a q'une id possible : 1.
 
         Call<ReponseRequete> call_Post = client.EnvoieTempsCapacite(capacite, temps,"1");
 
-        //Applique la requête à la base de données de façon asynchrone
+        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack.
+        //Ici le traitement de CallBack est directement appliqué :
+        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+        //  onFailure si la requête est considérée ratée.
         call_Post.enqueue(new Callback<ReponseRequete>() {
             @Override
-            //Si la requête est arrivé jusqu'à la base de données
+            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
-                int statusCode = reponse.code();
+                //Test si la requête a réussi ( code http allant de 200 à 299).
                 if (reponse.isSuccessful()) {
+                    //Affiche un Toast contenant le retour de la base de données sur le résultat obtenue de la requête.
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
+                    //Met à jour les informations des paramètres d'une séance affichés par l'application (Nombre limite d'utilisateurs, Temps limite d'une séance).
                     RenseignementCapaciteHeure();
                 } else {
-                    Log.e(TAG, "status Code: " + statusCode);
+                    //Affiche le code de la reponse, soit le code http de la requête.
+                    Log.e(TAG, "status Code: " + reponse.code());
                 }
             }
 
             @Override
-            //Si la requête n'arrive pas jusqu'à la base de données
+            /**
+             * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+             *   - la connexion au serveur,
+             *   - la création de la requête,
+             *   - la transformation de la réponse en objet java attendu (ici ReponseRequete).
+             * @Param call : La requête provoquant le onFailure.
+             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             */
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
+                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
