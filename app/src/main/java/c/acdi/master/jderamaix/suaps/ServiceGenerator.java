@@ -13,16 +13,15 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
- * Classe permettant la création d'un client pour les requêtes
- * BASE_URL est la base des majorités des URLs utilisés dans les requêtes
- * builder contient le builder de Retrofit
- * retrofit contient le lancement de son builder
- * httpClient contient son builder
+ * Classe permettant la création d'un client pour les requêtes.
+ * BASE_URL est la base des majorités des URLs utilisés dans les requêtes.
+ * builder contient le builder de Retrofit.
+ * retrofit contient le lancement de son builder.
+ * httpClient contient son builder.
  * interceptor contient une classe permettant d'intercepter les messages d'erreurs des requêtes avant qu'elles
- *      n'arrivent au code les attendant et donc de généralisé du code pour des erreurs spécifiques
+ *      n'arrivent au code les attendant et donc de généralisé du code pour des erreurs spécifiques.
  * createService est la méthode créant le client.
  */
-
 public class ServiceGenerator {
 
     /**
@@ -73,6 +72,8 @@ public class ServiceGenerator {
         Log.e(TAG,t.toString());
     }
 
+    //Méthode créant le client avec toutes les options voulues.
+    //C'est à partir de ce client que les méthodes des requêtes sont lancés.
     public static <S> S createService(Class<S> serviceClass){
 
         if (!httpClient.interceptors().contains(interceptor)) {

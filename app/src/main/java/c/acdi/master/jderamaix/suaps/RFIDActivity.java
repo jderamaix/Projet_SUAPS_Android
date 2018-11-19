@@ -143,14 +143,6 @@ public class RFIDActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    /**
-     * Méthode executé lors du postExecute de la tâche asynchrone
-     * On envoie la requête informant la base de données que quelqu'un à badger avec son numéro de carte = s
-     * et on l'ajoute à l'array
-     *
-     * @param s est l'id de la carte étudiant
-     */
-
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
 
@@ -281,8 +273,8 @@ public class RFIDActivity extends AppCompatActivity {
                  *   - la connexion au serveur,
                  *   - la création de la requête,
                  *   - la transformation de la réponse en objet java.
-                 * call : La requête provoquant le onFailure.
-                 * t    : objet contenant le message et le code d'erreur provoqué par la requête.
+                 * @Param call : La requête provoquant le onFailure.
+                 * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
                  */
                 @Override
                 public void onFailure(Call<ReponseRequete> call, Throwable t) {
