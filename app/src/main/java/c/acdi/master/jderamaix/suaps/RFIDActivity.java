@@ -174,11 +174,11 @@ public class RFIDActivity extends AppCompatActivity {
             final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
 
             //Appelle le ServiceGenerator pour générer la requête.
-            Client client = ServiceGenerator.createService(Client.class);
+            ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
             //Prépare l'envoie de la requête en instanciant le Call avec la méthode approprié pour la requête voulue,
             //  ici l'envoie du numéro de la carte d'un étudiant.
-            Call<ReponseRequete> call_Post = client.EnvoieNumCarte(s);
+            Call<ReponseRequete> call_Post = clientRequete.EnvoieNumCarte(s);
 
             //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
             //Ici le traitement de CallBack est directement appliqué :

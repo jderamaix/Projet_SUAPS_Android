@@ -53,7 +53,7 @@ public class ServiceGenerator {
         }
     };
 
-    //Méthode utilisé pour afficher un toast montrant qu'elle erreur s'est passé.
+    //Méthode utilisé pour afficher un toast montrant qu'elle erreur s'est passée.
     public static void Message(Context c, String TAG, Throwable t) {
         Toast.makeText(
                 c,
@@ -68,9 +68,15 @@ public class ServiceGenerator {
     //C'est à partir de ce client que les méthodes des requêtes sont lancés.
     public static <S> S createService(Class<S> serviceClass){
 
+        //Test si l'interceptor a été ajouté au client http utilisé par retrofit,
+        // si il n'y est pas alors le client http n'a pas été initialisé.
+        // Si il y est alors il n'y a pas besoin d'initialiser de nouveau le client http.
         if(!httpClient.interceptors().contains(interceptor)){
+            //Ajout l'intercepteur au client http.
             httpClient.addInterceptor(interceptor);
+            //Ajout le client http au builder de retrofit.
             builder.client(httpClient.build());
+            //Créer l'instance de retrofit utilisé pour les requêtes.
             retrofit = builder.build();
         }
 

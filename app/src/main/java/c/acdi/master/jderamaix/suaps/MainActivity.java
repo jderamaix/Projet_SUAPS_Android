@@ -84,12 +84,12 @@ public class MainActivity extends AppCompatActivity {
                 String numero_id_chaine = "" + numero_id;
 
                 //Créé le client utilisé pour intérargir avec la base de données.
-                Client client = ServiceGenerator.createService(Client.class);
+                ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
                 NumeroIDCarteEtudiant IDEtudiant = new NumeroIDCarteEtudiant(numero_id_chaine);
 
-                //Créer le receptacle de la méthode voulue à partir du client
+                //Créer le receptacle de la méthode voulue à partir de clientRequete
                 //EnleverPersonne prend en paramètre le String et le NumeroIdCarteEtudiant correspondant à l'id de l'utilisateur à enlever.
-                Call<Void> call_Post = client.EnleverPersonne(numero_id_chaine,IDEtudiant);
+                Call<Void> call_Post = clientRequete.EnleverPersonne(numero_id_chaine,IDEtudiant);
 
                 // Implémentation de la suppression par swipe
                 //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
@@ -195,8 +195,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void Badger(View view) {
         Intent intent = new Intent(this, RFIDActivity.class);
-        //Changer le startactivityforresult ==< on attend plus de result
-        startActivityForResult(intent, BadgeRequest);
+        startActivity(intent);
     }
 
     /**
@@ -216,11 +215,11 @@ public class MainActivity extends AppCompatActivity {
      */
     public void addStudent(String firstName, String lastName) {
         //Créé le client permettant d'interargir avec la base de données
-        Client client = ServiceGenerator.createService(Client.class);
+        ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
-        //Créer le receptacle de la méthode voulue à partie de client
+        //Créer le receptacle de la méthode voulue à partir de clientRequetes
         //EnvoieNom prend en paramètre le nom et le prénom de l'utilisateur.
-        Call<ReponseRequete> call_Post = client.EnvoieNom(lastName, firstName);
+        Call<ReponseRequete> call_Post = clientRequete.EnvoieNom(lastName, firstName);
 
         //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
         //Ici le traitement de CallBack est directement appliqué :
@@ -268,11 +267,11 @@ public class MainActivity extends AppCompatActivity {
     public void ReinitialiseAffichage() {
 
         //Créer le client permettant d'intérargir avec la base de données
-        Client client = ServiceGenerator.createService(Client.class);
+        ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
         //Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
         //RecoitPersonnes ne prend pas de paramètre
-        Call<List<ModeleUtilisateur>> methodeCall = client.RecoitPersonnes();
+        Call<List<ModeleUtilisateur>> methodeCall = clientRequete.RecoitPersonnes();
 
         //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
         //Ici le traitement de CallBack est directement appliqué :
@@ -372,11 +371,11 @@ public class MainActivity extends AppCompatActivity {
     public void RenseignementCapaciteHeure() {
 
         //Créé le client à partir du ServiceGenerator, il sera utilisé pour intérargir avec la base de données.
-        Client client = ServiceGenerator.createService(Client.class);
+        ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
         //Utilise la méthode du client pour créer la requête permettant l'intéraction voulue avec la base de données.
         //RecoitParametre n'a pas besoin de paramètre.
-        Call<List<AuaListeSeance>> call_Get  = client.RecoitParametre();
+        Call<List<AuaListeSeance>> call_Get  = clientRequete.RecoitParametre();
 
         //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
         //Ici le traitement de CallBack est directement appliqué :
@@ -450,12 +449,12 @@ public class MainActivity extends AppCompatActivity {
 
 
         //Créé le client permettant d'intéragir avec la base de données
-        Client client = ServiceGenerator.createService(Client.class);
+        ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
         //Utilise la méthode du client pour créer la requête permettant l'intéraction voulue avec la base de données.
         //EnvoieTempsCapactie prend en paramètre la capacité, le temps et l'id d'une séance, pour l'instant il n'y a q'une id possible : 1.
 
-        Call<ReponseRequete> call_Post = client.EnvoieTempsCapacite(capacite, temps,"1");
+        Call<ReponseRequete> call_Post = clientRequete.EnvoieTempsCapacite(capacite, temps,"1");
 
         //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack.
         //Ici le traitement de CallBack est directement appliqué :

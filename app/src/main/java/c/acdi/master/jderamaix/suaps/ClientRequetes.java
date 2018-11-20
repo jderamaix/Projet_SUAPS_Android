@@ -31,7 +31,7 @@ import retrofit2.http.Path;
  *         Paramètre(s) : @Path, @Body, @Field ou autres.
  *
  */
-public interface Client {
+public interface ClientRequetes {
 
     /**
      * Requête pour prendre les informations de toutes personnes présentes
