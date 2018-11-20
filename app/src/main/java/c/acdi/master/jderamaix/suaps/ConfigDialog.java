@@ -20,19 +20,31 @@ public class ConfigDialog extends DialogFragment {
         super();
     }
 
+    /**
+     * @see DialogFragment#onCreateDialog(Bundle)
+     */
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        /*
+         * On utilise explicitement la classe MainActivity à la place de la simple Activity car ce
+         * dialogue d'ajout est déjà spécifique à l'application de toute manière :
+         * inutile d'abstraire ceux avec qui on communique
+         */
         final MainActivity activity = (MainActivity) getActivity();
         final View view = LayoutInflater.from(activity).inflate(R.layout.dialog_config,null);
 
-        // Initialiser la sélection de la capacité à la valeur actuelle
+        /*
+         * Initialiser la sélection de la capacité à la valeur actuelle
+         */
         final NumberPicker capacity = view.findViewById(R.id.configCapacite);
         capacity.setMinValue(1);
         capacity.setMaxValue(255);
         capacity.setValue(activity.capacity());
 
-        // Initialiser la sélection du temps minimum au temps minimum actuel
+        /*
+         * Initialiser la sélection du temps minimum au temps minimum actuel
+         */
         final TimePicker duration = view.findViewById(R.id.configDuree);
         duration.setIs24HourView(true);
         duration.setCurrentHour(Integer.parseInt(activity.duration().substring(0,2)));

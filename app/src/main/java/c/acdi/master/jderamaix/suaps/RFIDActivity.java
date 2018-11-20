@@ -1,6 +1,7 @@
 package c.acdi.master.jderamaix.suaps;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
@@ -26,14 +27,19 @@ import retrofit2.Response;
 
 public class RFIDActivity extends AppCompatActivity {
 
-    // Le NFcAdapter utilisé pour intérargir avec le téléphone pour tout ce qui concerne la puce NFC
+    /**
+     * L'adaptateur gérant l'intéraction avec le téléphone pour le NFC.
+     */
     private NfcAdapter nfcAdapter;
-
-    // Tag utilisé pour permettre des recherches plus efficaces avec des Log.
+    /**
+     * Tag repérant cet Activity dans les messages d'erreur.
+     * @see ServiceGenerator#Message(Context, String, Throwable)
+     */
     public String TAG = "RFIDActivity";
-
-    // Int utilisé dans la gestion des messages informatifs concernant les utlisateurs,
-    // permettant de pouvoir réafficher le message initial de demande de badgeage.
+    /**
+     * Int utilisé dans la gestion des messages informatifs concernant les utlisateurs,
+     * permettant de pouvoir réafficher le message initial de demande de badgeage.
+     */
     public int compteur = 0;
 
     @Override
@@ -41,17 +47,25 @@ public class RFIDActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rfid_activite);
 
-        // initialize NFCAdapter
+        /*
+         * Initialize NFCAdapter
+         */
         nfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
-        if(nfcAdapter==null){ //Si nfcAdapter est null alors il n'y a pas de materiel NFC dans le téléphone
-            Toast.makeText(this,"NFC non présent sur le téléphone, fermeture de l'application ",Toast.LENGTH_LONG).show();
+        if (nfcAdapter == null) {
+            /*
+             * Matériel NFC absent
+             */
+            Toast.makeText(this,"NFC absent sur le téléphone, fermeture de l'application ",Toast.LENGTH_LONG).show();
             finish();
             return;
         }
 
-        if(!nfcAdapter.isEnabled()){ //Si le NFC n'est pas activé alors on ouvre le menu pour
-                                     //que l'utilisateur puisse activer le module NFC
+        if (!nfcAdapter.isEnabled()) {
+            /*
+             * Si le NFC n'est pas activé alors on ouvre le menu pour
+             * que l'utilisateur puisse activer le module NFC
+             */
             Toast.makeText(this,"Il faut activer le NFC",Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
         }
@@ -81,11 +95,12 @@ public class RFIDActivity extends AppCompatActivity {
      */
     @Override
     protected void onNewIntent(Intent intent) {
-
         super.onNewIntent(intent);
-        new RFIDActivity.TraitementAsynchrone().execute(intent); //Pour ne pas bloquer l'interface
-        //utilisateur, le traitement est lancé en tâche de fond.
-        //Une tâche asynchrone est lancé avec un l'intent de la carte en argument
+        /*
+         * Pour ne pas bloquer l'interface utilisateur, le traitement est lancé en tâche de fond.
+         * Une tâche asynchrone est lancé avec un l'intent de la carte en argument
+         */
+        new RFIDActivity.TraitementAsynchrone().execute(intent);
     }
 
 
@@ -128,14 +143,6 @@ public class RFIDActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-    /**
-     * Méthode executé lors du postExecute de la tâche asynchrone
-     * On envoie la requête informant la base de données que quelqu'un à badger avec son numéro de carte = s
-     * et on l'ajoute à l'array
-     *
-     * @param s est l'id de la carte étudiant
-     */
-
 
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
 
@@ -149,14 +156,20 @@ public class RFIDActivity extends AppCompatActivity {
         @Override
         protected String doInBackground(Intent... intents) {
 
-            Intent intent = intents[0]; //récupération de l'intent
+            /*
+             * Récupérer l'intent
+             */
+            Intent intent = intents[0];
 
             Tag tagId =  intent.getParcelableExtra(NfcAdapter.EXTRA_TAG); //Récupération du Tag permettant d'avoir l'identifiant
 
             String idEtudiant = dumpTagData(tagId);
             //Log.e("Identifiant carte Etu",idEtudiant);
 
-            return idEtudiant; //le return finissant doInBackground, la méthode onPostExecute est executé.
+            /*
+             * Permet d'aller dans la méthode onPostExecute
+             */
+            return idEtudiant;
         }
 
 
@@ -170,54 +183,87 @@ public class RFIDActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
 
-            //Recherche le TextView utilisé pour afficher les infromations relatives au badgeage
+            /*
+             * Recherche le TextView utilisé pour afficher les infromations relatives au badgeage
+             */
             final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
 
-            //Appelle le ServiceGenerator pour générer la requête.
+            /*
+             * Appelle le ServiceGenerator pour générer la requête.
+             */
             ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
-            //Prépare l'envoie de la requête en instanciant le Call avec la méthode approprié pour la requête voulue,
-            //  ici l'envoie du numéro de la carte d'un étudiant.
+            /*
+             * Prépare l'envoie de la requête en instanciant le Call avec la méthode approprié pour la requête voulue,
+             * ici l'envoie du numéro de la carte d'un étudiant.
+             */
             Call<ReponseRequete> call_Post = clientRequete.EnvoieNumCarte(s);
 
-            //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
-            //Ici le traitement de CallBack est directement appliqué :
-            //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
-            //  onFailure si la requête est considérée ratée.
+            /*
+             * Méthode envoyant la requête asynchronement à la base de données et stockant la
+             * réponse obtenue (erreur ou réussite) dans CallBack
+             * Ici le traitement de CallBack est directement appliqué :
+             *   onResponse si la requête est considérée réussite.
+             *  onFailure si la requête est considérée ratée.
+             */
             call_Post.enqueue(new Callback<ReponseRequete>() {
-                //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+                /*
+                 * Méthode étant appliqué lorsque la requête est reçu par la base de données.
+                 * Mais attention, il peut toujours y avoir des problèes ayant occurés.
+                 */
                 @Override
                 public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
 
-                    //Test si la requête a réussi ( code http allant de 200 à 299).
+                    /*
+                     * Test si la requête a réussi ( Aucune erreur comme l'erreur 404 ou 500).
+                     */
                     if (reponse.isSuccessful()) {
-                        //Change le message du TextView pour informer les utilisateurs du résultat du badgeage
-                        //  (Manque de place dans la séance, badgeage réussi, ...).
+                        /*
+                         * Change le message du TextView pour informer les utilisateurs du résultat du badgeage
+                         *  (Manque de place dans la séance, badgeage réussi, ...).
+                         */
                         String Result = reponse.body().getReponse();
                         textView.setText(Result);
-                        //Réinitialise le compteur pour pouvoir le relancer.
+
+                        /*
+                         * Réinitialise le compteur pour pouvoir le relancer.
+                         */
                         compteur = 0;
 
-                        // Créé et lance un compteur permettant de remettre le message du TextView affiché
-                        //   à celui indiquant de badger après qu'un temps donnée ce soit passer.
+                        /*
+                         * Créé et lance un compteur permettant de remettre le message du TextView affiché
+                         * à celui indiquant de badger après qu'un temps donnée ce soit passer.
+                         */
                         new CountDownTimer(4000, 1000) {
+
+                            /*
+                             * Méthode s'aplliquantà chaque tick, soit à chaque miliseconde,
+                             * ici augmentant la valeur du compteur de 1.
+                             */
                             @Override
-                            //Méthode s'aplliquantà chaque tick, soit à chaque miliseconde,
-                            //  ici augmentant la valeur du compteur de 1.
                             public void onTick(long millisUntilFinished) {
-                                //Augmente le compteur de 1 pour atteindre la limite.
+                                /*
+                                 * Augmente le compteur de 1 pour atteindre la limite.
+                                 */
                                 compteur++;
                             }
 
-                            //Méthode s'appliquant lorsque le compteur arrive au temps fixé.
-                            public void onFinish(){
-                                //Remet le message du TextView à sa valeur de base indiquant de badger.
+                            /*
+                             * Méthode s'appliquant lorsque le compteur arrive au temps fixé.
+                             */
+                            public void onFinish() {
+                                /*
+                                 * Remet le message du TextView à sa valeur de base indiquant de badger.
+                                 */
                                 String texteAffichage = "Veuillez Badger" ;
                                 textView.setText(texteAffichage);
                             }
                         }.start();
                     } else {
-                        //Affiche dans le log d'erreur le statut de la requête, soit quelle type d'erreur a été rencontré comme l'erreur 404 ou 500.
+                        /*
+                         * Affiche dans le log d'erreur le statut de la requête, soit quelle type
+                         * d'erreur a été rencontré comme l'erreur 404 ou 500.
+                         */
                         Log.e(TAG, "status Code: " + reponse.code());
                     }
                 }
@@ -232,10 +278,6 @@ public class RFIDActivity extends AppCompatActivity {
                  */
                 @Override
                 public void onFailure(Call<ReponseRequete> call, Throwable t) {
-                    //Méthode contenant les messages à afficher pour l'utilisateur en cas de problème récurrent.
-                    //  RFIDActivity.this est le context de l'activité pour pouvoir afficher des toats,
-                    //  TAG permet de facilité la recherche de message dans les logs,
-                    //  t est l'objet contenant le message et le code d'erreur provoqué par la requête.
                     ServiceGenerator.Message(RFIDActivity.this, TAG, t);
                 }
             });

@@ -15,15 +15,21 @@ import android.widget.EditText;
  */
 public class AddStudentDialog extends DialogFragment {
 
-    // Code de la classe en soi-même
-
     public AddStudentDialog() {
         super();
     }
 
+    /**
+     * @see DialogFragment#onCreateDialog(Bundle)
+     */
     @Override
     @NonNull
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        /*
+         * On utilise explicitement la classe MainActivity à la place de la simple Activity car ce
+         * dialogue d'ajout est déjà spécifique à l'application de toute manière :
+         * inutile d'abstraire ceux avec qui on communique
+         */
         final MainActivity activity = (MainActivity) getActivity();
         final View view = LayoutInflater.from(activity).inflate(R.layout.dialog_add, null);
 

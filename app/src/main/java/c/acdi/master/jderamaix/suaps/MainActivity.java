@@ -1,5 +1,6 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,24 +31,39 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    // Affichage des données sur le cours
+    /**
+     * Identifiant de l'Activity gérant le badgeage.
+     * @see RFIDActivity
+     */
+    public static final int BadgeRequest = 1;
+    /**
+     * Tag repérant cet Activity dans les messages d'erreur.
+     * @see ServiceGenerator#Message(Context, String, Throwable)
+     */
+    private static final String TAG = "MainActivity";
+    /**
+     * Intervalle utilisé pour la mise à jour périodique.
+     */
+    private final static int INTERVAL = 6;//60 * 3;
+
+    /**
+     * Capacité d'accueil du cours.
+     */
     private int _capacity = 0;
+    /**
+     * Durée minimale du cours.
+     */
     private String _duration = "00:00";
 
     public int capacity() { return _capacity; }
     public String duration() { return _duration; }
 
-    // Élément principal de l'interface
-    // Adaptateur de l'affichage des étudiants présents
+    /**
+     * Adaptateur de l'affichage des étudiants présents.
+     */
     private StudentViewAdapter _adapter;
-    public static final int BadgeRequest = 1;
-    // TAG est utilisé pour recherche plus facilement dans les logs.
-    private static final String TAG = "MainActivity";
 
-    // Intervalle utilisé pour la mise à jour périodique
-    private final static int INTERVAL = 6;
-
-    //L'orgaisateur et son gérant, utilisé pour lancer, stopper et supprimer la mise à jour de l'afichage à intervalle régulier.
+    //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
     private ScheduledFuture<?> organisateurGerant;
 
@@ -57,19 +73,23 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        _adapter = new StudentViewAdapter(this);
-
-
-
+        /*
+         * Initialiser l'affichage de la configuration de la séance
+         */
         RenseignementCapaciteHeure();
 
-        // Initialisation du RecyclerView
+        /*
+         * Initialiser l'affichage des présences
+         */
+        _adapter = new StudentViewAdapter(this);
         RecyclerView view = findViewById(R.id.affichageEtudiants);
         view.setHasFixedSize(true);
         view.setAdapter(_adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
 
-        // Implémentation de la suppression par swipe
+        /*
+         * Implémenter la suppression de présences par swipe
+         */
         new ItemTouchHelper(new ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT) {
             @Override
             public boolean onMove(RecyclerView view, RecyclerView.ViewHolder holder, RecyclerView.ViewHolder target) {
@@ -127,18 +147,20 @@ public class MainActivity extends AppCompatActivity {
             }
         }).attachToRecyclerView(view);
 
-        //Créer un organisateur fixé à une intervalle de INTERVAL secondes appellant AppelRun.
-        /*ScheduledFuture<?>*/ organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
+        /*
+         * Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
+         */
+        organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
         organisateurGerant.cancel(true);
 
 
     }
 
     /**
-     * Méthode invoqué quand MainActivity revient en premier plan,
+     * Lance la mise à jour de l'affichage,
+     * invoqué quand MainActivity revient en premier plan,
      * soit quand l'utilisateur était sur une autre application
      * soit en revenant de RFIDActivity.
-     * Lance la mise à jour de l'affichage et relance l'organisateur s'occupant de la mise à jour automatique des données.
      */
     @Override
     public void onResume() {
@@ -180,7 +202,8 @@ public class MainActivity extends AppCompatActivity {
     };
 
     /**
-     * Méthode factorisant le code pour mettre à jour l'affichage des présences.
+     * Met à jour l'affichage des présences,
+     * créée pour factoriser cette opération qui est plus fréquente que prévue.
      */
     private void _updateAttendance() {
         ((TextView) findViewById(R.id.affichageOccupation)).setText(
@@ -189,9 +212,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode appliqué quand le bouton boutonBadge est cliqué.
-     * Lance l'activité permettant de badger
-     * @param view
+     * Lance l'activité permettant de badger,
+     * invoqué comme callback du bouton boutonBadge.
      */
     public void Badger(View view) {
         Intent intent = new Intent(this, RFIDActivity.class);
@@ -199,17 +221,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour lancer le dialogue d'ajout manuel.
-     * Il est un callback invoqué par le bouton R.id.ajouterEtudiant.
+     * Lance le dialogue d'ajout manuel,
+     * invoqué comme callback du bouton boutonAjout.
      */
     public void ajouterEtudiant(View view) {
         new AddStudentDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
     }
 
     /**
-     * Méthode pour ajouter un étudiant manuellement à la séance.
-     * Crée le client et un receptacle de la méthode permettant l'intéraction voulue avec la base de données
-     * Puis applique la méthode asynchronement et si le résultat est réussi, réinitialise l'affichage
+     * Ajoute un étudiant manuellement à la séance en :
+     *   Créant le client et un receptacle de la méthode permettant l'intéraction voulue avec la base de données
+     *   Puis appliquant la méthode asynchronement et réinitialisant l'affichage si le résultat est réussi
      * @param firstName Le prénom de l'étudiant à ajouter.
      * @param lastName  Le nom de l'étudiant à ajouter.
      */
@@ -226,13 +248,15 @@ public class MainActivity extends AppCompatActivity {
         //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
         //  onFailure si la requête est considérée ratée.
         call_Post.enqueue(new Callback<ReponseRequete>() {
+            /*
+             * Si la requête est arrivé jusqu'à la base de données
+             */
             @Override
             //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
                 //Test si la requête a réussi ( code http allant de 200 à 299).
                 if (reponse.isSuccessful()) {
                     Toast.makeText(MainActivity.this, reponse.body().getReponse() , Toast.LENGTH_SHORT).show();
-                    //Toast.makeText(MainActivity.this, String.format("Le corps de task est : %s   ", String.valueOf(response.code())), Toast.LENGTH_SHORT).show();
                     ReinitialiseAffichage();
                 } else {
                     //Affiche le code de la reponse, soit le code http de la requête.
@@ -240,6 +264,9 @@ public class MainActivity extends AppCompatActivity {
                }
             }
 
+            /*
+             * Si la requête n'est pas arrivé jusqu'à la base de données
+             */
             @Override
             /**
              * Méthode étant appliqué losque des problèmes sont apparus lors de  :
@@ -257,12 +284,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode vidant la structure utilisée pour l'affichage des participants puis rajoutant
-     * dedans ceux obtenues de la base de données, permet aussi de mettre à l'heure leur temps passé dans la salle.
-     *
-     * Créer le client et le réceptacle de la méthode permettant l'intéraction voulue avec la base de données puis applique la méthode asynchronement
-     * Si un résultat est obtenue de la base de données, vérifie si il est non null et non vide(on veut quelquechose)
-     * Puis remplace l'affichage actuelle par celui obtenue à partir de la base de données.
+     * Met à jour l'affichage en :
+     *   Demandant la vue à la base
+     *   Mettant à jour atomiquement l'adaptateur si la vue reçue n'est pas vide.
      */
     public void ReinitialiseAffichage() {
 
@@ -328,12 +352,18 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    /**
+     * @see AppCompatActivity#onCreateOptionsMenu(Menu)
+     * */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.config_menu, menu);
         return true;
     }
 
+    /**
+     * @see AppCompatActivity#onOptionsItemSelected(MenuItem)
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -345,14 +375,15 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Méthode pour lancer le dialogue de configuration de classe.
+     * Lance le dialogue de configuration de classe,
+     * invoqué comme option du menu principal.
      */
     public void configurerCours(View view) {
         new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
     }
 
     /**
-     * Méthode permettant de changer la capacité et le temps minimum de la séance.
+     * Change la capacité et le temps minimum de la séance.
      * Elle est destinée à être utilisée à la place des setters déclarées en haut.
      *
      * @param capacity       La nouvelle capacité de la séance
@@ -368,6 +399,9 @@ public class MainActivity extends AppCompatActivity {
         ((TextView) findViewById(R.id.affichageTempsMinimum)).setText(_duration);
     }
 
+    /**
+     * Renseigne la configuration actuelle de la séance en la demandant à la base de données.
+     */
     public void RenseignementCapaciteHeure() {
 
         //Créé le client à partir du ServiceGenerator, il sera utilisé pour intérargir avec la base de données.
@@ -385,15 +419,12 @@ public class MainActivity extends AppCompatActivity {
             @Override
             //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<List<AuaListeSeance>> call, Response<List<AuaListeSeance>> response) {
-                //Test si la requête a réussi (code http allant de 200 à 299).
                 if(response.isSuccessful()){
 
                     //Prend la partie de response correspondant à l'objet envoyé par la base de données.
                     List<AuaListeSeance> listeSeance = response.body();
 
-                    //Test si la liste de séance obtenu par la requête n'est pas vide.
                     if(!listeSeance.isEmpty()) {
-                        //Prend la première valeur de la liste de séance, pour l'instant il n'y en a qu'une d'envoyée.
                         AuaListeSeance seance = listeSeance.get(0);
 
                         //Sépare le temps limite de la séance en deux parties, une pour les heures et l'autre pour les minutes.
@@ -429,7 +460,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     /**
-     * Méthode pour envoyer à la base de données le changement des paramètres de temps minimum et de capacité de la séance
+     * Met à jour la configuration de la séance en l'envoyant à la base de données.
      *
      * Récupère le temps et la limite de personnes de la séance des paramètres pour avoir le bon type de données pour intérargir avec la base de données..
      * Créé le client permettant d'intéragir avec la base de données.

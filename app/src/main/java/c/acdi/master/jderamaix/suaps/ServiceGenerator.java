@@ -24,26 +24,32 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 public class ServiceGenerator {
 
-    //Le début des url des routes, peut être remplacés par une autre url dans les méthodes utilisés.
-    private  static final String BASE_URL =  "http://192.168.43.104:8000/";
+    /**
+     * Base des URLs des requêtes.
+     */
+    private static final String BASE_URL =  "http://192.168.43.229:8000/";
 
-    //Le builder de retrofit où on ajoute :
-    //      le début de l'url à ajouté,
-    //      le convertisseur à utilisé pour transformer les informations des requêtes, contenu dans des objets java,
-    //          à la base de données s'attendant à un langage spécifique, ici du Json.
+    /**
+     * Builder des requêtes.
+     */
     private static Retrofit.Builder builder = new Retrofit.Builder()
             .baseUrl(BASE_URL)
             .addConverterFactory(GsonConverterFactory.create());
 
-    //Contient la construction du builder.
+    /**
+     * Lancée du builder des requêtes.
+     */
     private static Retrofit retrofit = builder.build();
 
-    //Le builder du OkhttpClient utilisé par retrofit.
+    /**
+     * Instance du builder du client HTTP.
+     */
     private static OkHttpClient.Builder httpClient =
             new OkHttpClient.Builder();
 
-    //Un intercepteur utilisé pour intercepté les messages de retour des requêtes,
-    // permettant de généraliser du code.
+    /**
+     * Intercepteur interceptant les erreurs.
+     */
     private static Interceptor interceptor = new Interceptor() {
         @Override
         public okhttp3.Response intercept(Chain chain) throws IOException {
@@ -53,11 +59,13 @@ public class ServiceGenerator {
         }
     };
 
-    //Méthode utilisé pour afficher un toast montrant qu'elle erreur s'est passée.
+    /**
+     * Émet un message d'erreur dans un Toast.
+     */
     public static void Message(Context c, String TAG, Throwable t) {
         Toast.makeText(
                 c,
-                (t instanceof IOException)? "Erreur de connexion": "Problème de conversion",
+                (t instanceof IOException)? "Erreur de connexion" : "Problème de conversion",
                 Toast.LENGTH_SHORT
         ).show();
         Log.e(TAG,t.getMessage());

@@ -59,7 +59,7 @@ public interface ClientRequetes {
      * Requête pour envoyer une personne badgeant avec son numéro de carte
      * Prend en Body et en Path son numéro de carte
      * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
-    */
+     */
     @FormUrlEncoded
      @POST("/controlleur/badgeage")
     Call<ReponseRequete> EnvoieNumCarte(@Field("numeroCarte") String numeroCarte);
