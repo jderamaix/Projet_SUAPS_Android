@@ -36,7 +36,9 @@ import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity implements InterfaceDecouverteReseau {
 
-
+    /**
+     * PORT : port utilisé pour le broadcast pour la recherche de l'adresse IP du serveur.
+     */
     private final static int PORT = 51423;
     /**
      * Il n'est pas nécessaire de comprendre la classe Utils
@@ -53,21 +55,19 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      * de compléter visuellement l'interface
      *
      */
+    /**
+     * Contient Toutesles valeurs et méthodes concernant la recherche de l'adresse IP par broadcast.
+     * @see Discovery
+     */
     private Discovery decouverte;
 
-
     /**
-     * Identifiant de l'Activity gérant le badgeage.
-     * @see RFIDActivity
-     */
-    //public static final int BadgeRequest = 1;
-    /**
-     * Tag repérant cet Activity dans les messages d'erreur.
+     * Tag repérant cet Activity dans les messages d'erreur des requêtes.
      * @see ServiceGenerator#Message(Context, String, Throwable)
      */
     private static final String TAG = "MainActivity";
     /**
-     * Intervalle utilisé pour la mise à jour périodique.
+     * Intervalle de temps utilisé pour la mise à jour périodique de l'affichage par requête.
      */
     private final static int INTERVAL = 6;//60 * 3;
 
@@ -88,22 +88,30 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     private StudentViewAdapter _adapter;
 
-    //L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
+    /**
+     *L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
+     */
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
+    /**
+     * Le gérant de l'organisateur.
+     */
     private ScheduledFuture<?> organisateurGerant;
 
 
+    /**
+     * Méthode invoqué quand l'application est lancé.
+     * Affiche tous l'affichage.
+     * Puis lance la recherche de l'adresse IP et sa récupération dans les sharedPreferences.
+     * Si l'adresse IP du serveur est trouvé alors les autres méthodes ajoutant des fonctionnalités concernant les requêtes sont invoquées.
+     * @param savedInstanceState : contient les bundles sauvegardés, nous n'utilisons pas de bundle.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
         /*
-        On s'occupe de l'affichage avant de s'occuper de l'adresse IP du serveur.
-         */
-
-
-        /*
+         * On s'occupe de l'affichage avant de s'occuper de l'adresse IP du serveur.
          * Initialiser l'affichage des présences
          */
 
@@ -113,54 +121,57 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         view.setAdapter(_adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
 
+        /*
+        Méthode commençant la gestion de l'adresse IP du serveur.
+         */
         GestionAdresseIPServeur();
 
     }
 
 
     /**
-     * Méthode utilisé pour tous ce qui concerne l'adresse IP du serveur :
-     *      -Sa sélection du sharedPref,
-     *      -Sa recherche (si besoin),
-     *      -Sa validation.
+     * Méthode invoqués dans le onCreate,
+     * Cherche si il y a une adresse IP dans un sharedPreference et si il y en a une, la teste.
+     * Sinon lance la recherche d'adresse IP.
      */
     public void GestionAdresseIPServeur(){
 
         /*
-        On regarde si une adresse IP est présente dans les préférences.
-        Si elle ne l'est pas, on lance une recherche par broadcast.
-        Si on reçoit une réponse ou si il y a une adresse IP, on test si c'est la bonne.
-        Si elle ne l'est pas on refait une recheche broadcast.
-        Sinon on continue avec l'ajout du swipe et le lancement des autres fonctionnalités.
-
+        On regarde si une adresse IP est présente dans les sharedPréférences.
+        Si il n'y en a pas, on lance une recherche par broadcast.
+        Sinon on test si c'est celle du serveur avec une requête.
         */
 
         /*
         Pour reprendre des données des sharedpreferences :
+        on cherche le sharedPreference correspondant au nom associé avec le sharedPreférence devant contenir l'IP puis on doit tester si il y a une valeur.
         */
         Context context = this.getApplicationContext();
         SharedPreferences sharedPref = context.getSharedPreferences(getResources().getString(R.string.NomPreferenceActivite),Context.MODE_PRIVATE);
 
-        //On doit tester l'adresse IP du serveur dans tous les cas.
+        /*
+            On met la valeur correspondant au test de la l'adresse IP à faux, on doit tester l'adresse IP dans tous les cas.
+         */
         ServiceGenerator.setEtatDeLAdresseIPDuServeur(false);
 
-        //On regarde si il existe une valeur pour ce getShared à cet emplacement.
+        //On regarde si il existe une valeur pour ce sharedPreference à cet emplacement.
         if(sharedPref != null) {
-            Log.e(TAG, "sharedPref n'est pas null.");
-
+            /*
+                Deux strings utilisées pour vérifiés la valeur dans le sharedPreference.
+             */
             String testPresenceDansPreference = "";
             String valeurRetour = "La valeur n'est pas presente";
 
             //On donne à testPresenceDansPreference la valeur dans sharedPref si il y en a une sinon on lui donne la valeur de valeurRetour.
             testPresenceDansPreference = sharedPref.getString(getResources().getString(R.string.NomPreferenceActivite), valeurRetour);
 
-            //Si testPresenceDansPreference == valeurRetour alors la donnée recherché dans sharedPref n'a pas été trouvé.
+            //Si testPresenceDansPreference égale valeurRetour alors la donnée recherchée dans sharedPref n'a pas été trouvée.
             if (!testPresenceDansPreference.equals(valeurRetour)) {
-                Log.e(TAG, "sharedPref wharwhatwhat.");
-
-                //On a obtenu quelque chose, peut être l'adresse IP du serveur (normalement).
+                /*
+                 * On a obtenu un string pouvant être l'adresse IP du serveur (normalement).
+                 * On remplace donc l'IP actuelle pa ce string pour le tester.
+                 */
                 ServiceGenerator.setIPUrl(testPresenceDansPreference);
-
             }
         }
 
@@ -171,10 +182,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
          */
         decouverte = new Discovery(PORT,this);
 
-            //Si l'url est null ou égale à "" (si on l'a déjà testée mais que ce n'était pas celle du serveur).
-            if((ServiceGenerator.getIpUrl() == null) || ServiceGenerator.getIpUrl().equals("")){
-                //On lance un broadcast pour obtenir une autre adresse IP.
-                RechercheAdresseIP();
+        //On test si l'IP est null ou égale à "" (sa valeur d'initialisation).
+        if((ServiceGenerator.getIpUrl() == null) || ServiceGenerator.getIpUrl().equals("")){
+            //On lance un broadcast pour obtenir une autre adresse IP.
+            RechercheAdresseIP();
             } else {
                 //On doit maintenant tester l'adresse IP.
                 LancementRequeteValidationIP();
@@ -199,12 +210,15 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int direction) {
 
+                //On prend l'id de l'utilsateur allant être enlevé.
                 int numero_id_utilisateur = _adapter.get((int) holder.itemView.getTag()).id();
 
+                //Méthode lançant la requete utilisée pour enlever l'utilisateur donné de la séance.
                 LancementRequeteSupprimerUtilisateur(numero_id_utilisateur);
             }
         }).attachToRecyclerView(view);
 
+        //On appelle la méthode ajoutant les mises à jour automatique de l'affichage.
         InitialiserGerantOrganisateur();
     }
 
@@ -213,18 +227,20 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     public void InitialiserGerantOrganisateur(){
         /*
-         * Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
+         * Créer un gérant d'organisateur et son organisateur fixé à une intervalle de INTERVAL d'unité de temps appellant AppelRun.
          */
         organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
         organisateurGerant.cancel(true);
-
         /*
-         * Initialise l'affichage de la configuration de la séance
+         * Rafraichit l'affichage de la configuration de la séance.
          */
         RenseignementCapaciteHeure();
     }
 
 
+    /**
+     * Méthode appelant la méthode lançant la recherche de l'adresse IP du serveur.
+     */
     public void RechercheAdresseIP(){
         decouverte.getServerIp();
     }
@@ -232,18 +248,20 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     /**
      * Méthode de l'interface InterfaceDecouverteReseau
      * Est activée lorsque une adresse IP est reçu ou que le temps alloué pour la réception est dépassé.
+     * Si le string représentant l'IP est null alors le broadcast n'a pas atteint le serveur,
+     *      il faut donc relancer une recherche par broadcast
+     * Sinon il faut tester si c'est l'adresse iP du serveur.
      */
     @Override
     public void recuperationIpServer() {
-        //On prend l'IP.
+        //On prend le string Reçu.
         String s = decouverte.getIp();
-        //On test si l'adresse IP est nulle.
+        //On test si le string est null.
         if (s == null || s.equals("null")){
-            //Si elle l'est on relance une recherche de l'adresse IP.
-            Log.e("ErreurRecupIP", "L'adresse IP obtenue est nulle");
+            //Si il l'est on relance une recherche de l'adresse IP.
             RechercheAdresseIP();
         } else {
-            //Maintenant que l'on a reçu une adresse IP, on change l'URL du ServiceGenerator et on lance le test.
+            //Sinon on change l'IP du ServiceGenerator et on lance le test.
             ServiceGenerator.setIPUrl(s);
             LancementRequeteValidationIP();
         }
@@ -251,10 +269,13 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
 
     //Nous avons obtenu la bonne adresse IP du serveur, nous devons maintenant l'enregistrer dans le sharedPrefrences.
     public void SauvegardeAdresseIP(){
-
             /*
-            Maintenant que l'on a l'adresse IP du serveur, on peut l'écrire dans un sharedPreferences pour la "sauvegarder".
-            Pour écrire des données dans un sharedpreference :
+             * Maintenant que l'on a l'adresse IP du serveur, on peut l'écrire dans un sharedPreferences pour la "sauvegarder".
+             * Pour écrire des données dans un sharedpreference :
+             * On cherche le sharedPreference correspondant au nom associé avec le sharedPreférence devant contenir l'IP.
+             * Puis on doit regarder si il est instancié, si oui on peut enlever l'ancien IP et rajouter le nouveau
+             *          sinon on doit l'instancier et ajouter l'IP.
+             * Pour finir il faut appliqué les modifications.
             */
         Context context = this.getApplicationContext();
         SharedPreferences sharedPref = context.getSharedPreferences(getResources().getString(R.string.NomPreferenceActivite),Context.MODE_PRIVATE);
@@ -270,10 +291,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
             //On applique les changements.
             editor.apply();
         } else {
-                /*
-                sharedPref n'est pas null, nous pouvons donc directement l'éditer.
-                Pour écrire des données dans un sharedpreference.
-                */
+            /*
+             * sharedPref n'est pas null, nous pouvons donc directement l'éditer.
+             * Pour écrire des données dans un sharedpreference.
+             */
             //On prend un editor nous permettant de l'éditer.
             SharedPreferences.Editor editor = sharedPref.edit();
             //On enlève ce qui se trouvait déjà à l'emplacement donné par la clé.
@@ -285,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         }
 
         //On peut maintenant implémenter et appliquer toutes les méthodes concernant le serveur.
-
+        //Ici la méthode ajoutant le swipe et appelant les autres.
         AjoutOnSwipedSurRecyclerView();
     }
 
@@ -301,7 +322,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         super.onResume();
         //Toutes les INTERVAL secondes, applique la méthode AppelRun.
         //Seulement si l'adresse IP a été vérifier.
-        if(ServiceGenerator.getEtatDeLAdresseIPDuServeur()) {
+        //Si le gérant de l'organisateur est arrêté, on le relance.
+        if(ServiceGenerator.getEtatDeLAdresseIPDuServeur() && organisateurGerant.isCancelled()){
             organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
             ReinitialiseAffichage();
         }
@@ -315,7 +337,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     @Override
     protected void onPause(){
         super.onPause();
-        if(ServiceGenerator.getEtatDeLAdresseIPDuServeur()) {
+        //Si le gérant de l'organisateur n'est pas arrêté et que l'adresse IP est la bonne(si elle ne l'est pas, il n'a jamais été initialisé), on l'arrête.
+        if(ServiceGenerator.getEtatDeLAdresseIPDuServeur() && !organisateurGerant.isCancelled()) {
             organisateurGerant.cancel(true);
         }
     }
@@ -326,8 +349,11 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     @Override
     protected void onDestroy(){
+        //Si l'organisateur n'est pas shutdown, on le shutdown.
+        if(!organisateur.isShutdown()) {
+            organisateur.shutdown();
+        }
         super.onDestroy();
-        organisateur.shutdown();
     }
 
     /**
@@ -335,10 +361,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     final Runnable AppelRun = new Runnable(){
         public void run() {
-
+            //Appelle la méthode mettant à jour les utilisateurs à partir de la base de données par une requête.
             ReinitialiseAffichage();
+            //Appelle la méthode mettant à jour les paramètres(temps limite, capacité).
             RenseignementCapaciteHeure();
-
         }
     };
 
@@ -730,6 +756,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     }
 
 
+    /**
+     * Méthode utilisant une requête pour enlever l'utilisateur désigné par l'id.
+     * @param numero_id_utilisateur : le numéro de l'utilisateur a enlever.
+     */
     public void LancementRequeteSupprimerUtilisateur(int numero_id_utilisateur){
 
         String numero_id_chaine = "" + numero_id_utilisateur;

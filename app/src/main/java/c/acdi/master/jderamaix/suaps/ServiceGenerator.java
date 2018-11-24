@@ -29,34 +29,61 @@ public abstract class ServiceGenerator {
      */
     private static final String BASE_URL =  "http://";
 
+    /**
+     * La valeur de l'IP du serveur ou si en cours de test l'IP a testé.
+     * Utilisé pour avoir l'ULR finale pour les requêtes.
+     */
     private static String IP_URL = "";
 
+    /**
+     * L'URL constitué de BASE_URL et de IP_URL.
+     * Est l'URL utilisé pour le requêtes.
+     */
     private static String URL_Complete = "http://urlDeTest";
 
+    /**
+     * Méthode modifiant URL_complete par la concaténation deBASE_URL et IP_URL.
+     */
     private static void Modification_URL_Complete(){
         URL_Complete = BASE_URL + IP_URL;
         builder.baseUrl(URL_Complete);
     }
 
-    /*
-     Vrai si l'adresse IP est la bonne.
-     Faux si ce n'est pas la bonne
+    /**
+     * Vrai si l'adresse IP est la bonne.
+     * Faux si ce n'est pas la bonne ou elle est en cours de test.
      */
     private static boolean etatDeLAdresseIPDuServeur = false;
 
+    /**
+     * Remplace le boolean représentant l'état de l'adresse IP par son nouveau état.
+     * @param valeurEtatAdresseIP : Le boolean par lequel remplacé celui actuel.
+     */
     public static void setEtatDeLAdresseIPDuServeur(boolean valeurEtatAdresseIP){
         etatDeLAdresseIPDuServeur = valeurEtatAdresseIP;
     }
 
+    /**
+     * Retourne le boolean en charge de l'état actuel de l'adresse IP.
+     * @return le boolean en charge de l'état actuel de l'adresse IP.
+     */
     public static boolean getEtatDeLAdresseIPDuServeur(){
         return etatDeLAdresseIPDuServeur;
     }
 
+    /**
+     * Change l'adresse IP actuelle avec la nouvelle adresse IP.
+     * @param IP_URL : Nouvelle adresse IP.
+     */
     public static void setIPUrl(String IP_URL){
         ServiceGenerator.IP_URL = IP_URL;
         Modification_URL_Complete();
     }
 
+    /**
+     * Retourne l'adresse IP actuelle.
+     * @return Retourne l'adresse IP actuelle.
+     */
     public static String getIpUrl(){
         return ServiceGenerator.IP_URL;
     }
