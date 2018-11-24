@@ -3,11 +3,13 @@ package c.acdi.master.jderamaix.suaps;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.nfc.NfcAdapter;
 import android.nfc.Tag;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.CountDownTimer;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -42,6 +44,8 @@ public class RFIDActivity extends AppCompatActivity {
      */
     public int compteur = 0;
 
+    public MediaPlayer mp;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,6 +73,12 @@ public class RFIDActivity extends AppCompatActivity {
             Toast.makeText(this,"Il faut activer le NFC",Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
         }
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });
     }
 
     /**
@@ -223,6 +233,23 @@ public class RFIDActivity extends AppCompatActivity {
                          *  (Manque de place dans la séance, badgeage réussi, ...).
                          */
                         String Result = reponse.body().getReponse();
+
+                        if(Result.equals("Badgeage Réussi.")){
+                            if(mp.isPlaying()){
+                                mp.stop();
+                                mp.release();
+                            }
+                            mp = MediaPlayer.create(RFIDActivity.this, R.raw.correct );
+                            mp.start();
+                        } else if(Result.equals("Badgeage pas réussi")){
+                            if(mp.isPlaying()){
+                                mp.stop();
+                                mp.release();
+                            }
+                            mp = MediaPlayer.create(RFIDActivity.this, R.raw.wrong );
+                            mp.start();
+                        }
+
                         textView.setText(Result);
 
                         /*

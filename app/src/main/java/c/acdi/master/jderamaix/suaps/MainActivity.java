@@ -1,7 +1,11 @@
 package c.acdi.master.jderamaix.suaps;
 
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.res.Resources;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -29,13 +34,33 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements InterfaceDecouverteReseau {
+
+
+    private final static int PORT = 51423;
+    /**
+     * Il n'est pas nécessaire de comprendre la classe Utils
+     * Dans un premier temps un objet discovery est déclaré;
+     * On lance ensuite la méthode getServerIp qui permet d'envoyer une requête et de recevoir
+     * l'adresse ip du serveur
+     *
+     *Une interface est utilisé pour appelé une méthode particulière parce que la méthode
+     * getServerIp se lance en tâche asynchrone, donc le reste de la méthode onCreate continue
+     * d'être déroulé.
+     *
+     * Il est important de créer les éléments graphique en premier, créer ensuite l'objet Discovery
+     * qui lance la recherche de l'IP du serveur, cette dernière lancera la ou les méthodes qui permettra
+     * de compléter visuellement l'interface
+     *
+     */
+    private Discovery decouverte;
+
 
     /**
      * Identifiant de l'Activity gérant le badgeage.
      * @see RFIDActivity
      */
-    public static final int BadgeRequest = 1;
+    //public static final int BadgeRequest = 1;
     /**
      * Tag repérant cet Activity dans les messages d'erreur.
      * @see ServiceGenerator#Message(Context, String, Throwable)
@@ -74,19 +99,94 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         /*
-         * Initialiser l'affichage de la configuration de la séance
+        On s'occupe de l'affichage avant de s'occuper de l'adresse IP du serveur.
          */
-        RenseignementCapaciteHeure();
+
 
         /*
          * Initialiser l'affichage des présences
          */
+
         _adapter = new StudentViewAdapter(this);
         RecyclerView view = findViewById(R.id.affichageEtudiants);
         view.setHasFixedSize(true);
         view.setAdapter(_adapter);
         view.setLayoutManager(new LinearLayoutManager(this));
 
+        GestionAdresseIPServeur();
+
+    }
+
+
+    /**
+     * Méthode utilisé pour tous ce qui concerne l'adresse IP du serveur :
+     *      -Sa sélection du sharedPref,
+     *      -Sa recherche (si besoin),
+     *      -Sa validation.
+     */
+    public void GestionAdresseIPServeur(){
+
+        /*
+        On regarde si une adresse IP est présente dans les préférences.
+        Si elle ne l'est pas, on lance une recherche par broadcast.
+        Si on reçoit une réponse ou si il y a une adresse IP, on test si c'est la bonne.
+        Si elle ne l'est pas on refait une recheche broadcast.
+        Sinon on continue avec l'ajout du swipe et le lancement des autres fonctionnalités.
+
+        */
+
+        /*
+        Pour reprendre des données des sharedpreferences :
+        */
+        Context context = this.getApplicationContext();
+        SharedPreferences sharedPref = context.getSharedPreferences(getResources().getString(R.string.NomPreferenceActivite),Context.MODE_PRIVATE);
+
+        //On doit tester l'adresse IP du serveur dans tous les cas.
+        ServiceGenerator.setEtatDeLAdresseIPDuServeur(false);
+
+        //On regarde si il existe une valeur pour ce getShared à cet emplacement.
+        if(sharedPref != null) {
+            Log.e(TAG, "sharedPref n'est pas null.");
+
+            String testPresenceDansPreference = "";
+            String valeurRetour = "La valeur n'est pas presente";
+
+            //On donne à testPresenceDansPreference la valeur dans sharedPref si il y en a une sinon on lui donne la valeur de valeurRetour.
+            testPresenceDansPreference = sharedPref.getString(getResources().getString(R.string.NomPreferenceActivite), valeurRetour);
+
+            //Si testPresenceDansPreference == valeurRetour alors la donnée recherché dans sharedPref n'a pas été trouvé.
+            if (!testPresenceDansPreference.equals(valeurRetour)) {
+                Log.e(TAG, "sharedPref wharwhatwhat.");
+
+                //On a obtenu quelque chose, peut être l'adresse IP du serveur (normalement).
+                ServiceGenerator.setIPUrl(testPresenceDansPreference);
+
+            }
+        }
+
+        /*
+         * Création d'un objet Discovery,Sur un port particulier
+         * et un un objet InterfaceDecouverteReseau, étant donné que l'activité principale
+         * implémente cette interface, elle est considéré comme un objet de ce type.
+         */
+        decouverte = new Discovery(PORT,this);
+
+            //Si l'url est null ou égale à "" (si on l'a déjà testée mais que ce n'était pas celle du serveur).
+            if((ServiceGenerator.getIpUrl() == null) || ServiceGenerator.getIpUrl().equals("")){
+                //On lance un broadcast pour obtenir une autre adresse IP.
+                RechercheAdresseIP();
+            } else {
+                //On doit maintenant tester l'adresse IP.
+                LancementRequeteValidationIP();
+            }
+    }
+
+
+    /**
+     * Méthode ajoutant le onSwiped sur le RecyclerView pour pouvoir enlerver des utilisateurs de la séance.
+     */
+    public void AjoutOnSwipedSurRecyclerView(){
+        RecyclerView view = findViewById(R.id.affichageEtudiants);
         /*
          * Implémenter la suppression de présences par swipe
          */
@@ -99,62 +199,96 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder holder, int direction) {
 
-                int numero_id = _adapter.get((int) holder.itemView.getTag()).id();
+                int numero_id_utilisateur = _adapter.get((int) holder.itemView.getTag()).id();
 
-                String numero_id_chaine = "" + numero_id;
-
-                //Créé le client utilisé pour intérargir avec la base de données.
-                ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
-                NumeroIDCarteEtudiant IDEtudiant = new NumeroIDCarteEtudiant(numero_id_chaine);
-
-                //Créer le receptacle de la méthode voulue à partir de clientRequete
-                //EnleverPersonne prend en paramètre le String et le NumeroIdCarteEtudiant correspondant à l'id de l'utilisateur à enlever.
-                Call<Void> call_Post = clientRequete.EnleverPersonne(numero_id_chaine,IDEtudiant);
-
-                // Implémentation de la suppression par swipe
-                //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
-                //Ici le traitement de CallBack est directement appliqué :
-                //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
-                //  onFailure si la requête est considérée ratée.
-                call_Post.enqueue(new Callback<Void>() {
-                    @Override
-                    //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
-                    public void onResponse(Call<Void> call, Response<Void> response) {
-                        //Test si la requête a réussi ( code http allant de 200 à 299).
-                        if (response.isSuccessful()) {
-                            Log.e("TAG", "La personne a été enlevée");
-                            //Met à jour l'affichage.
-                            ReinitialiseAffichage();
-                        } else {
-                            //Affiche le code de la reponse, soit le code http de la requête.
-                            Log.e(TAG, "Status code : " + response.code());
-                        }
-                    }
-                    @Override
-                    /**
-                     * Méthode étant appliqué losque des problèmes sont apparus lors de  :
-                     *   - la connexion au serveur,
-                     *   - la création de la requête,
-                     *   - la transformation de la réponse en objet java (ne peut pas causer de problème ici, aucune réponse n'est attendu).
-                     * @Param call : La requête provoquant le onFailure.
-                     * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
-                     */
-                    public void onFailure(Call<Void> call, Throwable t) {
-                        //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
-                        ServiceGenerator.Message(MainActivity.this, TAG, t);
-                    }
-                });
+                LancementRequeteSupprimerUtilisateur(numero_id_utilisateur);
             }
         }).attachToRecyclerView(view);
 
+        InitialiserGerantOrganisateur();
+    }
+
+    /**
+     * Méthode créant et initialisant le gérant de l'organisateur s'occupant des mises à jour auomatique de l'affichage.
+     */
+    public void InitialiserGerantOrganisateur(){
         /*
          * Créer un organisateur fixé à une intervalle de INTERVAL appellant AppelRun
          */
         organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
         organisateurGerant.cancel(true);
 
-
+        /*
+         * Initialise l'affichage de la configuration de la séance
+         */
+        RenseignementCapaciteHeure();
     }
+
+
+    public void RechercheAdresseIP(){
+        decouverte.getServerIp();
+    }
+
+    /**
+     * Méthode de l'interface InterfaceDecouverteReseau
+     * Est activée lorsque une adresse IP est reçu ou que le temps alloué pour la réception est dépassé.
+     */
+    @Override
+    public void recuperationIpServer() {
+        //On prend l'IP.
+        String s = decouverte.getIp();
+        //On test si l'adresse IP est nulle.
+        if (s == null || s.equals("null")){
+            //Si elle l'est on relance une recherche de l'adresse IP.
+            Log.e("ErreurRecupIP", "L'adresse IP obtenue est nulle");
+            RechercheAdresseIP();
+        } else {
+            //Maintenant que l'on a reçu une adresse IP, on change l'URL du ServiceGenerator et on lance le test.
+            ServiceGenerator.setIPUrl(s);
+            LancementRequeteValidationIP();
+        }
+    }
+
+    //Nous avons obtenu la bonne adresse IP du serveur, nous devons maintenant l'enregistrer dans le sharedPrefrences.
+    public void SauvegardeAdresseIP(){
+
+            /*
+            Maintenant que l'on a l'adresse IP du serveur, on peut l'écrire dans un sharedPreferences pour la "sauvegarder".
+            Pour écrire des données dans un sharedpreference :
+            */
+        Context context = this.getApplicationContext();
+        SharedPreferences sharedPref = context.getSharedPreferences(getResources().getString(R.string.NomPreferenceActivite),Context.MODE_PRIVATE);
+
+        //Si sharedPref est null, il faut l'instancier.
+        if(sharedPref == null) {
+            //On l'instancie.
+            sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+            //On créer un editor nous permettant de l'éditer.
+            SharedPreferences.Editor editor = sharedPref.edit();
+            //On ajoute dedans à la clé référencé par R.string.NomPreferenceActivite la valeur de l'IP du serveur.
+            editor.putString(getString(R.string.NomPreferenceActivite), ServiceGenerator.getIpUrl());
+            //On applique les changements.
+            editor.apply();
+        } else {
+                /*
+                sharedPref n'est pas null, nous pouvons donc directement l'éditer.
+                Pour écrire des données dans un sharedpreference.
+                */
+            //On prend un editor nous permettant de l'éditer.
+            SharedPreferences.Editor editor = sharedPref.edit();
+            //On enlève ce qui se trouvait déjà à l'emplacement donné par la clé.
+            editor.remove(getString(R.string.NomPreferenceActivite));
+            //On rajoute au même emplacement l'adressse IP du serveur.
+            editor.putString(getString(R.string.NomPreferenceActivite), ServiceGenerator.getIpUrl());
+            //On applique les changements.
+            editor.apply();
+        }
+
+        //On peut maintenant implémenter et appliquer toutes les méthodes concernant le serveur.
+
+        AjoutOnSwipedSurRecyclerView();
+    }
+
 
     /**
      * Lance la mise à jour de l'affichage,
@@ -166,8 +300,11 @@ public class MainActivity extends AppCompatActivity {
     public void onResume() {
         super.onResume();
         //Toutes les INTERVAL secondes, applique la méthode AppelRun.
-        organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
-        ReinitialiseAffichage();
+        //Seulement si l'adresse IP a été vérifier.
+        if(ServiceGenerator.getEtatDeLAdresseIPDuServeur()) {
+            organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
+            ReinitialiseAffichage();
+        }
     }
 
 
@@ -178,7 +315,9 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onPause(){
         super.onPause();
-        organisateurGerant.cancel(true);
+        if(ServiceGenerator.getEtatDeLAdresseIPDuServeur()) {
+            organisateurGerant.cancel(true);
+        }
     }
 
     /**
@@ -196,8 +335,10 @@ public class MainActivity extends AppCompatActivity {
      */
     final Runnable AppelRun = new Runnable(){
         public void run() {
+
             ReinitialiseAffichage();
             RenseignementCapaciteHeure();
+
         }
     };
 
@@ -267,7 +408,6 @@ public class MainActivity extends AppCompatActivity {
             /*
              * Si la requête n'est pas arrivé jusqu'à la base de données
              */
-            @Override
             /**
              * Méthode étant appliqué losque des problèmes sont apparus lors de  :
              *   - la connexion au serveur,
@@ -276,6 +416,7 @@ public class MainActivity extends AppCompatActivity {
              * @Param call : La requête provoquant le onFailure.
              * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
+            @Override
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
                 //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
@@ -344,7 +485,8 @@ public class MainActivity extends AppCompatActivity {
              *   - la transformation de la réponse en objet java (ici une liste de ModeleUtilisateur).
              * @Param call : La requête provoquant le onFailure.
              * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
-             */            @Override
+             */
+            @Override
             public void onFailure(Call<List<ModeleUtilisateur>> call, Throwable t) {
                 //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
@@ -440,7 +582,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            @Override
             /**
              * Méthode étant appliqué losque des problèmes sont apparus lors de  :
              *   - la connexion au serveur,
@@ -449,6 +590,7 @@ public class MainActivity extends AppCompatActivity {
              * @Param call : La requête provoquant le onFailure.
              * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
+            @Override
             public void onFailure(Call<List<AuaListeSeance>> call, Throwable t) {
                 //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
@@ -507,7 +649,6 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
 
-            @Override
             /**
              * Méthode étant appliqué losque des problèmes sont apparus lors de  :
              *   - la connexion au serveur,
@@ -516,10 +657,129 @@ public class MainActivity extends AppCompatActivity {
              * @Param call : La requête provoquant le onFailure.
              * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
+            @Override
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
                 //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
     }
+
+
+
+
+    /**
+     * Prépare et lance la requête utilisé pour vérifier si l'adresse IP actuelle est bien la bonne,
+     * Si oui, alors on change le boolean s'en chargeant à vrai.
+     * Si non on change le boolean s'en chargeant à faux.
+     */
+    public void LancementRequeteValidationIP(){
+        //Créé le client utilisé pour intérargir avec la base de données.
+        ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
+
+        //Créer le receptacle de la méthode voulue à partir de clientRequete
+        //Envoie une requête pour vérifier si c'est la bonne adresse IP du serveur.
+        Call<ReponseRequete> call_Post = clientRequete.TestBonneAdresseIP();
+
+        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+        //Ici le traitement de CallBack est directement appliqué :
+        //  onResponse si la requête est considérée réussite(Si une réponse http est reçu).
+        //  onFailure si la requête est considérée ratée.
+
+        call_Post.enqueue(new Callback<ReponseRequete>() {
+            @Override
+            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+            public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> response) {
+                //Test si la requête a réussi ( code http allant de 200 à 299).
+                if (response.isSuccessful()) {
+                    //Affiche le succès de la vérification de l'adresse IP du serveur.
+                    Toast.makeText(MainActivity.this, "L'adresse IP est bien celle du serveur.",Toast.LENGTH_SHORT ).show();
+                    //Changement du boolean s'occupant de l'état de l'adresse IP du serveur.
+                    ServiceGenerator.setEtatDeLAdresseIPDuServeur(true);
+                    //Nous devons maintenant passer à la suite de la gestion de l'adresse IP.
+                    SauvegardeAdresseIP();
+                } else {
+                    //Affiche le code de la reponse, soit le code http de la requête.
+                    Log.e(TAG, "Status code : " + response.code());
+                    //Des erreurs se sont passés, on doit donc changer le boolean chargé de son état.
+                    ServiceGenerator.setEtatDeLAdresseIPDuServeur(false);
+                    //On doit ensuite relancer la recherche de l'adresse IP, nous ne sommes pas sûr que ce soit la bonne.
+                    RechercheAdresseIP();
+                }
+            }
+            /**
+             * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+             *   - la connexion au serveur,
+             *   - la création de la requête,
+             *   - la transformation de la réponse en objet java (ne peut pas causer de problème ici, aucune réponse n'est attendu).
+             * @Param call : La requête provoquant le onFailure.
+             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             */
+
+            @Override
+            public void onFailure(Call<ReponseRequete> call, Throwable t) {
+                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
+                ServiceGenerator.Message(MainActivity.this, TAG, t);
+                //Ce n'est pas l'adresse IP du serveur, il faut donc changer la valeur du boolean s'en chargeant.
+                ServiceGenerator.setEtatDeLAdresseIPDuServeur(false);
+                //On doit ensuite relancer la recherche de l'adresse IP.
+                RechercheAdresseIP();
+            }
+        });
+
+    }
+
+
+    public void LancementRequeteSupprimerUtilisateur(int numero_id_utilisateur){
+
+        String numero_id_chaine = "" + numero_id_utilisateur;
+
+        //Créé le client utilisé pour intérargir avec la base de données.
+        ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
+        NumeroIDCarteEtudiant IDEtudiant = new NumeroIDCarteEtudiant(numero_id_chaine);
+
+        //Créer le receptacle de la méthode voulue à partir de clientRequete
+        //EnleverPersonne prend en paramètre le String et le NumeroIdCarteEtudiant correspondant à l'id de l'utilisateur à enlever.
+        Call<Void> call_Post = clientRequete.EnleverPersonne(numero_id_chaine,IDEtudiant);
+
+        // Implémentation de la suppression par swipe
+        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+        //Ici le traitement de CallBack est directement appliqué :
+        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+        //  onFailure si la requête est considérée ratée.
+        call_Post.enqueue(new Callback<Void>() {
+            /**
+             *Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+             */
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                //Test si la requête a réussi ( code http allant de 200 à 299).
+                if (response.isSuccessful()) {
+                    Log.e("TAG", "La personne a été enlevée");
+                    //Met à jour l'affichage.
+                    ReinitialiseAffichage();
+                } else {
+                    //Affiche le code de la reponse, soit le code http de la requête.
+                    Log.e(TAG, "Status code : " + response.code());
+                }
+            }
+            /**
+             * Méthode étant appliqué losque des problèmes sont apparus lors de  :
+             *   - la connexion au serveur,
+             *   - la création de la requête,
+             *   - la transformation de la réponse en objet java (ne peut pas causer de problème ici, aucune réponse n'est attendu).
+             * @Param call : La requête provoquant le onFailure.
+             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             */
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision.
+                ServiceGenerator.Message(MainActivity.this, TAG, t);
+            }
+        });
+    }
+
+
+
 }
+

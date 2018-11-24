@@ -22,18 +22,52 @@ import retrofit2.converter.gson.GsonConverterFactory;
  *      n'arrivent au code les attendant et donc de généralisé du code pour des erreurs spécifiques.
  * createService est la méthode créant le client.
  */
-public class ServiceGenerator {
+public abstract class ServiceGenerator {
 
     /**
      * Base des URLs des requêtes.
      */
-    private static final String BASE_URL =  "http://192.168.43.229:8000/";
+    private static final String BASE_URL =  "http://";
+
+    private static String IP_URL = "";
+
+    private static String URL_Complete = "http://urlDeTest";
+
+    private static void Modification_URL_Complete(){
+        URL_Complete = BASE_URL + IP_URL;
+        builder.baseUrl(URL_Complete);
+    }
+
+    /*
+     Vrai si l'adresse IP est la bonne.
+     Faux si ce n'est pas la bonne
+     */
+    private static boolean etatDeLAdresseIPDuServeur = false;
+
+    public static void setEtatDeLAdresseIPDuServeur(boolean valeurEtatAdresseIP){
+        etatDeLAdresseIPDuServeur = valeurEtatAdresseIP;
+    }
+
+    public static boolean getEtatDeLAdresseIPDuServeur(){
+        return etatDeLAdresseIPDuServeur;
+    }
+
+    public static void setIPUrl(String IP_URL){
+        ServiceGenerator.IP_URL = IP_URL;
+        Modification_URL_Complete();
+    }
+
+    public static String getIpUrl(){
+        return ServiceGenerator.IP_URL;
+    }
+
+
 
     /**
      * Builder des requêtes.
      */
     private static Retrofit.Builder builder = new Retrofit.Builder()
-            .baseUrl(BASE_URL)
+            .baseUrl(URL_Complete)
             .addConverterFactory(GsonConverterFactory.create());
 
     /**
@@ -75,7 +109,6 @@ public class ServiceGenerator {
     //Méthode créant le client avec toutes les options voulues.
     //C'est à partir de ce client que les méthodes des requêtes sont lancés.
     public static <S> S createService(Class<S> serviceClass){
-
         //Test si l'interceptor a été ajouté au client http utilisé par retrofit,
         // si il n'y est pas alors le client http n'a pas été initialisé.
         // Si il y est alors il n'y a pas besoin d'initialiser de nouveau le client http.
@@ -86,6 +119,9 @@ public class ServiceGenerator {
             builder.client(httpClient.build());
             //Créer l'instance de retrofit utilisé pour les requêtes.
             retrofit = builder.build();
+        } else {
+            retrofit = builder.build();
+
         }
 
         return retrofit.create(serviceClass);

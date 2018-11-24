@@ -88,4 +88,7 @@ public interface ClientRequetes {
                                                 @Field("temps") String temps,
                                                 @Field("id") String id);
 
+    @GET("CheminTemp")
+    Call<ReponseRequete> TestBonneAdresseIP();
+
 }
