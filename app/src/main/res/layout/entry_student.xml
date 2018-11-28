@@ -16,6 +16,7 @@
     <TextView
         android:id="@+id/nomEtudiant"
         style="@style/ElementHorizontal"
+        android:textSize="24sp"
         android:layout_weight="4" />
 
     <TextView
@@ -23,6 +24,7 @@
         style="@style/ElementHorizontal"
         android:layout_weight="1"
         android:text="@string/affichageTempsBidon"
+        android:textSize="24sp"
         android:textAlignment="center" />
 
 </LinearLayout></android.support.v7.widget.CardView>
