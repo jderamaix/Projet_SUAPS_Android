@@ -29,13 +29,13 @@ public abstract class ServiceGenerator {
      */
     private static final String BASE_URL =  "http://";
 
-
     /**
-     * 
+     * String contenant le port du serveur, à ajouter à l'url pour les requêtes.
      */
     private static final String FIN_URL = ":8000";
+
     /**
-     * La valeur de l'IP du serveur ou si en cours de test l'IP a testé.
+     * La valeur de l'IP du serveur ou si en cours de test la valeur de l'IP a testé.
      * Utilisé pour avoir l'ULR finale pour les requêtes.
      */
     private static String IP_URL = "";

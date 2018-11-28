@@ -255,12 +255,13 @@ public class RFIDActivity extends AppCompatActivity {
                             mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
                             mp_son_refuser.start();
                         }
-                        if(Result.equals("Désincription réussie.")){
+                        if(Result.equals("Désinscription réussie.")){
                             mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
                             mp_son_approuver.start();
                             }
                         if(Result.equals("Limite de personne atteinte.")){
                             mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
+                            mp_son_refuser.start();
                         }
                         /*
                          * Réinitialise le compteur pour pouvoir le relancer.
