@@ -12,10 +12,6 @@
         <item name="android:gravity">center_vertical</item>
     </style>
 
-    <style name="Element">
-        <item name="android:padding">@dimen/espacement</item>
-    </style>
-
     <style name="ElementVertical">
         <item name="android:paddingTop">@dimen/espacement</item>
         <item name="android:paddingBottom">@dimen/espacement</item>
