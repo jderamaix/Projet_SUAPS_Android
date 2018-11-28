@@ -45,7 +45,7 @@ public abstract class ServiceGenerator {
      * Méthode modifiant URL_complete par la concaténation deBASE_URL et IP_URL.
      */
     private static void Modification_URL_Complete(){
-        URL_Complete = BASE_URL + IP_URL;
+        URL_Complete = BASE_URL + IP_URL + ":8000";
         builder.baseUrl(URL_Complete);
     }
 

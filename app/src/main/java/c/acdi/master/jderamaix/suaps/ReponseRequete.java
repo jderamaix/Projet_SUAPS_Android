@@ -28,6 +28,15 @@ public class ReponseRequete {
      * Méthode renvoyant reponse.
      * @return : résultat informatif de la requête.
      */
-    public String getReponse() { return this.reponse; }
+    public String getReponse(){
+        try {
+            if (this.reponse != null) {
+                return this.reponse;
+            }
+        } catch (Exception e) {
+           return "null";
+        }
+        return "null";
+    }
 
 }

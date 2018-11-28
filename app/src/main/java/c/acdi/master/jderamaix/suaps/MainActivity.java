@@ -124,6 +124,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         /*
         Méthode commençant la gestion de l'adresse IP du serveur.
          */
+
+        decouverte = new Discovery(PORT,this);
+
         GestionAdresseIPServeur();
 
     }
@@ -180,18 +183,17 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
          * et un un objet InterfaceDecouverteReseau, étant donné que l'activité principale
          * implémente cette interface, elle est considéré comme un objet de ce type.
          */
-        decouverte = new Discovery(PORT,this);
 
         //On test si l'IP est null ou égale à "" (sa valeur d'initialisation).
         if((ServiceGenerator.getIpUrl() == null) || ServiceGenerator.getIpUrl().equals("")){
             //On lance un broadcast pour obtenir une autre adresse IP.
+
             RechercheAdresseIP();
             } else {
-                //On doit maintenant tester l'adresse IP.
+            //On doit maintenant tester l'adresse IP.
                 LancementRequeteValidationIP();
             }
     }
-
 
     /**
      * Méthode ajoutant le onSwiped sur le RecyclerView pour pouvoir enlerver des utilisateurs de la séance.
@@ -256,6 +258,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     public void recuperationIpServer() {
         //On prend le string Reçu.
         String s = decouverte.getIp();
+
         //On test si le string est null.
         if (s == null || s.equals("null")){
             //Si il l'est on relance une recherche de l'adresse IP.
@@ -719,7 +722,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
                 //Test si la requête a réussi ( code http allant de 200 à 299).
                 if (response.isSuccessful()) {
                     //Affiche le succès de la vérification de l'adresse IP du serveur.
-                    Toast.makeText(MainActivity.this, "L'adresse IP est bien celle du serveur.",Toast.LENGTH_SHORT ).show();
+                    if(!response.body().getReponse().equals("null")){
+                        Toast.makeText(MainActivity.this, response.body().getReponse(), Toast.LENGTH_SHORT).show();
+                    }
                     //Changement du boolean s'occupant de l'état de l'adresse IP du serveur.
                     ServiceGenerator.setEtatDeLAdresseIPDuServeur(true);
                     //Nous devons maintenant passer à la suite de la gestion de l'adresse IP.
@@ -730,7 +735,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
                     //Des erreurs se sont passés, on doit donc changer le boolean chargé de son état.
                     ServiceGenerator.setEtatDeLAdresseIPDuServeur(false);
                     //On doit ensuite relancer la recherche de l'adresse IP, nous ne sommes pas sûr que ce soit la bonne.
-                    RechercheAdresseIP();
+                    //RechercheAdresseIP();
                 }
             }
             /**

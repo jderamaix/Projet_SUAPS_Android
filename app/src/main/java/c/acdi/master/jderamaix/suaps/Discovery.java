@@ -20,12 +20,12 @@ public class Discovery
     private int mPort;
     private InterfaceDecouverteReseau _decouvrirReseau = null;
 
-    private StringBuilder ip = null;
+    private String ip = null;
 
     public Discovery(int p, InterfaceDecouverteReseau interfaceDecouverteReseau)
     {
         mPort = p;
-        ip = new StringBuilder();
+        ip = new String();
 
         /**
          * La classe MainActivity implents l'interface InterfaceDecouverteReseau
@@ -55,16 +55,15 @@ public class Discovery
      * Cette méthode à pour unique but de lancer
      * la tâche Asynchrone lançant le broadcast
      */
-    public void getServerIp()
-    {
-            new NetworkAsync().execute(MESSAGE);
+    public void getServerIp(){
+        new NetworkAsync().execute(MESSAGE);
     }
 
 
     /**
      *
      * A partir d'une InetAdress il est possible de récupérer l'adresse
-     * de broadcast associé à cette denrière
+     * de broadcast associé à cette dernière
      *
      * @param myIpAddress Ce paramètre est l'adresse IP du téléphone et avec cette dernière
      *                    il est possible de récupérer son adresse de broadcast
@@ -79,7 +78,10 @@ public class Discovery
             List<InterfaceAddress> addresses = temp.getInterfaceAddresses();
 
             for (InterfaceAddress inetAddress : addresses) {
-                iAddr = inetAddress.getBroadcast();
+                if(inetAddress.getBroadcast()==null)
+                    Log.e("returnBroadcast","objet de retour null");
+                else
+                    iAddr = inetAddress.getBroadcast();
             }
             //System.out.println("iAddr=" + iAddr);
             return iAddr;
@@ -114,7 +116,6 @@ public class Discovery
         socket = new DatagramSocket();
         socket.setBroadcast(true);
 
-
         /**
          * Boucle permettant de répeter l'envoi du Broadcast afin que le serveur reçoive
          * le message
@@ -147,14 +148,12 @@ public class Discovery
         }
         String s = packet.getAddress().getHostAddress(); //récupération de l'ip du serveur sous une forme
                                                         //de chaine de caractère
-
-
         stop();
         return s;
     }
 
     public String getIp() {
-        return ip.toString();
+        return ip;
     }
 
     public class NetworkAsync extends AsyncTask<String,Void,String>{
@@ -183,8 +182,9 @@ public class Discovery
          */
         @Override
         protected void onPostExecute(String s) {
-            ip.delete(0,ip.length());
-            ip.append(s);
+
+
+            ip = s;
             //Permet d'appeler la méthode recuperationIpServer dans la MainActivity
             _decouvrirReseau.recuperationIpServer();
             super.onPostExecute(s);

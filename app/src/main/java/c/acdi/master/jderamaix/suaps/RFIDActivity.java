@@ -44,12 +44,25 @@ public class RFIDActivity extends AppCompatActivity {
      */
     public int compteur = 0;
 
-    public MediaPlayer mp;
+    /**
+     * Contient le son à utiliser lorsque quelqu'un ayant badger est accepté par la base de données.
+     */
+    public MediaPlayer mp_son_approuver;
+
+    /**
+     * Contient le son à utiliser lorsque quelqu'un ayant badge n'est pas dans la base de données.
+     */
+    public MediaPlayer mp_son_refuser;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.rfid_activite);
+
+        mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter );
+
+        mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter );
 
         /*
          * Initialize NFCAdapter
@@ -73,12 +86,6 @@ public class RFIDActivity extends AppCompatActivity {
             Toast.makeText(this,"Il faut activer le NFC",Toast.LENGTH_LONG).show();
             startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
         }
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.release();
-            }
-        });
     }
 
     /**
@@ -235,19 +242,27 @@ public class RFIDActivity extends AppCompatActivity {
                         String Result = reponse.body().getReponse();
 
                         if(Result.equals("Badgeage Réussi.")){
-                            if(mp.isPlaying()){
-                                mp.stop();
-                                mp.release();
+                            /*
+                            if(mp_son_approuver.isPlaying()){
+                                mp_son_approuver.stop();
+                                mp_son_approuver.release();
                             }
-                            mp = MediaPlayer.create(RFIDActivity.this, R.raw.correct );
-                            mp.start();
+                            */
+                            mp_son_approuver.stop();
+                            mp_son_approuver.release();
+                            mp_son_approuver.reset();
+                            mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
+                            mp_son_approuver.start();
+                            //SetlistenerAudio();
                         } else if(Result.equals("Badgeage pas réussi")){
+                            /*
                             if(mp.isPlaying()){
                                 mp.stop();
                                 mp.release();
-                            }
-                            mp = MediaPlayer.create(RFIDActivity.this, R.raw.wrong );
-                            mp.start();
+                            }*/
+                            mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
+                            mp_son_refuser.start();
+                            //SetlistenerAudio();
                         }
 
                         textView.setText(Result);
@@ -311,6 +326,16 @@ public class RFIDActivity extends AppCompatActivity {
 
 
         }
+    }
+
+    public void SetlistenerAudio() {
+        /*
+        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(MediaPlayer mp) {
+                mp.release();
+            }
+        });*/
     }
 
 }
