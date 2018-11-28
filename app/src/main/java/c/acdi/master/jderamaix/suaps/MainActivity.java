@@ -309,6 +309,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     public void InvocationMethodeInitialisation(){
         AjoutOnSwipedSurRecyclerView();
         RenseignementCapaciteHeure();
+        ReinitialiseAffichage();
         InitialiserGerantOrganisateur();
     }
 
