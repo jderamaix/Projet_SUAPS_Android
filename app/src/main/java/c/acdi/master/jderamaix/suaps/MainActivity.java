@@ -1,11 +1,8 @@
 package c.acdi.master.jderamaix.suaps;
 
-import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
-import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -18,18 +15,14 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import okio.Buffer;
-import okio.BufferedSink;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -219,9 +212,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
                 LancementRequeteSupprimerUtilisateur(numero_id_utilisateur);
             }
         }).attachToRecyclerView(view);
-
-        //On appelle la méthode ajoutant les mises à jour automatique de l'affichage.
-        InitialiserGerantOrganisateur();
     }
 
     /**
@@ -236,8 +226,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         /*
          * Rafraichit l'affichage de la configuration de la séance.
          */
-        RenseignementCapaciteHeure();
-    }
+        }
 
 
     /**
@@ -309,10 +298,19 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         }
 
         //On peut maintenant implémenter et appliquer toutes les méthodes concernant le serveur.
-        //Ici la méthode ajoutant le swipe et appelant les autres.
-        AjoutOnSwipedSurRecyclerView();
+        //Ici la méthode appelant les méthodes chargés de l'affichage.
+        InvocationMethodeInitialisation();
+
     }
 
+    /**
+     * Méthode invoquer après la validification de l'adresse IP du serveur.
+     */
+    public void InvocationMethodeInitialisation(){
+        AjoutOnSwipedSurRecyclerView();
+        RenseignementCapaciteHeure();
+        InitialiserGerantOrganisateur();
+    }
 
     /**
      * Lance la mise à jour de l'affichage,

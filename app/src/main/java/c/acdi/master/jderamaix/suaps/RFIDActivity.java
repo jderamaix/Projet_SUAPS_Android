@@ -239,34 +239,29 @@ public class RFIDActivity extends AppCompatActivity {
                          * Change le message du TextView pour informer les utilisateurs du résultat du badgeage
                          *  (Manque de place dans la séance, badgeage réussi, ...).
                          */
-                        String Result = reponse.body().getReponse();
-
-                        if(Result.equals("Badgeage Réussi.")){
-                            /*
-                            if(mp_son_approuver.isPlaying()){
-                                mp_son_approuver.stop();
-                                mp_son_approuver.release();
-                            }
-                            */
-                            mp_son_approuver.stop();
-                            mp_son_approuver.release();
-                            mp_son_approuver.reset();
+                            String Result = reponse.body().getReponse();
+                            textView.setText(Result);
+                        /*
+                         * Test le message reçu, si le message reçu est celui de la réussite de l'inscription, on lance le son correspndant.
+                         */
+                        if(Result.equals("Inscription réussie.")){
                             mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
                             mp_son_approuver.start();
-                            //SetlistenerAudio();
-                        } else if(Result.equals("Badgeage pas réussi")){
-                            /*
-                            if(mp.isPlaying()){
-                                mp.stop();
-                                mp.release();
-                            }*/
+                        }
+                        /*
+                         * Test le message reçu, si le message reçu est celui correspondant à la non présence de l'utilisateur dans la base de données, on lance le son correspndant.
+                         */
+                        if(Result.equals("Personne non inscrite.")){
                             mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
                             mp_son_refuser.start();
-                            //SetlistenerAudio();
                         }
-
-                        textView.setText(Result);
-
+                        if(Result.equals("Désincription réussie.")){
+                            mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
+                            mp_son_approuver.start();
+                            }
+                        if(Result.equals("Limite de personne atteinte.")){
+                            mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
+                        }
                         /*
                          * Réinitialise le compteur pour pouvoir le relancer.
                          */
@@ -327,15 +322,4 @@ public class RFIDActivity extends AppCompatActivity {
 
         }
     }
-
-    public void SetlistenerAudio() {
-        /*
-        mp.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-            @Override
-            public void onCompletion(MediaPlayer mp) {
-                mp.release();
-            }
-        });*/
-    }
-
 }

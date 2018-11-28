@@ -6,9 +6,9 @@
     <color name="couleurTexteDefaut">#000000</color>
     <color name="couleurTexteContreombrage">#FFFFFF</color>
     <color name="couleurTexteBidon">#777777</color>
-    <color name="couleurEntreeTempsBon">#00BB00</color>
-    <color name="couleurEntreeTempsLimite">#EEEE00</color>
-    <color name="couleurEntreeTempsDepasse">#FF0000</color>
+    <color name="couleurEntreeTempsBon">#4BBF73</color>
+    <color name="couleurEntreeTempsLimite">#F0AD4E</color>
+    <color name="couleurEntreeTempsDepasse">#D9534F</color>
     <color name="couleurAjoutAjouter">#00BB00</color>
     <color name="couleurAjoutAnnuler">#FF0000</color>
 </resources>

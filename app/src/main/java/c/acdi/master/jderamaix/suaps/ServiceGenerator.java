@@ -29,6 +29,11 @@ public abstract class ServiceGenerator {
      */
     private static final String BASE_URL =  "http://";
 
+
+    /**
+     * 
+     */
+    private static final String FIN_URL = ":8000";
     /**
      * La valeur de l'IP du serveur ou si en cours de test l'IP a testé.
      * Utilisé pour avoir l'ULR finale pour les requêtes.
@@ -45,7 +50,7 @@ public abstract class ServiceGenerator {
      * Méthode modifiant URL_complete par la concaténation deBASE_URL et IP_URL.
      */
     private static void Modification_URL_Complete(){
-        URL_Complete = BASE_URL + IP_URL + ":8000";
+        URL_Complete = BASE_URL + IP_URL + FIN_URL;
         builder.baseUrl(URL_Complete);
     }
 
