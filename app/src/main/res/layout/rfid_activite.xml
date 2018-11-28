@@ -9,7 +9,7 @@
         android:layout_weight="1"
         android:gravity="center"
         android:text="@string/TextView_RFIDActivity"
-        android:textSize="50sp" />
+        android:textSize="45sp" />
 
     <ImageView
         android:contentDescription="@string/image_carte_etudiant"
