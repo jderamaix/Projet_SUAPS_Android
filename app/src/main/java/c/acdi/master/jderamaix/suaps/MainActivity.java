@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -63,7 +62,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     /**
      * Intervalle de temps utilisé pour la mise à jour périodique de l'affichage par requête.
      */
-    private final static int INTERVAL = 6;//60 * 3;
+    private final static int INTERVAL = 10;
+    //L'intervalle de temps entre deux mises à jour d'affichage est de INTERVAL secondes;
 
     /**
      * Capacité d'accueil du cours.
@@ -223,7 +223,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
          * Créer un gérant d'organisateur et son organisateur fixé à une intervalle de INTERVAL d'unité de temps appellant AppelRun.
          */
         organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun,0,INTERVAL,TimeUnit.SECONDS);
-        organisateurGerant.cancel(true);
         /*
          * Rafraichit l'affichage de la configuration de la séance.
          */
@@ -323,9 +322,11 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     @Override
     public void onResume() {
         super.onResume();
-        //Toutes les INTERVAL secondes, applique la méthode AppelRun.
-        //Seulement si l'adresse IP a été vérifier.
-        //Si le gérant de l'organisateur est arrêté, on le relance.
+        /*
+         * Toutes les INTERVAL secondes, applique la méthode AppelRun.
+         * Seulement si l'adresse IP a été vérifier.
+         * Si le gérant de l'organisateur est arrêté, on le relance.
+         */
         if(ServiceGenerator.getEtatDeLAdresseIPDuServeur() && organisateurGerant.isCancelled()){
             organisateurGerant = organisateur.scheduleAtFixedRate(AppelRun, 0, INTERVAL, TimeUnit.SECONDS);
             ReinitialiseAffichage();
@@ -352,7 +353,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     @Override
     protected void onDestroy(){
-        //Si l'organisateur n'est pas shutdown, on le shutdown.
+        /*
+         * Si l'organisateur n'est pas shutdown, on le shutdown.
+         */
         if(!organisateur.isShutdown()) {
             organisateur.shutdown();
         }
@@ -364,9 +367,14 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     final Runnable AppelRun = new Runnable(){
         public void run() {
-            //Appelle la méthode mettant à jour les utilisateurs à partir de la base de données par une requête.
+            Log.e(TAG, "On passe dans la mise à jour");
+            /*
+             * Appelle la méthode mettant à jour les utilisateurs à partir de la base de données par une requête.
+             */
             ReinitialiseAffichage();
-            //Appelle la méthode mettant à jour les paramètres(temps limite, capacité).
+            /*
+             * Appelle la méthode mettant à jour les paramètres(temps limite, capacité).
+             */
             RenseignementCapaciteHeure();
         }
     };
@@ -406,17 +414,23 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      * @param lastName  Le nom de l'étudiant à ajouter.
      */
     public void addStudent(String firstName, String lastName) {
-        //Créé le client permettant d'interargir avec la base de données
+        /*
+         * Créé le client permettant d'interargir avec la base de données
+         */
         ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
-        //Créer le receptacle de la méthode voulue à partir de clientRequetes
-        //EnvoieNom prend en paramètre le nom et le prénom de l'utilisateur.
+        /*
+         * Créer le receptacle de la méthode voulue à partir de clientRequetes
+         * EnvoieNom prend en paramètre le nom et le prénom de l'utilisateur.
+         */
         Call<ReponseRequete> call_Post = clientRequete.EnvoieNom(lastName, firstName);
 
-        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
-        //Ici le traitement de CallBack est directement appliqué :
-        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
-        //  onFailure si la requête est considérée ratée.
+        /*
+         * Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+         * Ici le traitement de CallBack est directement appliqué :
+         * onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+         * onFailure si la requête est considérée ratée.
+         */
         call_Post.enqueue(new Callback<ReponseRequete>() {
             /*
              * Si la requête est arrivé jusqu'à la base de données
@@ -447,7 +461,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              */
             @Override
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
-                //Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision
+                /*
+                 * Méthode affichant les messages pour l'utilisateur en cas de onFailure, voir ServiceFenerator pour plus de précision
+                 */
                 ServiceGenerator.Message(MainActivity.this, TAG, t);
             }
         });
@@ -460,20 +476,28 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     public void ReinitialiseAffichage() {
 
-        //Créer le client permettant d'intérargir avec la base de données
+        /*
+         * Créer le client permettant d'intérargir avec la base de données
+         */
         ClientRequetes clientRequete = ServiceGenerator.createService(ClientRequetes.class);
 
-        //Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
-        //RecoitPersonnes ne prend pas de paramètre
+        /*
+         * Utilise la méthode du client pour créer la requête permettant l'interaction avec la base de données
+         * RecoitPersonnes ne prend pas de paramètre
+         */
         Call<List<ModeleUtilisateur>> methodeCall = clientRequete.RecoitPersonnes();
 
-        //Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
-        //Ici le traitement de CallBack est directement appliqué :
-        //  onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
-        //  onFailure si la requête est considérée ratée.
+        /*
+         * Méthode envoyant la requête asynchronement à la base de données et stockant la réponse obtenue (erreur ou réussite) dans CallBack
+         * Ici le traitement de CallBack est directement appliqué :
+         * onResponse si la requête est considérée réussite(Si une réponse http esr reçu).
+         * onFailure si la requête est considérée ratée.
+         */
         methodeCall.enqueue(new Callback<List<ModeleUtilisateur>>() {
             @Override
-            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+            /*
+             * Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+             */
             public void onResponse(Call<List<ModeleUtilisateur>> call, Response<List<ModeleUtilisateur>> response) {
                 //Test si la requête a réussi ( code http allant de 200 à 299).
                 if (response.isSuccessful()) {
