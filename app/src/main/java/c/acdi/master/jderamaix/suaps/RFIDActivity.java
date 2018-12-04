@@ -192,8 +192,8 @@ public class RFIDActivity extends AppCompatActivity {
 
         /**
          * Méthode appliqué quand le numéro de la carte ayant badgé a finalement été obtenue,
-         *   Créé la requête pour envoyé le numéro à la base de données et affiché les informations
-         *   relatifs à la requête .
+         *   Créé la requête pour envoyer le numéro à la base de données puis affiche les informations
+         *   relatifs à la requête, joue un son selon le réultat de la requête.
          * @param s : contient le numéro de la carte de l'étudiant ayant badgé.
          */
         @Override
@@ -201,7 +201,7 @@ public class RFIDActivity extends AppCompatActivity {
             super.onPostExecute(s);
 
             /*
-             * Recherche le TextView utilisé pour afficher les infromations relatives au badgeage
+             * Recherche le TextView utilisé pour afficher les informations relatives au badgeage
              */
             final TextView textView = (TextView) findViewById(R.id.textViewRFIDActivity);
 
@@ -240,29 +240,44 @@ public class RFIDActivity extends AppCompatActivity {
                          *  (Manque de place dans la séance, badgeage réussi, ...).
                          */
                             String Result = reponse.body().getReponse();
-                            textView.setText(Result);
+                            textView.setText(Result.substring(1,Result.length()));
                         /*
                          * Test le message reçu, si le message reçu est celui de la réussite de l'inscription, on lance le son correspndant.
                          */
-                        if(Result.equals("Inscription réussie.")){
-                            mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
-                            mp_son_approuver.start();
+                        switch(Result.substring(0,1)){
+                            /*
+                             * Si la personne badgeant n'est pas dans la base de données.
+                             */
+                            case "0":
+                                mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
+                                mp_son_approuver.start();
+                                break;
+                            /*
+                             * Si l'inscription à la séance est réussite.
+                             */
+                            case "1":
+                                mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
+                                mp_son_approuver.start();
+                                break;
+                             /*
+                              * Si la désinscription de la séance est réussite.
+                              */
+                            case "2":
+                                mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
+                                mp_son_approuver.start();
+                                break;
+                            /*
+                             * Si il n'y a plus de place dans la séance.
+                             */
+                            case "3":
+                                mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
+                                mp_son_approuver.start();
+                                break;
+
+                            default:
+                                    break;
                         }
-                        /*
-                         * Test le message reçu, si le message reçu est celui correspondant à la non présence de l'utilisateur dans la base de données, on lance le son correspndant.
-                         */
-                        if(Result.equals("Personne non inscrite.")){
-                            mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
-                            mp_son_refuser.start();
-                        }
-                        if(Result.equals("Désinscription réussie.")){
-                            mp_son_approuver = MediaPlayer.create(RFIDActivity.this, R.raw.bonbadgeaccepter);
-                            mp_son_approuver.start();
-                            }
-                        if(Result.equals("Limite de personne atteinte.")){
-                            mp_son_refuser = MediaPlayer.create(RFIDActivity.this, R.raw.mauvaisbadgenonaccepter);
-                            mp_son_refuser.start();
-                        }
+
                         /*
                          * Réinitialise le compteur pour pouvoir le relancer.
                          */

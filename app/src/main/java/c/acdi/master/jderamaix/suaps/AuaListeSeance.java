@@ -13,15 +13,23 @@ package c.acdi.master.jderamaix.suaps;
  *      Initialisation de l'application en prenant les données par défauts dans la base dde données.
  */
 public class AuaListeSeance {
-    // La limite de personnes autorisés en un même temps dans une séance.
+    /*
+     * La limite de personnes autorisés en un même temps dans une séance.
+     */
     private String limitePersonnes;
-    // Le temps limite d'une séance pour un utilisateur, il peut dépasser,
-    // mais il sera choisi en priorité si la limite est atteinte et qu'un autre utilisateur veut participer.
+    /*
+     * Le temps limite d'une séance pour un utilisateur, il peut dépasser,
+     * mais il sera choisi en priorité si la limite est atteinte et qu'un autre utilisateur veut participer.
+     */
     private String tempsSeance;
-    // L'id de la séance, pour l'instant elle n'est pas utilisée.
+    /*
+     * L'id de la séance, pour l'instant elle n'est pas utilisée.
+     */
     private int idSeance;
 
-    //Le constructeur de la classe avec chaque données d'initialisé.
+    /*
+     * Le constructeur de la classe avec chaque données d'initialisé.
+     */
     public AuaListeSeance(String limitePersonnes, String tempsSeance, int idSeance) {
         this.idSeance = idSeance;
         this.limitePersonnes = limitePersonnes;

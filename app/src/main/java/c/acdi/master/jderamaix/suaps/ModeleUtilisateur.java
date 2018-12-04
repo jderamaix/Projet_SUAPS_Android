@@ -15,13 +15,21 @@ package c.acdi.master.jderamaix.suaps;
   */
 public class ModeleUtilisateur {
 
-    // Nom de l'utilisateur
+    /*
+     * Nom de l'utilisateur
+     */
     private String nom;
-    // Prénom de l'utilisateur
+    /*
+     * Prénom de l'utilisateur
+     */
     private String prenom;
-    // Numéro de la carte de l'utilisateur
+    /*
+     * Numéro de la carte de l'utilisateur
+     */
     private int no_etudiant;
-    // Durée de la présence de l'utilisateur pour cette séance
+    /*
+     * Durée de la présence de l'utilisateur pour cette séance
+     */
     private String duree;
 
     /**

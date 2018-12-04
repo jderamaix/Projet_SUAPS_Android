@@ -136,27 +136,33 @@ public abstract class ServiceGenerator {
         ).show();
         Log.e(TAG,t.getMessage());
         Log.e(TAG,t.toString());
-    }
-
-    //Méthode créant le client avec toutes les options voulues.
-    //C'est à partir de ce client que les méthodes des requêtes sont lancés.
+        }
+    /*
+     * Méthode créant le client avec toutes les options voulues.
+     * C'est à partir de ce client que les méthodes des requêtes sont lancés.
+     */
     public static <S> S createService(Class<S> serviceClass){
-        //Test si l'interceptor a été ajouté au client http utilisé par retrofit,
-        // si il n'y est pas alors le client http n'a pas été initialisé.
-        // Si il y est alors il n'y a pas besoin d'initialiser de nouveau le client http.
+        /*
+         * Test si l'interceptor a été ajouté au client http utilisé par retrofit,
+         * si il n'y est pas alors le client http n'a pas été initialisé.
+         * Si il y est alors il n'y a pas besoin d'initialiser de nouveau le client http.
+         */
         if(!httpClient.interceptors().contains(interceptor)){
-            //Ajout l'intercepteur au client http.
+            /*
+             * Ajout l'intercepteur au client http.
+             */
             httpClient.addInterceptor(interceptor);
-            //Ajout le client http au builder de retrofit.
+            /*
+             * Ajout le client http au builder de retrofit.
+             */
             builder.client(httpClient.build());
-            //Créer l'instance de retrofit utilisé pour les requêtes.
+            /*
+             * Créer l'instance de retrofit utilisé pour les requêtes.
+             */
             retrofit = builder.build();
         } else {
             retrofit = builder.build();
-
         }
-
         return retrofit.create(serviceClass);
     }
-
 }

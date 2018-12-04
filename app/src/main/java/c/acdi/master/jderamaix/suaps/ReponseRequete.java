@@ -14,8 +14,10 @@ package c.acdi.master.jderamaix.suaps;
  */
 public class ReponseRequete {
 
-    //Résultat de la requête formulé explicitement par la base de données,
-    // N'a un but qu'informatif.
+    /*
+     * Résultat de la requête formulé explicitement par la base de données,
+     * N'a un but qu'informatif.
+     */
     private String reponse;
 
     /**

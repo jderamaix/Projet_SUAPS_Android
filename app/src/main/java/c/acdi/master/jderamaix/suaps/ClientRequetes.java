@@ -34,15 +34,26 @@ import retrofit2.http.Path;
 public interface ClientRequetes {
 
     /**
-     * Requête pour prendre les informations de toutes personnes présentes
-     * Le 1 permet d'indiquer que la requête vient de l'application et non de l'écran
+     * Requête pour prendre les informations de toutes personnes présentes.
+     * Le 1 permet d'indiquer que la requête vient de l'application et non de l'écran.
      */
     @GET("/controlleur/listePersonne/1")
     Call<List<ModeleUtilisateur>> RecoitPersonnes();
 
+    /**
+     * Requête envoyant les changements d'heures de séances et capacité d'accueil
+     * Prend en Path le string commposé de la capacité / heure  / 1
+     * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
+     */
+    @FormUrlEncoded
+    @POST("controlleur/setSeance")
+    Call<ReponseRequete> EnvoieTempsCapacite(@Field("capacite") String capacite,
+                                             @Field("temps") String temps,
+                                             @Field("id") String id);
 
     /**
-     *
+     * Requête pour prendre les données de la base de données à propos des paramètres de la séance
+     * pour pouvoir les mettre à jour sur l'affichage.
      */
     @GET("/controlleur/sendSeance")
     Call<List<AuaListeSeance>> RecoitParametre();
@@ -54,22 +65,18 @@ public interface ClientRequetes {
     @POST("/controlleur/vuePresenceUpdate/{temp}")
     Call<Void> EnleverPersonne(@Path("temp") String Variable, @Body NumeroIDCarteEtudiant IDEtudiant);
 
-
     /**
      * Requête pour envoyer une personne badgeant avec son numéro de carte
-     * Prend en Body et en Path son numéro de carte
+     * Prend en Field et en Path son numéro de carte
      * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
      */
     @FormUrlEncoded
      @POST("/controlleur/badgeage")
     Call<ReponseRequete> EnvoieNumCarte(@Field("numeroCarte") String numeroCarte);
 
-
-
-
     /**
      *Requête pour envoyer une personne ajouter manuellement avec son nom
-     *Prend en Body et en Path son nom
+     *Prend en Field et en Path son nom
     */
     @FormUrlEncoded
     @POST("/controlleur/addPersonne")
@@ -78,16 +85,9 @@ public interface ClientRequetes {
     );
 
     /**
-     * Requête envoyant les changements d'heures de séances et capacité d'accueil
-     * Prend en Path le string commposé de la capacité / heure  / 1
-     * Attend un retour de type String pour avoir des informations sur l'intéraction avec la base de données
+     * Requête utilisé pour tester si l'adresse IP actuelle est celle du serveur.
+     * Ne prend aucun paramètre, ne fais rien d'autre que d'assayer d'atteindre la route pour le test.
      */
-    @FormUrlEncoded
-    @POST("controlleur/setSeance")
-    Call<ReponseRequete> EnvoieTempsCapacite(@Field("capacite") String capacite,
-                                                @Field("temps") String temps,
-                                                @Field("id") String id);
-
     @GET("/controlleur/connexion")
     Call<ReponseRequete> TestBonneAdresseIP();
 

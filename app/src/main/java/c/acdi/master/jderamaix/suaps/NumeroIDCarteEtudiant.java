@@ -10,9 +10,11 @@ package c.acdi.master.jderamaix.suaps;
  *      en fonction de son id (si ajouté manuellement) ou son numéro de carte étudiant/personnel.
  */
 public class NumeroIDCarteEtudiant {
-    // Le numéro de la carte si l'utilisateur est un étudiant ou un personnel
-    // ou le numéro d'identification de l'utilisateur, si il est ajouté manuellement
-    //      sur l'application, donné par la base de données.
+    /*
+     * Le numéro de la carte si l'utilisateur est un étudiant ou un personnel
+     *      ou le numéro d'identification de l'utilisateur, si il est ajouté manuellement
+     *      sur l'application, donné par la base de données.
+     */
     private String string;
 
     /**
