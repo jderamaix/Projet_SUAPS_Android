@@ -19,6 +19,13 @@
         <item name="android:layout_height">0dp</item>
     </style>
 
+    <style name="ElementVertical.EntreeNomEtudiant">
+        <item name="android:paddingTop">@dimen/espacementEntreeNomEtudiant</item>
+        <item name="android:paddingBottom">@dimen/espacementEntreeNomEtudiant</item>
+        <item name="android:ems">10</item>
+        <item name="android:inputType">textPersonName</item>
+    </style>
+
     <style name="ElementHorizontal">
         <item name="android:paddingLeft">@dimen/espacement</item>
         <item name="android:paddingRight">@dimen/espacement</item>
