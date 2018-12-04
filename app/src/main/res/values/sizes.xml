@@ -2,4 +2,5 @@
 <resources>
     <dimen name="tailleTextDefaut">20sp</dimen>
     <dimen name="espacement">3sp</dimen>
+    <dimen name="espacementEntreeNomEtudiant">8sp</dimen>
 </resources>

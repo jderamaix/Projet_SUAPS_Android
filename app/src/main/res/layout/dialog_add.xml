@@ -4,18 +4,14 @@
 
     <EditText
         android:id="@+id/saisieNomEtudiant"
-        style="@style/ElementVertical"
-        android:ems="10"
+        style="@style/ElementVertical.EntreeNomEtudiant"
         android:hint="@string/suggestionNomEtudiant"
-        android:inputType="textPersonName"
         android:layout_weight="1" />
 
     <EditText
         android:id="@+id/saisiePrenomEtudiant"
-        style="@style/ElementVertical"
-        android:ems="10"
+        style="@style/ElementVertical.EntreeNomEtudiant"
         android:hint="@string/suggestionPrenomEtudiant"
-        android:inputType="textPersonName"
         android:layout_weight="1" />
 
 </LinearLayout>
