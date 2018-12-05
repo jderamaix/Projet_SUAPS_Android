@@ -62,7 +62,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     /**
      * Intervalle de temps utilisé pour la mise à jour périodique de l'affichage par requête.
      */
-    private final static int INTERVAL = 10;
+    private final static int INTERVAL = 5;
     //L'intervalle de temps entre deux mises à jour d'affichage est de INTERVAL secondes;
 
     /**
@@ -495,10 +495,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         methodeCall.enqueue(new Callback<List<ModeleUtilisateur>>() {
             @Override
             /*
-             * Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+             * Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la gestion de la requête par la base de données.
              */
             public void onResponse(Call<List<ModeleUtilisateur>> call, Response<List<ModeleUtilisateur>> response) {
-                //Test si la requête a réussi ( code http allant de 200 à 299).
+                //Test si la requête a réussi (code http allant de 200 à 299).
                 if (response.isSuccessful()) {
                     //Prend la partie de la reponse contenant les données voulues
                     List<ModeleUtilisateur> etudiantList = response.body();
@@ -512,7 +512,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
                             do {
                                 ModeleUtilisateur etudiant = i.next();
                                 dataset.add(new StudentEntry(
-                                        getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom(), etudiant.getPrenom()),
+                                        getResources().getString(R.string.affichageNomEtudiant, etudiant.getNom().toUpperCase(), etudiant.getPrenom()),
                                         etudiant.getDuree(),
                                         etudiant.getNo_etudiant()
                                 ));
