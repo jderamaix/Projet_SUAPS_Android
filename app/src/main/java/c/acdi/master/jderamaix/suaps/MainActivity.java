@@ -157,7 +157,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
                 Deux strings utilisées pour vérifiés la valeur dans le sharedPreference.
              */
             String testPresenceDansPreference = "";
-            String valeurRetour = "La valeur n'est pas presente";
+            String valeurRetour = "La valeur n'est pas présente";
 
             //On donne à testPresenceDansPreference la valeur dans sharedPref si il y en a une sinon on lui donne la valeur de valeurRetour.
             testPresenceDansPreference = sharedPref.getString(getResources().getString(R.string.NomPreferenceActivite), valeurRetour);
@@ -367,7 +367,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     final Runnable AppelRun = new Runnable(){
         public void run() {
-            Log.e(TAG, "On passe dans la mise à jour");
             /*
              * Appelle la méthode mettant à jour les utilisateurs à partir de la base de données par une requête.
              */
