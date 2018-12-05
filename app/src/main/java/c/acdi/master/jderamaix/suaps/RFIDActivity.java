@@ -155,7 +155,7 @@ public class RFIDActivity extends AppCompatActivity {
             int b = bytes[i] & 0xff;
             if (b < 0x10)
                 sb.append('0');
-            sb.append(Integer.toHexString(b));
+            sb.append(Integer.toHexString(b).toUpperCase());
         }
         return sb.toString();
     }

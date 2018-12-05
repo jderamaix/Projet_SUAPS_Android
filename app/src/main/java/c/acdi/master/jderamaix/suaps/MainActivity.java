@@ -758,7 +758,6 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
                     //Des erreurs se sont passés, on doit donc changer le boolean chargé de son état.
                     ServiceGenerator.setEtatDeLAdresseIPDuServeur(false);
                     //On doit ensuite relancer la recherche de l'adresse IP, nous ne sommes pas sûr que ce soit la bonne.
-                    //RechercheAdresseIP();
                 }
             }
             /**

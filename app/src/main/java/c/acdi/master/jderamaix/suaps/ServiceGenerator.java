@@ -130,8 +130,8 @@ public abstract class ServiceGenerator {
      */
     public static void Message(Context c, String TAG, Throwable t) {
         Toast.makeText(
-                c,
-                (t instanceof IOException)? "Erreur de connexion" : "Problème de conversion",
+                 c,
+                (t instanceof IOException)? "Erreur de connexion" : "Problème de conversion des données ou de configuration.",
                 Toast.LENGTH_SHORT
         ).show();
         Log.e(TAG,t.getMessage());
