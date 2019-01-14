@@ -14,7 +14,6 @@ import android.util.Log;
 public class Discovery
 {
     public static final int RECEIVING_TIMEOUT = 10000;
-    public static final int RECEIVING_TIMEOUT_SERVER = 30000;
     private static final String MESSAGE = "AppSUAPS";
     private DatagramSocket socket;
     private int mPort;

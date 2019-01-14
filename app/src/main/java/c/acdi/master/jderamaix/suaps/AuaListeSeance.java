@@ -2,7 +2,7 @@ package c.acdi.master.jderamaix.suaps;
 
 /**
  * Classe utilisé pour transité les informations nécessaires pour
- *      les requêtes de  java dans l'application au Json pour la base de données,
+ *      les requêtes de  java dans l'application au JSON pour la base de données,
  *      concernant les paramètres des séances.
  * Concerne les requêtes liées  :
  *      - au nombre limite de personnes dans une séance,
@@ -28,7 +28,7 @@ public class AuaListeSeance {
     private int idSeance;
 
     /*
-     * Le constructeur de la classe avec chaque données d'initialisé.
+     * Le constructeur de la classe avec chaque donnée d'initialisée.
      */
     public AuaListeSeance(String limitePersonnes, String tempsSeance, int idSeance) {
         this.idSeance = idSeance;

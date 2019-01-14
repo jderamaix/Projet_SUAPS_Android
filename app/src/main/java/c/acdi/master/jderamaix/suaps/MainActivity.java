@@ -105,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         setContentView(R.layout.activity_main);
 
         /*
-         * On s'occupe de l'affichage avant de s'occuper de l'adresse IP du serveur.
+         * On s'occupe de l'affichage avant de récupérer l'adresse IP du serveur.
          * Initialiser l'affichage des présences
          */
 

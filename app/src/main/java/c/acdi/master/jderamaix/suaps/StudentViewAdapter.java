@@ -4,6 +4,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -114,6 +115,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
                 SimpleDateFormat formatter = new SimpleDateFormat("HH:mm", Locale.FRANCE);
                 Date time = formatter.parse(shownTime);
                 studentTime.setTime(time);
+                Log.e("time",time.toString());
                 targetTime.setTime(time);
                 targetTime.add(Calendar.MINUTE, 15);
                 sessionTime.setTime(formatter.parse(_activity.duration()));
