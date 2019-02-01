@@ -14,12 +14,12 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 /**
  * Classe permettant la création d'un client pour les requêtes.
- * BASE_URL est la base des majorités des URLs utilisés dans les requêtes.
- * builder contient le builder de Retrofit.
- * retrofit contient le lancement de son builder.
- * httpClient contient son builder.
+ * BASE_URL est la base des majorités des URLs utilisés dans les requêtes.<br>
+ * builder contient le builder de Retrofit.<br>
+ * retrofit contient le lancement de son builder.<br>
+ * httpClient contient son builder.<br><br>
  * interceptor contient une classe permettant d'intercepter les messages d'erreurs des requêtes avant qu'elles
- *      n'arrivent au code les attendant et donc de généralisé du code pour des erreurs spécifiques.
+ *      n'arrivent au code les attendant et donc de généralisé du code pour des erreurs spécifiques.<br><br>
  * createService est la méthode créant le client.
  */
 public abstract class ServiceGenerator {
@@ -62,7 +62,7 @@ public abstract class ServiceGenerator {
 
     /**
      * Remplace le boolean représentant l'état de l'adresse IP par son nouveau état.
-     * @param valeurEtatAdresseIP : Le boolean par lequel remplacé celui actuel.
+     * @param valeurEtatAdresseIP Le boolean par lequel remplacé celui actuel.
      */
     public static void setEtatDeLAdresseIPDuServeur(boolean valeurEtatAdresseIP){
         etatDeLAdresseIPDuServeur = valeurEtatAdresseIP;
@@ -126,7 +126,12 @@ public abstract class ServiceGenerator {
     };
 
     /**
+     *
      * Émet un message d'erreur dans un Toast.
+     *
+     * @param c Contexte de l'application
+     * @param TAG Chaque contient un text particulier
+     * @param t Objet de l'exception
      */
     public static void Message(Context c, String TAG, Throwable t) {
         Toast.makeText(
@@ -137,9 +142,14 @@ public abstract class ServiceGenerator {
         Log.e(TAG,t.getMessage());
         Log.e(TAG,t.toString());
         }
-    /*
+
+    /**
      * Méthode créant le client avec toutes les options voulues.
      * C'est à partir de ce client que les méthodes des requêtes sont lancés.
+     *
+     * @param serviceClass Objet d'une classe générique
+     * @param <S> Il s'agit d'un type générique
+     * @return Création générique d'un service retrofit
      */
     public static <S> S createService(Class<S> serviceClass){
         /*

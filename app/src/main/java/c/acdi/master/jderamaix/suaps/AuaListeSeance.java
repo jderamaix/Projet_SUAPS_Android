@@ -4,31 +4,35 @@ package c.acdi.master.jderamaix.suaps;
  * Classe utilisé pour transité les informations nécessaires pour
  *      les requêtes de  java dans l'application au JSON pour la base de données,
  *      concernant les paramètres des séances.
- * Concerne les requêtes liées  :
- *      - au nombre limite de personnes dans une séance,
- *      - au temps autorisé par séance pour les utilisateurs de la séance,
- *      - au numéro de la séance.
- * Utilisé en cas de :
- *      Envoi de ces données à la base de données après modifications sur l'applications,
- *      Initialisation de l'application en prenant les données par défauts dans la base dde données.
+ * Concerne les requêtes liées  :<br>
+ *      - au nombre limite de personnes dans une séance,<br>
+ *      - au temps autorisé par séance pour les utilisateurs de la séance,<br>
+ *      - au numéro de la séance.<br>
+ * Utilisé en cas de :<br>
+ *      Envoi de ces données à la base de données après modifications sur l'applications,<br>
+ *      Initialisation de l'application en prenant les données par défauts dans la base dde données.<br>
  */
 public class AuaListeSeance {
-    /*
-     * La limite de personnes autorisés en un même temps dans une séance.
+    /**
+     *  La limite de personnes autorisés en un même temps dans une séance.
      */
     private String limitePersonnes;
-    /*
+    /**
      * Le temps limite d'une séance pour un utilisateur, il peut dépasser,
      * mais il sera choisi en priorité si la limite est atteinte et qu'un autre utilisateur veut participer.
      */
     private String tempsSeance;
-    /*
+    /**
      * L'id de la séance, pour l'instant elle n'est pas utilisée.
      */
     private int idSeance;
 
-    /*
+    /**
      * Le constructeur de la classe avec chaque donnée d'initialisée.
+     *
+     * @param limitePersonnes Nombre maximum d'étudiants pouvant venir à une séance
+     * @param tempsSeance temps minimal accordé à chaque personne
+     * @param idSeance identifiant de la séance
      */
     public AuaListeSeance(String limitePersonnes, String tempsSeance, int idSeance) {
         this.idSeance = idSeance;

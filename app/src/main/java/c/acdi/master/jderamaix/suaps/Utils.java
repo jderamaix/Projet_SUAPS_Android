@@ -1,11 +1,13 @@
 package c.acdi.master.jderamaix.suaps;
 
-/**
- * La classe Utils regroupe un ensemble d'outils pour le réseau.
- */
+
 
 import java.net.*;
 import java.util.*;
+
+/**
+ * La classe Utils regroupe un ensemble d'outils pour les requêtes réseau.
+ */
 public class Utils {
 
     /**

@@ -5,13 +5,13 @@ package c.acdi.master.jderamaix.suaps;
   * Classe utilisé pour transité les données nécessaires au
  *      requête du java de l'application au Json de la base de données,
  *      concernant les utilisateurs.
- *  Concerne les requêtes liéés :
- *      - au nom d'un participant,
- *      - au prénom d'un participant,
- *      - au numéro de carte de la carte du participant,
- *      - au temps déjà effectué par le participant dans cette séance.
- *  Utilisé en cas de :
- *      - Actualisation de l'affichage des utilisateurs d'une séance.
+ *  Concerne les requêtes liéés :<br>
+ *      - au nom d'un participant,<br>
+ *      - au prénom d'un participant,<br>
+ *      - au numéro de carte de la carte du participant,<br>
+ *      - au temps déjà effectué par le participant dans cette séance.<br>
+ *  Utilisé en cas de :<br>
+ *      - Actualisation de l'affichage des utilisateurs d'une séance.<br>
   */
 public class ModeleUtilisateur {
 
@@ -33,7 +33,7 @@ public class ModeleUtilisateur {
     private String duree;
 
     /**
-     * Costructeur de ModeleUtilisateur initialisant le nom et le prénom de l'utilisateur.
+     * Constructeur de ModeleUtilisateur initialisant le nom et le prénom de l'utilisateur.
      * @param nom : Nom de l'utilisateur.
      * @param prenom : Prénom de l'utilisateur.
      */

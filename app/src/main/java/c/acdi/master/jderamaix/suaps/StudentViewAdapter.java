@@ -23,7 +23,7 @@ import java.util.Locale;
 public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.ViewHolder> {
 
     /**
-     * Le jeu de données.
+     * Le jeu de données des étudiants présent.
      */
     private ArrayList<StudentEntry> _dataset;
     /**
@@ -40,7 +40,10 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     private LayoutInflater _inflater;
 
     /**
-     * Constructeur à signature complète.
+     *  Constructeur à signature complète.
+     *
+     * @param activity Activité principale
+     * @param data Liste des étudiants présent à la séance de sport.
      */
     public StudentViewAdapter(MainActivity activity, ArrayList<StudentEntry> data) {
         _activity = activity;
@@ -50,6 +53,8 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
 
     /**
      * Constructeur à signature légère (pour l'initialisation par exemple).
+     *
+     * @param activity Activité servant à initialiser l'adapter
      */
     public StudentViewAdapter(MainActivity activity) {
         this(activity, new ArrayList<StudentEntry>());
@@ -138,6 +143,7 @@ public class StudentViewAdapter extends RecyclerView.Adapter<StudentViewAdapter.
     /**
      * Modifie atomiquement le jeu de données.
      * @see MainActivity#ReinitialiseAffichage()
+     * @param dataset ArrayList contenant l'intégralité des élèves présent à la séance
      */
     public void dataset(ArrayList<StudentEntry> dataset) {
         _dataset = dataset;

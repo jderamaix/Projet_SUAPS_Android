@@ -16,11 +16,20 @@ import android.widget.TimePicker;
  */
 public class ConfigDialog extends DialogFragment {
 
+    /**
+     * Constructeur par défaut de la classe
+     */
     public ConfigDialog() {
         super();
     }
 
     /**
+     * Méthode servant à créer la fenêtre affichant les informations nécessaire à la configuration
+     * d'une séance de sport ( temps et capacité )
+     *
+
+     * @param savedInstanceState Bundle qui peut contenir des informations sauvegardées
+     * @return Retourne l'affichage de configuration d'une séance
      * @see DialogFragment#onCreateDialog(Bundle)
      */
     @Override

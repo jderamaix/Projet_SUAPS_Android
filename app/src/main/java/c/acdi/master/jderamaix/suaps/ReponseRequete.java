@@ -5,12 +5,12 @@ package c.acdi.master.jderamaix.suaps;
  * Classe utilisé pour transité les données venant de la base données (en Json)
  *      pour l'application (en java).
  *      Ces informations sont les résultat de la requête si elle atteint la base de données
- *      et qu'il n'y a pas de problème inprévue comme des erreurs de connexions, de typage
+ *      et qu'il n'y a pas de problème imprévue comme des erreurs de connexions, de typage
  *      ou encore de routes.
- *      Possibles résultats sont :
- *          - "Limite de personnes atteintes."
- *          - "Inscription réussie."
- *          - "Désinscription réussie."
+ *      Possibles résultats sont :<br>
+ *          - "Limite de personnes atteintes."<br>
+ *          - "Inscription réussie."<br>
+ *          - "Désinscription réussie."<br>
  */
 public class ReponseRequete {
 

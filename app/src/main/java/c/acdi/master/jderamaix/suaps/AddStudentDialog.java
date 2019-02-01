@@ -11,16 +11,23 @@ import android.view.View;
 import android.widget.EditText;
 
 /**
- * Classe représentant la dialogue d'ajout manuel d'étudiant à la base.
+ * Classe représentant le dialogue d'ajout manuel d'un étudiant
  */
 public class AddStudentDialog extends DialogFragment {
-
+    /**
+     * Constructeur par défaut de la classe
+     */
     public AddStudentDialog() {
         super();
     }
 
     /**
+     * Méthode permettant de créer le dialog qui sert à ajouter un élève ne possédant pas sa
+     * carte étudiante
+     *
      * @see DialogFragment#onCreateDialog(Bundle)
+     * @param savedInstanceState Bundle contenant des informations ayant été conservé
+     * @return retourne le dialog d'affichage
      */
     @Override
     @NonNull

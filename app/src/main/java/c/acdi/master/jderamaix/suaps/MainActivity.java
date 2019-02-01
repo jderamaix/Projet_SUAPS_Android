@@ -27,27 +27,28 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
+/**
+ *
+ * Il est important de créer les éléments graphique en premier, créer ensuite l'objet Discovery
+ * qui lance la recherche de l'IP du serveur, cette dernière lancera la ou les méthodes qui permettra
+ * de compléter visuellement l'interface
+ *
+ * Dans un premier temps un objet Discovery est déclaré;
+ * On lance ensuite la méthode getServerIp qui permet d'envoyer une requête et de recevoir
+ * l'adresse ip du serveur
+ *
+ * Une interface est utilisé pour appelé une méthode particulière parce que la méthode
+ * getServerIp se lance en tâche asynchrone, donc le reste de la méthode onCreate continue
+ * d'être déroulé.
+ *
+ */
 public class MainActivity extends AppCompatActivity implements InterfaceDecouverteReseau {
 
     /**
      * PORT : port utilisé pour le broadcast pour la recherche de l'adresse IP du serveur.
      */
     private final static int PORT = 51423;
-    /**
-     * Il n'est pas nécessaire de comprendre la classe Utils
-     * Dans un premier temps un objet discovery est déclaré;
-     * On lance ensuite la méthode getServerIp qui permet d'envoyer une requête et de recevoir
-     * l'adresse ip du serveur
-     *
-     *Une interface est utilisé pour appelé une méthode particulière parce que la méthode
-     * getServerIp se lance en tâche asynchrone, donc le reste de la méthode onCreate continue
-     * d'être déroulé.
-     *
-     * Il est important de créer les éléments graphique en premier, créer ensuite l'objet Discovery
-     * qui lance la recherche de l'IP du serveur, cette dernière lancera la ou les méthodes qui permettra
-     * de compléter visuellement l'interface
-     *
-     */
+
     /**
      * Contient Toutesles valeurs et méthodes concernant la recherche de l'adresse IP par broadcast.
      * @see Discovery
@@ -60,11 +61,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     private static final String TAG = "MainActivity";
     /**
-     * Intervalle de temps utilisé pour la mise à jour périodique de l'affichage par requête.
+     * Intervalle de temps utilisé (en secondes) pour la mise à jour périodique de l'affichage par requête.
+     * L'intervalle de temps entre deux mises à jour d'affichage est de INTERVAL secondes;
      */
     private final static int INTERVAL = 5;
-    //L'intervalle de temps entre deux mises à jour d'affichage est de INTERVAL secondes;
-
     /**
      * Capacité d'accueil du cours.
      */
@@ -74,16 +74,25 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      */
     private String _duration = "00:00";
 
+    /**
+     * Méthode Retournant la capacité de la séance
+     * @return Capacité de la sénace
+     */
     public int capacity() { return _capacity; }
+
+    /**
+     * Méthode Retournant la durée de la séance
+     * @return Durée de la sénace
+     */
     public String duration() { return _duration; }
 
     /**
-     * Adaptateur de l'affichage des étudiants présents.
+     * Adapteur du ReclyclerView permettant l'affichage des étudiants présents.
      */
     private StudentViewAdapter _adapter;
 
     /**
-     *L'orgaisateur utilisé pour lancé la mise à jour de l'afichage à intervalle régulier.
+     *L'organisateur utilisé pour lancé la mise à jour de l'affichage à intervalle régulier.
      */
     private ScheduledExecutorService organisateur = Executors.newScheduledThreadPool(1);
     /**
@@ -116,8 +125,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         view.setLayoutManager(new LinearLayoutManager(this));
 
         /*
-        Méthode commençant la gestion de l'adresse IP du serveur.
-         */
+         Méthode commençant la gestion de l'adresse IP du serveur.
+        */
 
         decouverte = new Discovery(PORT,this);
 
@@ -130,6 +139,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      * Méthode invoqués dans le onCreate,
      * Cherche si il y a une adresse IP dans un sharedPreference et si il y en a une, la teste.
      * Sinon lance la recherche d'adresse IP.
+     * @see MainActivity#onCreate(Bundle)
      */
     public void GestionAdresseIPServeur(){
 
@@ -216,7 +226,7 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     }
 
     /**
-     * Méthode créant et initialisant le gérant de l'organisateur s'occupant des mises à jour auomatique de l'affichage.
+     * Méthode créant et initialisant le gérant de l'organisateur s'occupant des mises à jour automatique de l'affichage.
      */
     public void InitialiserGerantOrganisateur(){
         /*
@@ -242,6 +252,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      * Si le string représentant l'IP est null alors le broadcast n'a pas atteint le serveur,
      *      il faut donc relancer une recherche par broadcast
      * Sinon il faut tester si c'est l'adresse iP du serveur.
+     *
+     * @see InterfaceDecouverteReseau#recuperationIpServer()
+     * @see Discovery.NetworkAsync#onPostExecute(String)
      */
     @Override
     public void recuperationIpServer() {
@@ -259,7 +272,10 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
         }
     }
 
-    //Nous avons obtenu la bonne adresse IP du serveur, nous devons maintenant l'enregistrer dans le sharedPrefrences.
+    /**
+     * Méthode sauvegardant l'adresse IP du serveur dans un sharedPreferences. Cela permet de tester
+     * directement une adresse IP au redémarrage de l'application.
+     */
     public void SauvegardeAdresseIP(){
             /*
              * Maintenant que l'on a l'adresse IP du serveur, on peut l'écrire dans un sharedPreferences pour la "sauvegarder".
@@ -305,6 +321,12 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
 
     /**
      * Méthode invoquer après la validification de l'adresse IP du serveur.
+     * Cette méthode va lancer consécutivement différentes tâches:<br>
+     *     - Ajouter la fonctionnalité au recyclerView lui permettant d'enlever des éléments avec un swipe<br>
+     *     - Mise à jour de l'affichage sur la capacité et la durée minimal d'une séance<br>
+     *     - Mise à jour du recyclerView pour obtenir les élèves présent.<br>
+     *     - Création de l'organisateur, ce dernier est ce qui permet à l'affichage de se mettre à jour
+     *     automatiquement<br>
      */
     public void InvocationMethodeInitialisation(){
         AjoutOnSwipedSurRecyclerView();
@@ -391,6 +413,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     /**
      * Lance l'activité permettant de badger,
      * invoqué comme callback du bouton boutonBadge.
+     *
+     * @param view View appeler au moment de l'interraction sur le bouton
      */
     public void Badger(View view) {
         Intent intent = new Intent(this, RFIDActivity.class);
@@ -400,6 +424,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     /**
      * Lance le dialogue d'ajout manuel,
      * invoqué comme callback du bouton boutonAjout.
+     *
+     *  @param view View appeler au moment de l'interraction sur le bouton
      */
     public void ajouterEtudiant(View view) {
         new AddStudentDialog().show(getSupportFragmentManager(), "ajoutEtudiant");
@@ -431,11 +457,15 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
          * onFailure si la requête est considérée ratée.
          */
         call_Post.enqueue(new Callback<ReponseRequete>() {
-            /*
-             * Si la requête est arrivé jusqu'à la base de données
+            /**
+             *
+             *Méthode étant appliqué lorsque la requête est reçu par la base de données.
+             *Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
+             *
+             * @param call Requête provoquant le onResponse
+             * @param reponse Réponse de la base du serveur
              */
             @Override
-            //Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la requête.
             public void onResponse(Call<ReponseRequete> call, Response<ReponseRequete> reponse) {
                 //Test si la requête a réussi ( code http allant de 200 à 299).
                 if (reponse.isSuccessful()) {
@@ -455,8 +485,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              *   - la connexion au serveur,
              *   - la création de la requête,
              *   - la transformation de la réponse en objet java (ici un ReponseRequete).
-             * @Param call : La requête provoquant le onFailure.
-             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             * @param call : La requête provoquant le onFailure.
+             * @param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
             @Override
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
@@ -494,7 +524,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
          */
         methodeCall.enqueue(new Callback<List<ModeleUtilisateur>>() {
             @Override
-            /*
+            /**
+             *
              * Méthode étant appliqué lorsque la requête est reçu par la base de données. Mais attention, il peut toujours y avoir des problèmes ayant occurés lors de la gestion de la requête par la base de données.
              */
             public void onResponse(Call<List<ModeleUtilisateur>> call, Response<List<ModeleUtilisateur>> response) {
@@ -535,8 +566,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              *   - la connexion au serveur,
              *   - la création de la requête,
              *   - la transformation de la réponse en objet java (ici une liste de ModeleUtilisateur).
-             * @Param call : La requête provoquant le onFailure.
-             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             * @param call : La requête provoquant le onFailure.
+             * @param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
             @Override
             public void onFailure(Call<List<ModeleUtilisateur>> call, Throwable t) {
@@ -547,6 +578,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     }
 
     /**
+     * Méthode permettant de créer le menu d'option en haut à droit de l'application
+     *
      * @see AppCompatActivity#onCreateOptionsMenu(Menu)
      * */
     @Override
@@ -556,6 +589,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     }
 
     /**
+     * Méthode se déclenchant lorsqu'une action est effectué sur le menu d'options
+     *
      * @see AppCompatActivity#onOptionsItemSelected(MenuItem)
      */
     @Override
@@ -571,6 +606,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
     /**
      * Lance le dialogue de configuration de classe,
      * invoqué comme option du menu principal.
+     *
+     * @param view View appelé au moment de l'interraction avec le bouton "configurer"
      */
     public void configurerCours(View view) {
         new ConfigDialog().show(getSupportFragmentManager(),"configClasse");
@@ -639,8 +676,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              *   - la connexion au serveur,
              *   - la création de la requête,
              *   - la transformation de la réponse en objet java (ici une Liste de AuaListeSeance).
-             * @Param call : La requête provoquant le onFailure.
-             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             * @param call : La requête provoquant le onFailure.
+             * @param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
             @Override
             public void onFailure(Call<List<AuaListeSeance>> call, Throwable t) {
@@ -662,9 +699,9 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
      * EnvoieTempsCapactie prend en paramètre une partie de l'URL et les paramètres de la séance à envoyer à la base de données.
      * Applique la requête à la base de données de façon asyncrone.
      *
-     * @Param capacity          : La nouvelle capacité limite de personnes de la séance.
-     * @Param minimumHours      : La partie heure du nouveau temps limite de la séance.
-     * @Param minimumMinutes    : La partie minute du nouveau temps limite de la séance.
+     * @param capacity          : La nouvelle capacité limite de personnes de la séance.
+     * @param minimumHours      : La partie heure du nouveau temps limite de la séance.
+     * @param minimumMinutes    : La partie minute du nouveau temps limite de la séance.
      */
     public void ModificationCapaciteHeure(int capacity, int minimumHours, int minimumMinutes) {
 
@@ -706,8 +743,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              *   - la connexion au serveur,
              *   - la création de la requête,
              *   - la transformation de la réponse en objet java attendu (ici ReponseRequete).
-             * @Param call : La requête provoquant le onFailure.
-             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             * @param call : La requête provoquant le onFailure.
+             * @param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
             @Override
             public void onFailure(Call<ReponseRequete> call, Throwable t) {
@@ -765,8 +802,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              *   - la connexion au serveur,
              *   - la création de la requête,
              *   - la transformation de la réponse en objet java (ne peut pas causer de problème ici, aucune réponse n'est attendu).
-             * @Param call : La requête provoquant le onFailure.
-             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             * @param call : La requête provoquant le onFailure.
+             * @param t    : objet contenant le message et le code d'erreur provoqué par la requête.
              */
 
             @Override
@@ -825,8 +862,8 @@ public class MainActivity extends AppCompatActivity implements InterfaceDecouver
              *   - la connexion au serveur,
              *   - la création de la requête,
              *   - la transformation de la réponse en objet java (ne peut pas causer de problème ici, aucune réponse n'est attendu).
-             * @Param call : La requête provoquant le onFailure.
-             * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+             * @param call  La requête provoquant le onFailure.
+             * @param t     objet contenant le message et le code d'erreur provoqué par la requête.
              */
             @Override
             public void onFailure(Call<Void> call, Throwable t) {

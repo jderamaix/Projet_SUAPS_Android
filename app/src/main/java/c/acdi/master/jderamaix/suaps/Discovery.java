@@ -11,16 +11,47 @@ import java.util.List;
 import android.os.AsyncTask;
 import android.util.Log;
 
+
+/**
+ * Classe utilisé pour la découverte de l'adresse IP du serveur. Cette classe permet d'effectuer un
+ * broadcast sur un port défini ainsi qu'avec un message dans la requête.
+ */
 public class Discovery
 {
+    /**
+     * Délai d'attente avant d'interrompre la réception d'un message du serveur
+     */
     public static final int RECEIVING_TIMEOUT = 10000;
-    private static final String MESSAGE = "AppSUAPS";
-    private DatagramSocket socket;
-    private int mPort;
-    private InterfaceDecouverteReseau _decouvrirReseau = null;
 
+    /**
+     * Message qui sera transmis lors du broadcast
+     */
+    private static final String MESSAGE = "AppSUAPS";
+    /**
+     * Socket qui sert à communiquer le message.
+     */
+    private DatagramSocket socket;
+    /**
+     * Port réseau sur lequel le message sera transmis
+     */
+    private int mPort;
+    /**
+     * Objet devant être défini afin que l'activité puisse intérargir avec cette classe
+     */
+    private InterfaceDecouverteReseau _decouvrirReseau = null;
+    /**
+     * Adresse IP du serveur
+     */
     private String ip = null;
 
+
+    /**
+     * Constucteur de la classe Discovery, ce dernier permet de rendre l'objet Discovery utilisable
+     *
+     * @param p Port réseau qui sera utilisé pour la transmission du message
+     * @param interfaceDecouverteReseau objet InterfaceDecouverteReseau qui permet d'interagir avec
+     *                                  l'activité sans en connaitre sa nature.
+     */
     public Discovery(int p, InterfaceDecouverteReseau interfaceDecouverteReseau)
     {
         mPort = p;
@@ -39,7 +70,7 @@ public class Discovery
      */
     public void stop()
     {
-        //udpNeeded = false;
+
         try
         {
             socket.close();
@@ -77,10 +108,13 @@ public class Discovery
             List<InterfaceAddress> addresses = temp.getInterfaceAddresses();
 
             for (InterfaceAddress inetAddress : addresses) {
-                if(inetAddress.getBroadcast()==null)
-                    Log.e("returnBroadcast","objet de retour null");
-                else
+                if(inetAddress.getBroadcast() == null)
+                    Log.e("returnBroadcast","objet de retour null pas de broadcast disponible");
+                else{
+                    Log.e("returnBroadcast","objet de retour positif ; une adresse de broadcast est disponible");
                     iAddr = inetAddress.getBroadcast();
+                }
+
             }
             //System.out.println("iAddr=" + iAddr);
             return iAddr;
@@ -101,7 +135,8 @@ public class Discovery
      * @param data Message qui sera dans la requête broadcast
      * @return  Si il y a un retour positif, cela permet de renvoyer
      *          l'adresse IP du serveur sous une forme de String
-     * @throws Exception
+     * @throws Exception Lorsqu'un comportement innatendu survient, une exception est lancé
+     *                   Cette dernière peut être intercepté afin de voir l'origine de l'erreur.
      */
     private String sendBroadcast(String data) throws Exception
     {
@@ -138,7 +173,7 @@ public class Discovery
 
 
         /**
-         * Si le socket ne reçois rien à la fin du TimeOut, une Exception est levé
+         * Si le socket ne reçoit rien à la fin du TimeOut, une Exception est levé
          */
         try{
             socket.receive(packet);
@@ -151,17 +186,27 @@ public class Discovery
         return s;
     }
 
+    /**
+     * Méthode permettant d'obtenir l'adresse du serveur
+     *
+     * @return Adresse IP du serveur
+     */
     public String getIp() {
         return ip;
     }
 
+    /**
+     * Classe héritant de AsyncTask. NetworkAsync est la classe qui envoie le broadcast. En
+     * effet il est interdit par Android d'effectuer cette action via le thread d'interface, d'où
+     * l'importance d'utiliser une tâche asynchrone.
+     */
     public class NetworkAsync extends AsyncTask<String,Void,String>{
         /**
          * L'execution dans une tache asynchrone est obligatoire lorsque des requêtes sur le réseau
          * sont effectué
          *
-         * @param strings
-         * @return
+         * @param strings ce tableau contient à la case 0 le message qui sera transmis dans le broadcast
+         * @return l'adresse du serveur SUAPS
          */
         @Override
         protected String doInBackground(String... strings) {
@@ -177,11 +222,11 @@ public class Discovery
 
         /**
          * Une fois l'execution fin la méthode onPostExecute se passe dans le thread d'interface.
-         * @param s
+         * @param s Il s'agit de l'adresse IP qui a été récupéré. Et qui correspond au serveur avec
+         *          qui il faut communiquer
          */
         @Override
         protected void onPostExecute(String s) {
-
 
             ip = s;
             //Permet d'appeler la méthode recuperationIpServer dans la MainActivity

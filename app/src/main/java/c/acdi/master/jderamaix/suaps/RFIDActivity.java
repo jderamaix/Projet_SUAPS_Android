@@ -26,7 +26,11 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-
+/**
+ * Cette activité a pour but de gérer les interractions avec les cartes étudiantes.<br>
+ * Elle dispose des méthodes nécessaire à la lecture de puces NFC et se charge également
+ * d'envoyer les informations lues à la base de données.
+ */
 public class RFIDActivity extends AppCompatActivity {
 
     /**
@@ -54,7 +58,13 @@ public class RFIDActivity extends AppCompatActivity {
      */
     public MediaPlayer mp_son_refuser;
 
-
+    /**
+     * Méthode appelée au lancement de l'activité. Cette activité contient la majorité des initialisations
+     * ayant pour but d'assurer un bon fonctionnement de l'application.
+     *
+     * @param savedInstanceState Bundle qui peut contenir des informations si l'activité
+     *                           est réinitialiser
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -160,7 +170,11 @@ public class RFIDActivity extends AppCompatActivity {
         return sb.toString();
     }
 
-
+    /**
+     * Lorsqu'une carte est lue elle se fait dans le thread d'interface, hors il déconseillé de faire
+     * un quelconque traitement dans ce thread. Cette tâche asynchrone à pour but de faire le traitement
+     * de lecture dans un nouveau thread.
+     */
     public class TraitementAsynchrone extends AsyncTask<Intent,Void,String> {
 
         /**
@@ -326,8 +340,8 @@ public class RFIDActivity extends AppCompatActivity {
                  *   - la connexion au serveur,
                  *   - la création de la requête,
                  *   - la transformation de la réponse en objet java.
-                 * @Param call : La requête provoquant le onFailure.
-                 * @Param t    : objet contenant le message et le code d'erreur provoqué par la requête.
+                 * @param call : La requête provoquant le onFailure.
+                 * @param t    : objet contenant le message et le code d'erreur provoqué par la requête.
                  */
                 @Override
                 public void onFailure(Call<ReponseRequete> call, Throwable t) {

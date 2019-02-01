@@ -5,7 +5,7 @@ package c.acdi.master.jderamaix.suaps;
 /**
  * Classe utilisé pour transité les données nécessaires au
  *      requête du java de l'application au Json de la base de données,
- *      concernant le numéro de la carte des utilisateurs.
+ *      concernant le numéro de la carte des utilisateurs.<br>
  *  Concerne la requête utilisée pour enlever un utilisater de la séance
  *      en fonction de son id (si ajouté manuellement) ou son numéro de carte étudiant/personnel.
  */
