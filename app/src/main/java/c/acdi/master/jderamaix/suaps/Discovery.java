@@ -58,7 +58,7 @@ public class Discovery
         ip = new String();
 
         /**
-         * La classe MainActivity implents l'interface InterfaceDecouverteReseau
+         * La classe MainActivity implémente l'interface InterfaceDecouverteReseau
          * Cela permet de lié la méthode défini dans la classe principale
          * à l'objet ici présent.
          */
