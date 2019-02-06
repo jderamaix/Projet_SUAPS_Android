@@ -7,8 +7,8 @@ L'objectif est de rendre plus facile la gestion d'entrées/sorties dans une sall
 
 ## Libraire extérieur à Android.
 Il y a deux librairies externes qui sont utilisées :
-*Retrofit, qui sert pour communiquer avec des API REST
-*GSON, qui sert pour la transmission d'information
+* Retrofit, qui sert pour communiquer avec des API REST
+* GSON, qui sert pour la transmission d'information
 
 ## Gestion de version
 Nous avons utilisé la méthode de travail GitFlow.
