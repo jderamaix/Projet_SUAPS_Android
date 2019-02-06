@@ -10,11 +10,11 @@ Il y a deux librairies externes qui sont utilisées :
 *Retrofit, qui sert pour communiquer avec des API REST
 *GSON, qui sert pour la transmission d'information
 
-##Gestion de version
+## Gestion de version
 Nous avons utilisé la méthode de travail GitFlow.
 
-##Documentation supplémentaire
+## Documentation supplémentaire
 Une javadoc complète est disponible dans le git
 
-##Licence utilisé
+## Licence utilisé
 Ce projet est sous licence GPL v3
