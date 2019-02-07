@@ -24,4 +24,7 @@ Nous avons utilisé la méthode de travail [GitFlow](https://danielkummer.github
 Une javadoc complète est disponible dans le git
 
 ## Licence utilisé
-Ce projet est sous licence GPL v3
+Ce projet est sous licence GPL
+
+## Autheur 
+Deramaix Jonathan
