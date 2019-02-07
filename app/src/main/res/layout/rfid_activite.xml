@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/ConteneurVertical">
+
+    <TextView
+        android:id="@+id/textViewRFIDActivity"
+        style="@style/ElementVertical"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/TextView_RFIDActivity"
+        android:textSize="45sp" />
+
+    <ImageView
+        android:contentDescription="@string/image_carte_etudiant"
+        android:id="@+id/imageView1"
+        style="@style/ElementVertical"
+        android:layout_weight="2"
+        android:src="@drawable/carteetudiant" />
+
+</LinearLayout>

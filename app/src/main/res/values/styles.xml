@@ -7,18 +7,30 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textSize">@dimen/taillePoliceTexteDefaut</item>
+        <item name="android:textSize">@dimen/tailleTextDefaut</item>
         <item name="android:textColor">@color/couleurTexteDefaut</item>
+        <item name="android:gravity">center_vertical</item>
     </style>
 
     <style name="ElementVertical">
-        <item name="android:layout_height">0dp</item>
+        <item name="android:paddingTop">@dimen/espacement</item>
+        <item name="android:paddingBottom">@dimen/espacement</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0dp</item>
+    </style>
+
+    <style name="ElementVertical.EntreeNomEtudiant">
+        <item name="android:paddingTop">@dimen/espacementEntreeNomEtudiant</item>
+        <item name="android:paddingBottom">@dimen/espacementEntreeNomEtudiant</item>
+        <item name="android:ems">10</item>
+        <item name="android:inputType">textPersonName</item>
     </style>
 
     <style name="ElementHorizontal">
-        <item name="android:layout_height">match_parent</item>
+        <item name="android:paddingLeft">@dimen/espacement</item>
+        <item name="android:paddingRight">@dimen/espacement</item>
         <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
     </style>
 
     <style name="ElementHorizontal.Bouton">
@@ -27,14 +39,14 @@
     </style>
 
     <style name="ConteneurVertical">
-        <item name="android:layout_height">match_parent</item>
         <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">match_parent</item>
         <item name="android:orientation">vertical</item>
     </style>
 
     <style name="ConteneurHorizontal">
-        <item name="android:layout_height">wrap_content</item>
         <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
     </style>
 

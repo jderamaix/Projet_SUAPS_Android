@@ -2,46 +2,72 @@ package c.acdi.master.jderamaix.suaps;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.NumberPicker;
-import android.widget.TextView;
+import android.widget.TimePicker;
 
+/**
+ * Classe représentant le dialogue de configuration de la séance.
+ */
 public class ConfigDialog extends DialogFragment {
 
-    private Context _context;
-
-    public ConfigDialog(Context context) {
-        _context = context;
+    /**
+     * Constructeur par défaut de la classe
+     */
+    public ConfigDialog() {
+        super();
     }
 
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final View view = LayoutInflater.from(_context).inflate(R.layout.dialog_config,null);
+    /**
+     * Méthode servant à créer la fenêtre affichant les informations nécessaire à la configuration
+     * d'une séance de sport ( temps et capacité )
+     *
 
-        return new AlertDialog.Builder(_context)
+     * @param savedInstanceState Bundle qui peut contenir des informations sauvegardées
+     * @return Retourne l'affichage de configuration d'une séance
+     * @see DialogFragment#onCreateDialog(Bundle)
+     */
+    @Override
+    @NonNull
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        /*
+         * On utilise explicitement la classe MainActivity à la place de la simple Activity car ce
+         * dialogue d'ajout est déjà spécifique à l'application de toute manière :
+         * inutile d'abstraire ceux avec qui on communique
+         */
+        final MainActivity activity = (MainActivity) getActivity();
+        final View view = LayoutInflater.from(activity).inflate(R.layout.dialog_config,null);
+
+        /*
+         * Initialiser la sélection de la capacité à la valeur actuelle
+         */
+        final NumberPicker capacity = view.findViewById(R.id.configCapacite);
+        capacity.setMinValue(1);
+        capacity.setMaxValue(255);
+        capacity.setValue(activity.capacity());
+
+        /*
+         * Initialiser la sélection du temps minimum au temps minimum actuel
+         */
+        final TimePicker duration = view.findViewById(R.id.configDuree);
+        duration.setIs24HourView(true);
+        duration.setCurrentHour(Integer.parseInt(activity.duration().substring(0,2)));
+        duration.setCurrentMinute(Integer.parseInt(activity.duration().substring(3)));
+
+        return new AlertDialog.Builder(activity)
                 .setView(view)
                 .setPositiveButton(R.string.etiquetteConfigValider, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        ((TextView) view.findViewById(R.id.affichageCapacite)).setText(
-                                ((NumberPicker) view.findViewById(R.id.configCapacite)).getValue()
-                        );
-                        ((TextView) view.findViewById(R.id.affichageTempsMinimum)).setText(
-                                ((NumberPicker) view.findViewById(R.id.configDureeHeures)).getValue()
-                        );
+                        activity.ModificationCapaciteHeure(capacity.getValue(), duration.getCurrentHour(), duration.getCurrentMinute());
                     }
                 })
-                .setNegativeButton(R.string.etiquetteConfigAnnuler, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                })
+                .setNegativeButton(R.string.etiquetteConfigAnnuler, null)
                 .create();
 
     }

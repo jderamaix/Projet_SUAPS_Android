@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_width="match_parent"
     android:orientation="vertical"
+    android:gravity="top"
     tools:context=".MainActivity">
 
     <LinearLayout style="@style/ConteneurHorizontal">
@@ -12,14 +12,14 @@
         <TextView
             android:id="@+id/etiquetteCapacite"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:text="@string/etiquetteCapacite" />
 
         <TextView
             android:id="@+id/affichageCapacite"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
-            android:text="@string/affichageCapacite" />
+            android:layout_weight="1"
+            android:text="@string/affichageCapaciteBidon" />
     </LinearLayout>
 
     <LinearLayout style="@style/ConteneurHorizontal">
@@ -27,38 +27,40 @@
         <TextView
             android:id="@+id/etiquetteTempsMinimum"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:text="@string/etiquetteTempsMinimum" />
 
         <TextView
             android:id="@+id/affichageTempsMinimum"
             style="@style/ElementHorizontal"
-            android:layout_weight="0.5"
-            android:text="@string/affichageTempsMinimum" />
+            android:layout_weight="1"
+            android:text="@string/affichageTempsBidon" />
     </LinearLayout>
 
     <Space
-        android:layout_width="match_parent"
-        android:layout_height="20dp" />
+        android:layout_height="20dp"
+        android:layout_width="match_parent" />
 
     <TextView
         android:id="@+id/affichageOccupation"
-        android:layout_height="wrap_content"
         android:layout_width="match_parent"
-        android:text="@string/affichageOccupation"
+        android:layout_height="wrap_content"
+        android:text="@string/affichageOccupationBidon"
         android:textAlignment="center" />
 
+    <!-- Solution au bug du dimensionnement du RecyclerView
+         Aucun autre element ne peut avoir un layout_weight -->
     <android.support.v7.widget.RecyclerView
         android:id="@+id/affichageEtudiants"
-        android:layout_height="wrap_content"
-        android:layout_width="match_parent" />
+        style="@style/ElementVertical"
+        android:layout_weight="1"/>
 
     <LinearLayout style="@style/ConteneurHorizontal">
 
         <Button
             android:id="@+id/boutonBadge"
             style="@style/ElementHorizontal.Bouton"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:background="#000000"
             android:onClick="Badger"
             android:text="@string/etiquetteBoutonBadge" />
@@ -66,9 +68,9 @@
         <Button
             android:id="@+id/boutonAjout"
             style="@style/ElementHorizontal.Bouton"
-            android:layout_weight="0.5"
+            android:layout_weight="1"
             android:background="@color/colorPrimary"
-            android:onClick="addStudent"
+            android:onClick="ajouterEtudiant"
             android:text="@string/etiquetteBoutonAjout" />
 
     </LinearLayout>
