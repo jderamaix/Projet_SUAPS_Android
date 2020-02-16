@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <item
+        android:id="@+id/menu_creer_seance"
+        android:title="@string/cr_er_une_s_ance"
+        android:icon="@drawable/add"
+        android:elevation="10dp"
+        app:showAsAction="always"/>
+
+    <item
+        android:id="@+id/menu_code_pin"
+        android:title="@string/code_pin"
+        android:icon="@drawable/lock"
+        android:elevation="10dp"
+        app:showAsAction="always"/>
+</menu>

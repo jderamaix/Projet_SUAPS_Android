@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item android:id="@+id/id_present" android:title="Present" android:icon="@drawable/present"/>
+    <item android:id="@+id/id_absent" android:title="Absent" android:icon="@drawable/absent" />
+    <item android:id="@+id/id_retard" android:title="Retard" android:icon="@drawable/retard" />
+    <item android:id="@+id/id_excuse" android:title="Excuse" android:icon="@drawable/excuse" />
+
+</menu>

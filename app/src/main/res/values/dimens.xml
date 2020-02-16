@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="tailleTexte">14sp</dimen>
+    <dimen name="WidthLight">40dp</dimen>
+    <dimen name="HeightLinearLayout">90dp</dimen>
+    <dimen name="ZeroDP">0dp</dimen>
+    <dimen name="espacement">3sp</dimen>
+    <dimen name="espacementEntreeNomEtudiant">8sp</dimen>
+</resources>

@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/tv_message_connexion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/message_connexion"
+        android:textAlignment="center"
+        android:textSize="18sp"/>
+
+    <EditText
+        android:id="@+id/ed_connexion_login"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/ed_connexion_login"
+        android:inputType="textPersonName" />
+
+    <EditText
+        android:id="@+id/ed_connexion_mdp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="@string/ed_connexion_mdp"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/b_connexion_valider"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="onClickValider"
+        android:text="@string/b_valider" />
+</LinearLayout>
