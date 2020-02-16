@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#008577</color>
+    <color name="bleuUA">#0ABBEF</color>
+    <color name="rouge">#E30613</color>
+    <color name="vert">#13A538</color>
+    <color name="orange">#EE7601</color>
+    <color name="bleu">#0069B2</color>
+
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-    <color name="couleurTexteDefaut">#000000</color>
+    <color name="blanc">#ffffff</color>
+
+    <color name="noir">#000000</color>
+
     <color name="couleurTexteContreombrage">#FFFFFF</color>
-    <color name="couleurTexteBidon">#777777</color>
-    <color name="couleurEntreeTempsBon">#4BBF73</color>
-    <color name="couleurEntreeTempsLimite">#F0AD4E</color>
-    <color name="couleurEntreeTempsDepasse">#D9534F</color>
-    <color name="couleurAjoutAjouter">#00BB00</color>
-    <color name="couleurAjoutAnnuler">#FF0000</color>
 </resources>

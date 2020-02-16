@@ -3,23 +3,14 @@
     <!-- Base application theme. -->
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
-        <item name="buttonStyle">@style/Widget.AppCompat.Button.Borderless</item>
-        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimary">@color/bleuUA</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
-        <item name="android:textSize">@dimen/tailleTextDefaut</item>
-        <item name="android:textColor">@color/couleurTexteDefaut</item>
-        <item name="android:gravity">center_vertical</item>
     </style>
 
+
+    <!-- Configuration dialog theme -->
     <style name="ElementVertical">
-        <item name="android:paddingTop">@dimen/espacement</item>
-        <item name="android:paddingBottom">@dimen/espacement</item>
-        <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">0dp</item>
-    </style>
-
-    <style name="ElementVertical.EntreeNomEtudiant">
         <item name="android:paddingTop">@dimen/espacementEntreeNomEtudiant</item>
         <item name="android:paddingBottom">@dimen/espacementEntreeNomEtudiant</item>
         <item name="android:ems">10</item>
@@ -44,10 +35,19 @@
         <item name="android:orientation">vertical</item>
     </style>
 
+
     <style name="ConteneurHorizontal">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">wrap_content</item>
         <item name="android:orientation">horizontal</item>
+    </style>
+
+
+    <style name="ElementVertical.EntreeNomEtudiant">
+        <item name="android:paddingTop">@dimen/espacementEntreeNomEtudiant</item>
+        <item name="android:paddingBottom">@dimen/espacementEntreeNomEtudiant</item>
+        <item name="android:ems">10</item>
+        <item name="android:inputType">textPersonName</item>
     </style>
 
 </resources>

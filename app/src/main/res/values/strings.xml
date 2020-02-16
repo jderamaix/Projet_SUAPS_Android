@@ -1,24 +1,59 @@
 <resources>
-    <string name="app_name">SUAPS</string>
+    <!-- APPLICATION-->
+    <string name="app_name">UnivEmarge</string>
+
+    <!-- INTERFACE-->
+    <string name="photo_de_l_etudiant">Photo de l\'étudiant(e)</string>
+    <string name="etat_etudiant">Etat de l\'étudiant(e)</string>
+    <string name="modifier_une_s_ance">Modifier une séance</string>
+    <string name="cr_er_une_s_ance">Créer une séance</string>
+    <string name="code_pin">Code Pin</string>
+
+    <!-- MENU -->
+    <string name="menu">Menu</string>
+    <string name="menu_calendrier">Calendrier</string>
+    <string name="menu_synchronisation">Synchronisation</string>
+    <string name="menu_option">Option</string>
+    <string name="menu_deconnexion">Déconnexion</string>
+
+
+    <!-- PREFERENCES-->
+    <string name="PREFERENCE">app_preferences_univ_emarge</string>
+    <string name="PREF_LOGIN">login_univ_emarge</string>
+    <string name="PREF_IDENTIFIANT">identifiant_personel</string>
+    <string name="PREF_DATE_MAJ">date_maj</string>
+
+    <!-- PREFERENCES Clès-->
+    <string name="Synchronisation_cle">sync_pref</string>
+    <string name="Notification_cle">notif_pref</string>
+    <string name="Code_pin_activation_cle">pin_activation_pref</string>
+    <string name="Code_Pin_EditText_cle">pin_editetxt_pref</string>
+
+    <!-- Connexion -->
+    <string name="message_connexion">Bienvenue sur UnivEmarge, pour vous authentifier il faut utiliser les identifiants de l\'Université d\'Angers</string>
+    <string name="ed_connexion_login">Login</string>
+    <string name="ed_connexion_mdp">Mot de passe</string>
+    <string name="b_valider">Valider</string>
+    <string name="connexion_erreur_mdp">Login ou mot de passe incorrect</string>
+    <string name="connexion_erreur_champ">Il faut remplir les deux champs</string>
+    <string name="connexion_missing">Il faut être connecté à Internet pour s\'authentifier</string>
+
+
+    <!-- Paramètres -->
+    <string name="preference">...</string>
+    <string name="notification">Notifications</string>
+    <string name="old_pass">Ancien code pin</string>
+    <string name="new_pass">Nouveau code pin </string>
+    <string name="Synchronisation_automatique">Synchronisation automatique</string>
+
+
+    <!-- Configuration -->
     <string name="etiquetteCapacite">Capacité : </string>
-    <string name="affichageCapacite">%d</string>
-    <string name="affichageCapaciteBidon">0</string>
     <string name="etiquetteTempsMinimum">Temps Minimum : </string>
-    <string name="affichageTemps">%02d:%02d</string>
-    <string name="affichageTempsBidon">00:00</string>
-    <string name="affichageOccupation">Occupation : %d/%d</string>
-    <string name="affichageOccupationBidon">Occupation : 0/0</string>
-    <string name="affichageNomEtudiant">%s, %s</string>
-    <string name="etiquetteBoutonAjout">Ajouter</string>
-    <string name="etiquetteBoutonBadge">BADGE</string>
-    <string name="etiquetteAjoutAjouter">Ajouter</string>
-    <string name="etiquetteAjoutAnnuler">Annuler</string>
-    <string name="suggestionNomEtudiant">Nom de l\'étudiant(e)</string>
-    <string name="suggestionPrenomEtudiant">Prénom de l\'étudiant(e)</string>
     <string name="etiquetteConfigValider">Valider</string>
     <string name="etiquetteConfigAnnuler">Annuler</string>
-    <string name="etiquetteConfig">Configurer...</string>
+
+    <!-- Lecture RFID -->
     <string name="TextView_RFIDActivity">Veuillez badger</string>
     <string name="image_carte_etudiant">Image d\'une carte d\'étudiant de l\'université d\'Angers.</string>
-    <string name="NomPreferenceActivite">NomPreferenceApplicationJavaCAcdiMasterJderamaixSuaps</string>
 </resources>

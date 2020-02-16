@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="24dp"
+    android:orientation="vertical">
+
+    <fragment
+        android:id="@+id/frag_setting"
+        android:name="com.chavau.univ_angers.univemarge.view.fragments.SettingsFragment"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        tools:context=".view.activities.SettingsActivity" />
+
+
+    <EditText
+        android:id="@+id/edtnewpin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="@string/new_pass"
+        android:inputType="numberPassword"
+        android:text="" />
+
+    <Button
+        android:id="@+id/btnchange"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Changer"
+        android:onClick="onClickChanger"/>
+
+
+</LinearLayout>

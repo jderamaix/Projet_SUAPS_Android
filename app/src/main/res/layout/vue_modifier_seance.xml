@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="@dimen/HeightLinearLayout"
+    android:layout_margin="2dp"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:background="@drawable/fonds"
+        >
+
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="70dp"
+            android:layout_weight="1"
+            android:id="@+id/imageview_man_woman"
+            android:layout_margin="10dp"
+            android:contentDescription="@string/photo_de_l_etudiant"
+            tools:src="@drawable/man"/>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginStart="20dp"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview_nom_persInscr"
+                android:layout_marginTop="5dp"
+                android:textSize="@dimen/tailleTexte"
+                android:textStyle="bold"
+                tools:text="Omar"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview_prenom_persInscr"
+                android:layout_marginTop="2dp"
+                android:textSize="@dimen/tailleTexte"
+                android:textStyle="bold"
+                tools:text="Toibrani"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview_num_etudiant"
+                android:layout_marginTop="2dp"
+                android:textStyle="bold"
+                android:textSize="@dimen/tailleTexte"
+                tools:text="35NH69A"/>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/textview_activite_type"
+                android:textSize="@dimen/tailleTexte"
+                android:textStyle="bold"
+                tools:text="Loisirs"/>
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/iv_lighning"
+            android:contentDescription="@string/etat_etudiant"
+            android:layout_margin="25dp"
+            android:src="@drawable/light_on"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:id="@+id/tv_menu_presence"
+            android:text="&#8942;"
+            android:textSize="25sp"
+            android:textColor="@color/noir"
+            android:layout_marginRight="10dp"
+            android:gravity="center_vertical|right"/>
+
+
+
+    </LinearLayout>
+
+</android.support.v7.widget.CardView>
